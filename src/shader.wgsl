@@ -33,4 +33,15 @@ fn sdSegment(p: vec2<f32>, a: vec2<f32>, b: vec2<f32>) -> f32
     return length( pa - ba*h );
 }
 
+fn sdSegment2(p: vec2<f32>, a: vec2<f32>, b: vec2<f32>, width: f32) -> f32
+{
+    let u = normalize(b-a);
+    let v = rot90(u);
+
+    var pp = p;
+    pp = pp - (a+b)/2.0;
+    pp = pp * mat2x2<f32>(u, v);
+    return sdBox(pp, vec2<f32>(length(b-a)/2.0, width/2.0), 0.0);
+}
+
 fn vs_main() { }
