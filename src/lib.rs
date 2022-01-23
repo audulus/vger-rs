@@ -41,7 +41,7 @@ impl VGER {
             .expect("Unable to find a suitable GPU adapter!")
     }
 
-    fn new() -> Self {
+    pub fn new() -> Self {
         let (device, queue) = block_on(VGER::setup());
 
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
