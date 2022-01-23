@@ -4,11 +4,12 @@ use winit::*;
 
 pub struct VGER {
     pub device: wgpu::Device,
+    pub queue: wgpu::Queue
 }
 
 impl VGER {
 
-    async fn setup(window: &winit::window::Window) {
+    async fn setup(window: &winit::window::Window) -> (wgpu::Device, wgpu::Queue) {
 
         let backend = wgpu::Backends::all();
         let instance = wgpu::Instance::new(backend);
@@ -27,7 +28,7 @@ impl VGER {
         println!("Using {} ({:?})", adapter_info.name, adapter_info.backend);
 
         let trace_dir = std::env::var("WGPU_TRACE");
-        let (device, queue) = adapter
+        adapter
             .request_device(
                 &wgpu::DeviceDescriptor {
                     label: None,
@@ -37,7 +38,7 @@ impl VGER {
                 trace_dir.ok().as_ref().map(std::path::Path::new),
             )
             .await
-            .expect("Unable to find a suitable GPU adapter!");
+            .expect("Unable to find a suitable GPU adapter!")
     }
 
     /*
