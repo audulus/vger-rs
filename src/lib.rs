@@ -1,6 +1,7 @@
 
 use wgpu::*;
 use winit::*;
+use futures::executor::block_on;
 
 pub struct VGER {
     pub device: wgpu::Device,
@@ -41,11 +42,11 @@ impl VGER {
             .expect("Unable to find a suitable GPU adapter!")
     }
 
-    /*
     fn new(window: &winit::window::Window) -> Self {
+        let (device, queue) = block_on(VGER::setup(window));
 
+        Self { device: device, queue: queue }
     }
-    */
 
 }
 
