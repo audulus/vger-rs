@@ -44,6 +44,11 @@ impl VGER {
     fn new() -> Self {
         let (device, queue) = block_on(VGER::setup());
 
+        let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!("shader.wgsl"))),
+        });
+
         Self { device, queue }
     }
 
