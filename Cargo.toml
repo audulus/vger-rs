@@ -1,5 +1,5 @@
 [workspace]
-resolver = "2"
+resolver = "2" # What does this do?
 
 [package]
 name = "vger-rs"
