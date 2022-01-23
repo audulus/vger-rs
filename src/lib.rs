@@ -14,18 +14,13 @@ pub struct VGER {
 
 impl VGER {
 
-    async fn setup(window: &winit::window::Window) -> (wgpu::Device, wgpu::Queue) {
+    async fn setup() -> (wgpu::Device, wgpu::Queue) {
 
         let backend = wgpu::Backends::all();
         let instance = wgpu::Instance::new(backend);
-        let (size, surface) = unsafe {
-            let size = window.inner_size();
-            let surface = instance.create_surface(&window);
-            (size, surface)
-        };
 
         let adapter =
-        wgpu::util::initialize_adapter_from_env_or_default(&instance, backend, Some(&surface))
+        wgpu::util::initialize_adapter_from_env_or_default(&instance, backend, None)
             .await
             .expect("No suitable GPU adapters found on the system!");
 
@@ -46,8 +41,8 @@ impl VGER {
             .expect("Unable to find a suitable GPU adapter!")
     }
 
-    fn new(window: &winit::window::Window) -> Self {
-        let (device, queue) = block_on(VGER::setup(window));
+    fn new() -> Self {
+        let (device, queue) = block_on(VGER::setup());
 
         Self { device: device, queue: queue }
     }
@@ -61,10 +56,6 @@ mod tests {
 
     #[test]
     fn create_vger() {
-
-        let event_loop = EventLoop::new();
-        let window = WindowBuilder::new().build(&event_loop).unwrap();
-
-        let _ = VGER::new(&window);
+        let _ = VGER::new();
     }
 }
