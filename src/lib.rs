@@ -44,7 +44,7 @@ impl VGER {
     fn new() -> Self {
         let (device, queue) = block_on(VGER::setup());
 
-        Self { device: device, queue: queue }
+        Self { device, queue }
     }
 
 }
