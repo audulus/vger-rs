@@ -1,7 +1,11 @@
 
 use wgpu::*;
-use winit::*;
 use futures::executor::block_on;
+use winit::{
+    event::{Event, WindowEvent},
+    event_loop::{ControlFlow, EventLoop},
+    window::WindowBuilder,
+};
 
 pub struct VGER {
     pub device: wgpu::Device,
@@ -52,8 +56,15 @@ impl VGER {
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn create_vger() {
+
+        let event_loop = EventLoop::new();
+        let window = WindowBuilder::new().build(&event_loop).unwrap();
+
+        let _ = VGER::new(&window);
     }
 }
