@@ -1,3 +1,9 @@
+use wgpu::*;
+
+pub struct VGER {
+    pub device: wgpu::Device,
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
