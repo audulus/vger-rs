@@ -1,4 +1,6 @@
+
 use wgpu::*;
+use winit::*;
 
 pub struct VGER {
     pub device: wgpu::Device,
@@ -6,13 +8,44 @@ pub struct VGER {
 
 impl VGER {
 
-    /*
-    fn new() -> Self {
+    async fn setup(window: &winit::window::Window) {
+
         let backend = wgpu::Backends::all();
         let instance = wgpu::Instance::new(backend);
+        let (size, surface) = unsafe {
+            let size = window.inner_size();
+            let surface = instance.create_surface(&window);
+            (size, surface)
+        };
+
+        let adapter =
+        wgpu::util::initialize_adapter_from_env_or_default(&instance, backend, Some(&surface))
+            .await
+            .expect("No suitable GPU adapters found on the system!");
+
+        let adapter_info = adapter.get_info();
+        println!("Using {} ({:?})", adapter_info.name, adapter_info.backend);
+
+        let trace_dir = std::env::var("WGPU_TRACE");
+        let (device, queue) = adapter
+            .request_device(
+                &wgpu::DeviceDescriptor {
+                    label: None,
+                    features: wgpu::Features::default(),
+                    limits: wgpu::Limits::default(),
+                },
+                trace_dir.ok().as_ref().map(std::path::Path::new),
+            )
+            .await
+            .expect("Unable to find a suitable GPU adapter!");
+    }
+
+    /*
+    fn new(window: &winit::window::Window) -> Self {
+
     }
     */
-    
+
 }
 
 #[cfg(test)]
