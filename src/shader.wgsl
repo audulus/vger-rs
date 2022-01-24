@@ -101,4 +101,14 @@ fn sdBezier(pos: vec2<f32>, A: vec2<f32>, B: vec2<f32>, C: vec2<f32> ) -> f32
     return sqrt( res );
 }
 
+fn sdSubtract(d1: f32, d2: f32) -> f32
+{
+    return max(-d1, d2);
+}
+
+fn sdPie(p: vec2<f32>, n: vec2<f32>) -> f32
+{
+    return abs(p).x * n.y + p.y*n.x;
+}
+
 fn vs_main() { }
