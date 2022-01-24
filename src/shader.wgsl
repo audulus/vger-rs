@@ -120,4 +120,29 @@ fn sdArc2(p: vec2<f32>, sca: vec2<f32>, scb: vec2<f32>, radius: f32, width: f32)
                      abs(sdCircle(pp, radius)) - width);
 }
 
+// From https://www.shadertoy.com/view/4sySDK
+
+fn inv(M: mat2x2<f32>) -> mat2x2<f32> {
+    return (1.0 / determinant(M)) * mat2x2<f32>(
+        vec2<f32>(M[1][1], -M[0][1]),
+        vec2<f32>(-M[1][0], M[0][0]));
+}
+
+fn sdBezier2(uv: vec2<f32>, p0: vec2<f32>, p1: vec2<f32>, p2: vec2<f32>) -> f32 {
+
+    let trf1 = mat2x2<f32>( vec2<f32>(-1.0, 2.0), vec2<f32>(1.0, 2.0) );
+    let trf2 = inv(mat2x2<f32>(p0-p1, p2-p1));
+    let trf=trf1*trf2;
+
+    let uv2 = uv - p1;
+    var xy =trf*uv2;
+    xy.y = xy.y - 1.0;
+
+    var gradient: vec2<f32>;
+    gradient.x=2.*trf[0][0]*(trf[0][0]*uv2.x+trf[1][0]*uv2.y)-trf[0][1];
+    gradient.y=2.*trf[1][0]*(trf[0][0]*uv2.x+trf[1][0]*uv2.y)-trf[1][1];
+
+    return (xy.x*xy.x-xy.y)/length(gradient);
+}
+
 fn vs_main() { }
