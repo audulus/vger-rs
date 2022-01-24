@@ -1,8 +1,39 @@
 
+
+/// Filled circle.
+let vgerCircle = 0;
+
+/// Stroked arc.
+let vgerArc = 1;
+
+/// Rounded corner rectangle.
+let vgerRect = 2;
+
+/// Stroked rounded rectangle.
+let vgerRectStroke = 3;
+
+/// Single-segment quadratic bezier curve.
+let vgerBezier = 4;
+
+/// line segment
+let vgerSegment = 5;
+
+/// Multi-segment bezier curve.
+let vgerCurve = 6;
+
+/// Connection wire. See https://www.shadertoy.com/view/NdsXRl
+let vgerWire = 7;
+
+/// Text rendering.
+let vgerGlyph = 8;
+
+/// Path fills.
+let vgerPathFill = 9;
+
 struct vgerPrim {
 
     /// Type of primitive.
-    prim_type: i32;
+    prim_type: u32;
 
     /// Stroke width.
     width: f32;
@@ -235,6 +266,11 @@ fn expand(box: BBox, p: vec2<f32>) -> BBox {
     result.min = min(box.min, p);
     result.max = max(box.max, p);
     return result;
+}
+
+fn sdPrimBounds(prim: vgerPrim, cvs: ptr<function, vec2<f32> >) -> BBox {
+    var b: BBox;
+    return b;
 }
 
 fn vs_main() { }
