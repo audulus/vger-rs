@@ -230,4 +230,11 @@ struct BBox {
     max: vec2<f32>;
 };
 
+fn expand(box: BBox, p: vec2<f32>) -> BBox {
+    var result: BBox;
+    result.min = min(box.min, p);
+    result.max = max(box.max, p);
+    return result;
+}
+
 fn vs_main() { }
