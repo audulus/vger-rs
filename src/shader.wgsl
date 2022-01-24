@@ -44,4 +44,19 @@ fn sdSegment2(p: vec2<f32>, a: vec2<f32>, b: vec2<f32>, width: f32) -> f32
     return sdBox(pp, vec2<f32>(length(b-a)/2.0, width/2.0), 0.0);
 }
 
+// sca is {sin,cos} of orientation
+// scb is {sin,cos} of aperture angle
+fn sdArc(p: vec2<f32>, sca: vec2<f32>, scb: vec2<f32>, ra: f32, rb: f32 ) -> f32
+{
+    var pp = p * mat2x2<f32>(vec2<f32>(sca.x,sca.y),vec2<f32>(-sca.y,sca.x));
+    pp.x = abs(pp.x);
+    var k = 0.0;
+    if (scb.y*pp.x>scb.x*pp.y) {
+        k = dot(pp,scb);
+    } else {
+        k = length(pp);
+    }
+    return sqrt( dot(pp,pp) + ra*ra - 2.0*ra*k ) - rb;
+}
+
 fn vs_main() { }
