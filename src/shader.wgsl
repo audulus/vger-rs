@@ -188,4 +188,9 @@ fn sdBezierApprox2(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>, C: vec2<f32>) -> f3
     return length(get_distance_vector(A-p, B-p, C-p));
 }
 
+struct BBox {
+    min: vec2<f32>;
+    max: vec2<f32>;
+};
+
 fn vs_main() { }
