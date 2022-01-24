@@ -111,4 +111,13 @@ fn sdPie(p: vec2<f32>, n: vec2<f32>) -> f32
     return abs(p).x * n.y + p.y*n.x;
 }
 
+/// Arc with square ends.
+fn sdArc2(p: vec2<f32>, sca: vec2<f32>, scb: vec2<f32>, radius: f32, width: f32) -> f32
+{
+    // Rotate point.
+    let pp = p * mat2x2<f32>(vec2<f32>(sca.x,sca.y),vec2<f32>(-sca.y,sca.x));
+    return sdSubtract(sdPie(pp, vec2<f32>(scb.x, -scb.y)),
+                     abs(sdCircle(pp, radius)) - width);
+}
+
 fn vs_main() { }
