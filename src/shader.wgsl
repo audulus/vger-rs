@@ -271,6 +271,10 @@ fn expand(box: BBox, p: vec2<f32>) -> BBox {
 fn sdPrimBounds(prim: vgerPrim, cvs: ptr<function, vec2<f32> >) -> BBox {
     var b: BBox;
     switch (prim.prim_type) {
+        case 0: { // vgerCircle
+            b.min = prim.cvs[0] - prim.radius;
+            b.max = prim.cvs[0] + prim.radius;
+        }
         default: {}
     }
     return b;
