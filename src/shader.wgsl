@@ -173,4 +173,19 @@ fn get_distance_vector(b0: vec2<f32>, b1: vec2<f32>, b2: vec2<f32>) -> vec2<f32>
     
 }
 
+fn sdBezierApprox(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>, C: vec2<f32>) -> f32 {
+
+    let v0 = normalize(B - A); let v1 = normalize(C - A);
+    let det = v0.x * v1.y - v1.x * v0.y;
+    if(abs(det) < 0.01) {
+        return sdBezier(p, A, B, C);
+    }
+
+    return length(get_distance_vector(A-p, B-p, C-p));
+}
+
+fn sdBezierApprox2(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>, C: vec2<f32>) -> f32 {
+    return length(get_distance_vector(A-p, B-p, C-p));
+}
+
 fn vs_main() { }
