@@ -92,8 +92,7 @@ fn sdBezier(pos: vec2<f32>, A: vec2<f32>, B: vec2<f32>, C: vec2<f32> ) -> f32
         let v = acos( q/(p*z*2.0) ) / 3.0;
         let m = cos(v);
         let n = sin(v)*1.732050808;
-        let vv = vec3<f32>(m+m,-n-m,n-m)*z-kx;
-        let t = clamp(vv, vec3<f32>(0.0), vec3<f32>(1.0));
+        let t = clamp(vec3<f32>(m+m,-n-m,n-m)*z-kx, vec3<f32>(0.0), vec3<f32>(1.0));
         res = min( dot2(d+(c+b*t.x)*t.x),
                    dot2(d+(c+b*t.y)*t.y) );
         // the third root cannot be the closest
