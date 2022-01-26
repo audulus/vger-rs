@@ -320,7 +320,7 @@ fn sdPrimBounds(prim: vgerPrim) -> BBox {
             b.min = min(prim.cvs[0], prim.cvs[1]);
             b.max = max(prim.cvs[0], prim.cvs[1]);
         }
-        case 8: { // vgerRectStroke
+        case 8: { // vgerGlyph
             b.min = prim.cvs[0];
             b.max = prim.cvs[1];
         }
@@ -371,6 +371,54 @@ fn bezierTest(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>, C: vec2<f32>) -> bool {
 
     return u*u < v;
 
+}
+
+fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
+    var d = 1e10;
+    var s = 1;
+    switch(prim.prim_type) {
+        case 0: { // vgerCircle
+            d = sdCircle(p - prim.cvs[0], prim.radius);
+        }
+        case 1: { // vgerArc
+            d = sdArc2(p - prim.cvs[0], prim.cvs[1], prim.cvs[2], prim.radius, prim.width/2.0);
+        }
+        case 2: { // vgerRect
+            let center = 0.5*(prim.cvs[1] + prim.cvs[0]);
+            let size = prim.cvs[1] - prim.cvs[0];
+            d = sdBox(p - center, 0.5*size, prim.radius);
+        }
+        case 3: { // vgerRectStroke
+            let center = 0.5*(prim.cvs[1] + prim.cvs[0]);
+            let size = prim.cvs[1] - prim.cvs[0];
+            d = abs(sdBox(p - center, 0.5*size, prim.radius)) - prim.width/2.0;
+        }
+        case 4: { // vgerBezier
+            d = sdBezierApprox(p, prim.cvs[0], prim.cvs[1], prim.cvs[2]) - prim.width;
+        }
+        case 5: { // vgerSegment
+            d = sdSegment2(p, prim.cvs[0], prim.cvs[1], prim.width);
+        }
+        case 6: { // vgerCurve
+            //for(var i=0; i<i32(prim.count); i = i+1) {
+            //    let j = prim.start + 3*i;
+            //    d = min(d, sdBezierApprox(p, cvs[j], cvs[j+1], cvs[j+2]));
+            //}
+        }
+        case 7: { // vgerSegment
+            d = sdSegment2(p, prim.cvs[0], prim.cvs[1], prim.width);
+        }
+        case 8: { // vgerGlyph
+            let center = 0.5*(prim.cvs[1] + prim.cvs[0]);
+            let size = prim.cvs[1] - prim.cvs[0];
+            d = sdBox(p - center, 0.5*size, prim.radius);
+        }
+        case 9: { // vgerPathFill
+            
+        }
+        default: { }
+    }
+    return d;
 }
 
 fn vs_main() { }
