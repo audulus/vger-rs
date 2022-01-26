@@ -351,4 +351,26 @@ fn lineTest(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>) -> bool {
 
 }
 
+/// Is the point with the area between the curve and line segment A C?
+fn bezierTest(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>, C: vec2<f32>) -> bool {
+
+    // Compute barycentric coordinates of p.
+    // p = s * A + t * B + (1-s-t) * C
+    let v0 = B - A; let v1 = C - A; let v2 = p - A;
+    let det = v0.x * v1.y - v1.x * v0.y;
+    let s = (v2.x * v1.y - v1.x * v2.y) / det;
+    let t = (v0.x * v2.y - v2.x * v0.y) / det;
+
+    if(s < 0.0 || t < 0.0 || (1.0-s-t) < 0.0) {
+        return false; // outside triangle
+    }
+
+    // Transform to canonical coordinte space.
+    let u = s * 0.5 + t;
+    let v = t;
+
+    return u*u < v;
+
+}
+
 fn vs_main() { }
