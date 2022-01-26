@@ -293,9 +293,21 @@ fn sdPrimBounds(prim: vgerPrim) -> BBox {
             b.min = prim.cvs[0] - prim.radius;
             b.max = prim.cvs[0] + prim.radius;
         }
+        case 2: { // vgerRect
+            b.min = prim.cvs[0];
+            b.max = prim.cvs[1];
+        }
+        case 3: { // vgerRectStroke
+            b.min = prim.cvs[0];
+            b.max = prim.cvs[1];
+        }
         case 4: { // vgerBezier
             b.min = min(min(prim.cvs[0], prim.cvs[1]), prim.cvs[2]);
             b.max = max(max(prim.cvs[0], prim.cvs[1]), prim.cvs[2]);
+        }
+        case 8: { // vgerRectStroke
+            b.min = prim.cvs[0];
+            b.max = prim.cvs[1];
         }
         case 9: { // vgerPathFill
             b.min = vec2<f32>(1e10, 1e10);
