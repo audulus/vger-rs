@@ -375,7 +375,7 @@ fn bezierTest(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>, C: vec2<f32>) -> bool {
 
 fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
     var d = 1e10;
-    var s = 1;
+    var s = 1.0;
     switch(prim.prim_type) {
         case 0: { // vgerCircle
             d = sdCircle(p - prim.cvs[0], prim.radius);
@@ -414,7 +414,48 @@ fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
             d = sdBox(p - center, 0.5*size, prim.radius);
         }
         case 9: { // vgerPathFill
-            
+            for(var i=0; i<i32(prim.count); i = i+1) {
+                let j = i32(prim.start) + 3*i;
+                let a = cvs.cvs[j];
+                let b = cvs.cvs[j+1];
+                let c = cvs.cvs[j+2];
+
+                var skip = false;
+
+                if(exact) {
+                    d = min(d, sdBezier(p, a, b, c));
+                } else {
+                    let xmax = p.x + filterWidth;
+                    let xmin = p.x - filterWidth;
+
+                    // If the hull is far enough away, don't bother with
+                    // a sdf.
+                    if(a.x > xmax && b.x > xmax && c.x > xmax) {
+                        skip = true;
+                    } else if(a.x < xmin && b.x < xmin && c.x < xmin) {
+                        skip = true;
+                    }
+
+                    if(!skip) {
+                        d = min(d, sdBezierApprox2(p, a, b, c));
+                    }
+
+                }
+
+                if(lineTest(p, a, c)) {
+                    s = -s;
+                }
+
+                // Flip if inside area between curve and line.
+                if(!skip) {
+                    if(bezierTest(p, a, b, c)) {
+                        s = -s;
+                    }
+                }
+
+            }
+            d = d * s;
+            break;
         }
         default: { }
     }
