@@ -402,7 +402,7 @@ fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
         case 6: { // vgerCurve
             for(var i=0; i<i32(prim.count); i = i+1) {
                 let j = i32(prim.start) + 3*i;
-            //    d = min(d, sdBezierApprox(p, cvs[j], cvs[j+1], cvs[j+2]));
+                d = min(d, sdBezierApprox(p, cvs.cvs[j], cvs.cvs[j+1], cvs.cvs[j+2]));
             }
         }
         case 7: { // vgerSegment
