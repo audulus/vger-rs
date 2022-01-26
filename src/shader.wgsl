@@ -305,6 +305,21 @@ fn sdPrimBounds(prim: vgerPrim) -> BBox {
             b.min = min(min(prim.cvs[0], prim.cvs[1]), prim.cvs[2]);
             b.max = max(max(prim.cvs[0], prim.cvs[1]), prim.cvs[2]);
         }
+        case 5: { // vgerSegment
+            b.min = min(prim.cvs[0], prim.cvs[1]);
+            b.max = max(prim.cvs[0], prim.cvs[1]);
+        }
+        case 6: { // vgerCurve
+            b.min = vec2<f32>(1e10, 1e10);
+            b.max = -b.min;
+            for(var i: i32 = 0; i < i32(prim.count * 3u); i = i+1) {
+                b = expand(b, cvs.cvs[i32(prim.start)+i]);
+            }
+        }
+        case 7: { // vgerSegment
+            b.min = min(prim.cvs[0], prim.cvs[1]);
+            b.max = max(prim.cvs[0], prim.cvs[1]);
+        }
         case 8: { // vgerRectStroke
             b.min = prim.cvs[0];
             b.max = prim.cvs[1];
@@ -315,7 +330,6 @@ fn sdPrimBounds(prim: vgerPrim) -> BBox {
             for(var i: i32 = 0; i < i32(prim.count * 3u); i = i+1) {
                 b = expand(b, cvs.cvs[i32(prim.start)+i]);
             }
-            break;
         }
         default: {}
     }
