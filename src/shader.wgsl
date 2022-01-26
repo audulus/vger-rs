@@ -275,7 +275,7 @@ struct CVS {
 [[group(0), binding(0)]]
 var<storage> cvs: CVS;
 
-fn sdPrimBounds(prim: vgerPrim, cvs: ptr<function, vec2<f32> >) -> BBox {
+fn sdPrimBounds(prim: vgerPrim) -> BBox {
     var b: BBox;
     switch (prim.prim_type) {
         case 0: { // vgerCircle
@@ -290,7 +290,7 @@ fn sdPrimBounds(prim: vgerPrim, cvs: ptr<function, vec2<f32> >) -> BBox {
             b.min = vec2<f32>(1e10, 1e10);
             b.max = -b.min;
             for(var i: i32 = 0; i < i32(prim.count * 3u); i = i+1) {
-                // b = expand(b, cvs[prim.start+i]);
+                b = expand(b, cvs.cvs[i32(prim.start)+i]);
             }
             break;
         }
