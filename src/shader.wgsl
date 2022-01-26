@@ -336,7 +336,7 @@ fn sdPrimBounds(prim: vgerPrim) -> BBox {
     return b;
 }
 
-fn ineTest(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>) -> bool {
+fn lineTest(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>) -> bool {
 
     let cs = i32(A.y < p.y) * 2 + i32(B.y < p.y);
 
