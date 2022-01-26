@@ -279,6 +279,14 @@ fn sdPrimBounds(prim: vgerPrim, cvs: ptr<function, vec2<f32> >) -> BBox {
             b.min = prim.cvs[0] - prim.radius;
             b.max = prim.cvs[0] + prim.radius;
         }
+        case 9: { // vgerPathFill
+            b.min = vec2<f32>(1e10, 1e10);
+            b.max = -b.min;
+            for(var i: i32 = 0; i < i32(prim.count * 3u); i = i+1) {
+                // b = expand(b, cvs[prim.start+i]);
+            }
+            break;
+        }
         default: {}
     }
     return b;
