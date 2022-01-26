@@ -275,6 +275,13 @@ struct CVS {
 [[group(0), binding(0)]]
 var<storage> cvs: CVS;
 
+struct Prims {
+    prims: array<vgerPrim>;
+};
+
+[[group(0), binding(1)]]
+var<storage> prims: Prims;
+
 fn sdPrimBounds(prim: vgerPrim) -> BBox {
     var b: BBox;
     switch (prim.prim_type) {
