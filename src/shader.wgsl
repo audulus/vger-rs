@@ -268,6 +268,13 @@ fn expand(box: BBox, p: vec2<f32>) -> BBox {
     return result;
 }
 
+struct CVS {
+    cvs: array<vec2<f32>>;
+};
+
+[[group(0), binding(0)]]
+var<storage> cvs: CVS;
+
 fn sdPrimBounds(prim: vgerPrim, cvs: ptr<function, vec2<f32> >) -> BBox {
     var b: BBox;
     switch (prim.prim_type) {
