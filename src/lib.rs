@@ -7,6 +7,9 @@ use winit::{
     window::WindowBuilder,
 };
 
+mod path;
+use path::*;
+
 pub struct VGER {
     pub device: wgpu::Device,
     pub queue: wgpu::Queue
