@@ -19,4 +19,34 @@ impl PathScanner {
             segments: vec![]
         }
     }
+
+    pub fn begin(&mut self, cvs: &[WorldPoint]) {
+
+        self.segments.clear();
+
+        let mut i = 0;
+        while i < cvs.len()-2 {
+            self.segments.push(PathSegment{
+                cvs: [cvs[i], cvs[i+1], cvs[i+2]],
+                next: -1,
+                previous: -1
+            });
+            i += 2;
+        }
+
+        // Close the path if necessary.
+        if let Some(first) = self.segments.first() {
+            if let Some(last) = self.segments.last() {
+                let start = first.cvs[0];
+                let end = last.cvs[2];
+                if start != end {
+                    self.segments.push(PathSegment{
+                        cvs: [end, start.lerp(end, 0.5), start],
+                        next: -1,
+                        previous: -1
+                    })
+                }
+            }
+        }
+    }
 }
