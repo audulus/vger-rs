@@ -149,7 +149,7 @@ mod tests {
 
         let mut scan = PathScanner::new();
 
-        let cvs:Vec<WorldPoint> = vec![
+        let cvs = vec![
             WorldPoint::new(1.0,0.0),
             WorldPoint::new(1.0,1.0),
             WorldPoint::new(0.0,1.0),
