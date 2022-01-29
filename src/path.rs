@@ -11,8 +11,8 @@ struct Interval {
 
 struct PathSegment {
     cvs: [WorldPoint; 3],
-    next: i32,
-    previous: i32
+    next: Option<usize>,
+    previous: Option<usize>
 }
 
 impl PathSegment {
@@ -27,14 +27,16 @@ impl PathSegment {
 #[derive(PartialEq, PartialOrd)]
 struct PathScannerNode {
     coord: f32,
-    seg: i32,
+    seg: usize,
     end: bool
 }
 
 pub struct PathScanner {
     segments: Vec<PathSegment>,
     nodes: Vec<PathScannerNode>,
-    index: i32
+    index: usize,
+    interval: Interval,
+    first: Option<usize>
 }
 
 impl PathScanner {
@@ -42,7 +44,9 @@ impl PathScanner {
         Self {
             segments: vec![],
             nodes: vec![],
-            index: 0
+            index: 0,
+            interval: Interval{a: 0.0, b: 0.0},
+            first: None
         }
     }
 
@@ -54,8 +58,8 @@ impl PathScanner {
         while i < cvs.len()-2 {
             self.segments.push(PathSegment{
                 cvs: [cvs[i], cvs[i+1], cvs[i+2]],
-                next: -1,
-                previous: -1
+                next: None,
+                previous: None
             });
             i += 2;
         }
@@ -68,8 +72,8 @@ impl PathScanner {
                 if start != end {
                     self.segments.push(PathSegment{
                         cvs: [end, start.lerp(end, 0.5), start],
-                        next: -1,
-                        previous: -1
+                        next: None,
+                        previous: None
                     })
                 }
             }
@@ -81,14 +85,56 @@ impl PathScanner {
         for i in 0..self.segments.len() {
             let y_interval = self.segments[i].y_interval();
             self.nodes.push(PathScannerNode {
-                coord: y_interval.a, seg: i as i32, end: false
+                coord: y_interval.a, seg: i, end: false
             });
             self.nodes.push(PathScannerNode {
-                coord: y_interval.b, seg: i as i32, end: true
+                coord: y_interval.b, seg: i, end: true
             });
         }
         
         self.nodes.sort_by(|a, b| a.partial_cmp(b).unwrap());
 
     }
+
+    fn next(&mut self) -> bool {
+        let y = self.nodes[self.index as usize].coord;
+        self.interval.a = y;
+        let n = self.nodes.len();
+
+        while self.index < n && self.nodes[self.index].coord == y {
+
+            let node = &self.nodes[self.index];
+            assert!(node.seg < self.segments.len());
+
+            if node.end {
+                if let Some(prev) = self.segments[node.seg].previous {
+                    self.segments[prev].next = self.segments[node.seg].next;
+                }
+                if let Some(next) = self.segments[node.seg].next {
+                    self.segments[next].previous = self.segments[node.seg].previous;
+                }
+                if self.first == Some(node.seg) {
+                    self.first = self.segments[node.seg].next
+                }
+                self.segments[node.seg].next = None;
+                self.segments[node.seg].previous = None;
+            } else {
+                self.segments[node.seg].next = self.first;
+                if let Some(first) = self.first {
+                    self.segments[first].previous = Some(node.seg);
+                }
+                self.first = Some(node.seg);
+            }
+
+            self.index += 1;
+        }
+
+        if self.index < n {
+            self.interval.b = self.nodes[self.index].coord
+        }
+
+        self.index < n
+
+    }
+    
 }
