@@ -138,3 +138,34 @@ impl PathScanner {
     }
     
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_path_scanner() {
+
+        let mut scan = PathScanner::new();
+
+        let cvs:Vec<WorldPoint> = vec![
+            WorldPoint::new(1.0,0.0),
+            WorldPoint::new(1.0,1.0),
+            WorldPoint::new(0.0,1.0),
+            WorldPoint::new(-1.0,1.0),
+            WorldPoint::new(-1.0,0.0),
+            WorldPoint::new(-1.0,-1.0),
+            WorldPoint::new(0.0,-1.0),
+            WorldPoint::new(1.0,-1.0),
+            WorldPoint::new(1.0,0.0)
+        ];
+
+        scan.begin(&cvs);
+
+        while scan.next() {
+            println!("interval {:?} {:?}", scan.interval.a, scan.interval.b);
+        }
+
+    }
+}
