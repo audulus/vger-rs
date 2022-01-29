@@ -18,8 +18,10 @@ struct PathSegment {
 impl PathSegment {
     pub fn y_interval(&self) -> Interval {
         Interval {
-            a: self.cvs[0].y.min(self.cvs[1].y).min(self.cvs[2].y),
-            b: self.cvs[0].y.min(self.cvs[1].y).max(self.cvs[2].y)
+            // Fatten the interval slightly to prevent artifacts by
+            // slightly missing a curve in a band.
+            a: self.cvs[0].y.min(self.cvs[1].y).min(self.cvs[2].y) - 1.0,
+            b: self.cvs[0].y.min(self.cvs[1].y).max(self.cvs[2].y) + 1.0
         }
     }
 }
