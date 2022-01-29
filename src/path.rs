@@ -1,5 +1,4 @@
 
-use std::cmp::Ord;
 use euclid::*;
 pub struct WorldSpace;
 pub type WorldPoint = Point2D<f32, WorldSpace>;
