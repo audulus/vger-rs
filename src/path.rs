@@ -168,7 +168,16 @@ mod tests {
         assert_eq!(scan.segments.len(), 4);
 
         while scan.next() {
-            println!("interval {:?} {:?}", scan.interval.a, scan.interval.b);
+            print!("interval {:?} {:?} active: ", scan.interval.a, scan.interval.b);
+
+            let mut index = scan.first;
+            while let Some(i) = index {
+                print!("{:?} ", i);
+                index = scan.segments[i].next;
+            }
+
+            print!("\n");
+
         }
 
     }
