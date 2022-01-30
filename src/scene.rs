@@ -5,7 +5,7 @@ use euclid::*;
 use std::mem::size_of;
 use wgpu::*;
 
-type LocalToWorld = Transform2D<f32, LocalSpace, WorldSpace>;
+pub type LocalToWorld = Transform2D<f32, LocalSpace, WorldSpace>;
 
 #[derive(Clone, Copy)]
 pub struct Paint {
