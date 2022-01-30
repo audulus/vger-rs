@@ -24,7 +24,6 @@ pub struct Scene {
     pub prims: [GPUVec<Prim>; MAX_LAYERS],
     pub xforms: GPUVec<LocalToWorld>,
     pub paints: GPUVec<Paint>,
-    pub bind_group: wgpu::BindGroup
 }
 
 pub const MAX_PRIMS: usize = 65536;
@@ -38,6 +37,15 @@ impl Scene {
             GPUVec::new(device, MAX_PRIMS, "Prim Buffer 2"),
             GPUVec::new(device, MAX_PRIMS, "Prim Buffer 3"),
         ];
+
+        Self {
+            prims,
+            xforms: GPUVec::new(device, MAX_PRIMS, "Xform Buffer"),
+            paints: GPUVec::new(device, MAX_PRIMS, "Paint Buffer"),
+        }
+    }
+
+    pub fn bind_group(&self, device: &wgpu::Device, layer: usize) -> wgpu::BindGroup {
 
         let bind_group_layout = device.create_bind_group_layout(
             &wgpu::BindGroupLayoutDescriptor {
@@ -57,26 +65,20 @@ impl Scene {
             }
         );
 
-        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &bind_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
                     resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding{
-                        buffer: prims[0].buffer(),
+                        buffer: self.prims[layer].buffer(),
                         offset: 0,
                         size: None
                     }),
                 },
             ],
             label: Some("vger bind group"),
-        });
+        })
 
-        Self {
-            prims,
-            xforms: GPUVec::new(device, MAX_PRIMS, "Xform Buffer"),
-            paints: GPUVec::new(device, MAX_PRIMS, "Paint Buffer"),
-            bind_group
-        }
     }
 }
