@@ -20,23 +20,19 @@ pub struct Paint {
 }
 
 pub struct Scene {
-    pub prim_buffer: GPUVec<Prim>,
-    pub xform_buffer: GPUVec<LocalToWorld>,
-    pub paint_buffer: GPUVec<Paint>,
+    pub prims: GPUVec<Prim>,
+    pub xforms: GPUVec<LocalToWorld>,
+    pub paints: GPUVec<Paint>,
 }
 
 const MAX_PRIMS: usize = 65536;
 
 impl Scene {
     pub fn new(device: &wgpu::Device) -> Self {
-        let prim_buffer = GPUVec::new(device, MAX_PRIMS, "Prim Buffer");
-        let xform_buffer = GPUVec::new(device, MAX_PRIMS, "Xform Buffer");
-        let paint_buffer = GPUVec::new(device, MAX_PRIMS, "Paint Buffer");
-
         Self {
-            prim_buffer,
-            xform_buffer,
-            paint_buffer,
+            prims: GPUVec::new(device, MAX_PRIMS, "Prim Buffer"),
+            xforms: GPUVec::new(device, MAX_PRIMS, "Xform Buffer"),
+            paints: GPUVec::new(device, MAX_PRIMS, "Paint Buffer"),
         }
     }
 }
