@@ -100,6 +100,18 @@ impl VGER {
 
         self.render(prim);
     }
+
+    pub fn stroke_arc(&mut self, center: LocalPoint, radius: f32, width: f32, rotation: f32, aperture: f32, paint_index: usize) {
+
+        let mut prim = Prim::default();
+        prim.prim_type = PrimType::Arc;
+        prim.radius = radius;
+        prim.cvs = [ center, LocalPoint::new(rotation.sin(), rotation.cos()), LocalPoint::new(aperture.sin(), aperture.cos()) ];
+        prim.width = width;
+        prim.paint = paint_index as u32;
+    
+        self.render(prim);
+    }
 }
 
 #[cfg(test)]
