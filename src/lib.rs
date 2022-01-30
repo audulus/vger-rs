@@ -31,7 +31,8 @@ pub struct VGER {
     cur_layer: usize,
     tx_stack: Vec<LocalToWorld>,
     device_px_ratio: f32,
-    screen_size: ScreenSize
+    screen_size: ScreenSize,
+    bind_group: wgpu::BindGroup
 }
 
 impl VGER {
@@ -76,6 +77,39 @@ impl VGER {
             Scene::new(&device),
         ];
 
+        let bind_group_layout = device.create_bind_group_layout(
+            &wgpu::BindGroupLayoutDescriptor {
+                entries: &[
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Storage{read_only: false},
+                            has_dynamic_offset: true,
+                            min_binding_size: None
+                        },
+                        count: None,
+                    },
+                ],
+                label: Some("bind_group_layout"),
+            }
+        );
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            layout: &bind_group_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding{
+                        buffer: scenes[0].prims[0].buffer(),
+                        offset: 0,
+                        size: None
+                    }),
+                },
+            ],
+            label: Some("vger bind group"),
+        });
+
         Self {
             device,
             queue,
@@ -85,7 +119,8 @@ impl VGER {
             cur_layer: 0,
             tx_stack: vec![],
             device_px_ratio: 1.0,
-            screen_size: ScreenSize::new(512.0,512.0)
+            screen_size: ScreenSize::new(512.0,512.0),
+            bind_group
         }
     }
 
@@ -96,6 +131,18 @@ impl VGER {
         self.screen_size = ScreenSize::new(window_width, window_height);
         self.cur_scene = (self.cur_scene + 1) % 3;
         self.tx_stack.clear();
+    }
+
+    /// Encode all rendering to a command buffer.
+    pub fn encode(&mut self, command_buffer: wgpu::CommandBuffer, render_pass: &wgpu::RenderPassDescriptor) {
+
+        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("vger encoder") });
+
+        {
+            let mut rpass = encoder.begin_render_pass(render_pass);
+
+        }
+        self.queue.submit(Some(encoder.finish()));
     }
 
     fn render(&mut self, prim: Prim) {
