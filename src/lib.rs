@@ -15,6 +15,7 @@ mod scene;
 use scene::*;
 
 mod prim;
+use prim::*;
 
 mod gpu_vec;
 
@@ -77,6 +78,16 @@ impl VGER {
             cur_scene: 0,
             cur_layer: 0
         }
+    }
+
+    fn render(&mut self, prim: Prim) {
+
+        let prim_ix = self.cur_prim[self.cur_layer];
+        if prim_ix < MAX_PRIMS {
+            // self.scenes[self.cur_scene].prims[self.cur_layer][prim_ix] = prim;
+            self.cur_prim[self.cur_layer] += 1;
+        }
+    
     }
 }
 
