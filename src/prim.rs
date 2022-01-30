@@ -1,3 +1,4 @@
+use euclid::*;
 
 #[derive(Copy, Clone)]
 pub enum PrimType {
@@ -38,6 +39,9 @@ impl Default for PrimType {
         PrimType::Circle
     }
 }
+
+pub struct LocalSpace {}
+pub type LocalPoint = Point2D<f32, LocalSpace>;
 
 #[derive(Copy, Clone, Default)]
 pub struct Prim {
