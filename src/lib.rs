@@ -19,6 +19,9 @@ use prim::*;
 
 mod gpu_vec;
 
+struct ScreenCoordinates;
+type ScreenSize = Size2D<f32, ScreenCoordinates>;
+
 pub struct VGER {
     device: wgpu::Device,
     queue: wgpu::Queue,
@@ -27,6 +30,8 @@ pub struct VGER {
     cur_scene: usize,
     cur_layer: usize,
     tx_stack: Vec<LocalToWorld>,
+    device_px_ratio: f32,
+    screen_size: ScreenSize
 }
 
 impl VGER {
@@ -79,7 +84,16 @@ impl VGER {
             cur_scene: 0,
             cur_layer: 0,
             tx_stack: vec![],
+            device_px_ratio: 1.0,
+            screen_size: ScreenSize::new(512.0,512.0)
         }
+    }
+
+    pub fn begin(&mut self, window_width: f32, window_height: f32, device_px_ratio: f32) {
+        self.device_px_ratio = device_px_ratio;
+        self.cur_prim = [0,0,0,0];
+        self.cur_layer = 0;
+        self.screen_size = ScreenSize::new(window_width, window_height);
     }
 
     fn render(&mut self, prim: Prim) {
