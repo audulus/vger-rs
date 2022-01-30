@@ -20,12 +20,12 @@ use prim::*;
 mod gpu_vec;
 
 pub struct VGER {
-    pub device: wgpu::Device,
-    pub queue: wgpu::Queue,
-    pub scenes: [Scene; 3],
-    pub cur_prim: [usize; MAX_LAYERS],
-    pub cur_scene: usize,
-    pub cur_layer: usize,
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+    scenes: [Scene; 3],
+    cur_prim: [usize; MAX_LAYERS],
+    cur_scene: usize,
+    cur_layer: usize,
     tx_stack: Vec<LocalToWorld>
 }
 
