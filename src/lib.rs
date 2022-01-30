@@ -23,8 +23,6 @@ pub struct VGER {
     pub scene: Scene
 }
 
-const MAX_PRIMS: usize = 65536;
-
 impl VGER {
 
     async fn setup() -> (wgpu::Device, wgpu::Queue) {
