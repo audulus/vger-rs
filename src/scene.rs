@@ -1,11 +1,12 @@
 use crate::path::*;
 use crate::prim::*;
+use crate::gpu_vec::*;
 use euclid::*;
 use std::mem::size_of;
 use wgpu::*;
 
 pub struct Scene {
-    pub prim_buffer: wgpu::Buffer,
+    pub prim_buffer: GPUVec<Prim>,
     pub xform_buffer: wgpu::Buffer,
     pub paint_buffer: wgpu::Buffer,
 }
@@ -27,12 +28,7 @@ struct Paint {
 
 impl Scene {
     pub fn new(device: &wgpu::Device) -> Self {
-        let prim_buffer = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("Prim Buffer"),
-            size: (MAX_PRIMS * size_of::<Prim>()) as u64,
-            usage: BufferUsages::MAP_WRITE,
-            mapped_at_creation: true,
-        });
+        let prim_buffer = GPUVec::new(device, MAX_PRIMS, "Prim Buffer");
 
         let xform_buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Xform Buffer"),
