@@ -2,15 +2,14 @@ use euclid::*;
 
 #[derive(Copy, Clone)]
 pub enum PrimType {
-
     /// Filled circle.
-    Circle, 
+    Circle,
 
     /// Stroked arc.
     Arc,
 
     /// Rounded corner rectangle.
-    Rect,  
+    Rect,
 
     /// Stroked rounded rectangle.
     RectStroke,
@@ -26,12 +25,12 @@ pub enum PrimType {
 
     /// Connection wire. See https://www.shadertoy.com/view/NdsXRl
     Wire,
-    
+
     /// Text rendering.
     Glyph,
 
     /// Path fills.
-    PathFill
+    PathFill,
 }
 
 impl Default for PrimType {

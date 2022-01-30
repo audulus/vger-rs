@@ -1,6 +1,6 @@
+use crate::gpu_vec::*;
 use crate::path::*;
 use crate::prim::*;
-use crate::gpu_vec::*;
 use euclid::*;
 use std::mem::size_of;
 use wgpu::*;
@@ -35,7 +35,7 @@ impl Scene {
                 GPUVec::new(device, MAX_PRIMS, "Prim Buffer 0"),
                 GPUVec::new(device, MAX_PRIMS, "Prim Buffer 1"),
                 GPUVec::new(device, MAX_PRIMS, "Prim Buffer 2"),
-                GPUVec::new(device, MAX_PRIMS, "Prim Buffer 3")
+                GPUVec::new(device, MAX_PRIMS, "Prim Buffer 3"),
             ],
             xforms: GPUVec::new(device, MAX_PRIMS, "Xform Buffer"),
             paints: GPUVec::new(device, MAX_PRIMS, "Paint Buffer"),

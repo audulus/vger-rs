@@ -26,7 +26,7 @@ pub struct VGER {
     cur_prim: [usize; MAX_LAYERS],
     cur_scene: usize,
     cur_layer: usize,
-    tx_stack: Vec<LocalToWorld>
+    tx_stack: Vec<LocalToWorld>,
 }
 
 impl VGER {
@@ -75,25 +75,22 @@ impl VGER {
             device,
             queue,
             scenes,
-            cur_prim: [0,0,0,0],
+            cur_prim: [0, 0, 0, 0],
             cur_scene: 0,
             cur_layer: 0,
-            tx_stack: vec![]
+            tx_stack: vec![],
         }
     }
 
     fn render(&mut self, prim: Prim) {
-
         let prim_ix = self.cur_prim[self.cur_layer];
         if prim_ix < MAX_PRIMS {
             self.scenes[self.cur_scene].prims[self.cur_layer][prim_ix] = prim;
             self.cur_prim[self.cur_layer] += 1;
         }
-    
     }
 
     pub fn fill_circle(&mut self, center: LocalPoint, radius: f32, paint_index: usize) {
-
         let mut prim = Prim::default();
         prim.prim_type = PrimType::Circle;
         prim.cvs[0] = center;
@@ -103,15 +100,26 @@ impl VGER {
         self.render(prim);
     }
 
-    pub fn stroke_arc(&mut self, center: LocalPoint, radius: f32, width: f32, rotation: f32, aperture: f32, paint_index: usize) {
-
+    pub fn stroke_arc(
+        &mut self,
+        center: LocalPoint,
+        radius: f32,
+        width: f32,
+        rotation: f32,
+        aperture: f32,
+        paint_index: usize,
+    ) {
         let mut prim = Prim::default();
         prim.prim_type = PrimType::Arc;
         prim.radius = radius;
-        prim.cvs = [ center, LocalPoint::new(rotation.sin(), rotation.cos()), LocalPoint::new(aperture.sin(), aperture.cos()) ];
+        prim.cvs = [
+            center,
+            LocalPoint::new(rotation.sin(), rotation.cos()),
+            LocalPoint::new(aperture.sin(), aperture.cos()),
+        ];
         prim.width = width;
         prim.paint = paint_index as u32;
-    
+
         self.render(prim);
     }
 }

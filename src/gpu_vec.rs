@@ -6,8 +6,7 @@ pub struct GPUVec<T: Copy> {
     mem_align: MemAlign<T>,
 }
 
-impl<T: Copy> GPUVec<T>
-{
+impl<T: Copy> GPUVec<T> {
     pub fn new(device: &wgpu::Device, capacity: usize, label: &str) -> Self {
         let mem_align = MemAlign::new(capacity);
 
