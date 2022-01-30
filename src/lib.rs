@@ -89,6 +89,10 @@ impl VGER {
         }
     
     }
+
+    fn fill_circle(&mut self, center: LocalPoint, radius: f32, paint_index: usize) {
+
+    }
 }
 
 #[cfg(test)]
