@@ -90,6 +90,10 @@ impl VGER {
                 &self.scenes[self.cur_scene].bind_groups[self.cur_layer],
                 &[],
             );
+
+            rpass.draw(
+                /*vertices*/0..4,
+                /*instances*/0..(self.cur_prim[self.cur_layer] as u32))
         }
         encoder.finish()
     }
