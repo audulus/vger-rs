@@ -1,7 +1,42 @@
+
+#[derive(Copy, Clone)]
+pub enum PrimType {
+
+    /// Filled circle.
+    Circle, 
+
+    /// Stroked arc.
+    Arc,
+
+    /// Rounded corner rectangle.
+    Rect,  
+
+    /// Stroked rounded rectangle.
+    RectStroke,
+
+    /// Single-segment quadratic bezier curve.
+    Bezier,
+
+    /// line segment
+    Segment,
+
+    /// Multi-segment bezier curve.
+    Curve,
+
+    /// Connection wire. See https://www.shadertoy.com/view/NdsXRl
+    Wire,
+    
+    /// Text rendering.
+    Glyph,
+
+    /// Path fills.
+    PathFill
+}
+
 #[derive(Copy, Clone)]
 pub struct Prim {
     /// Type of primitive.
-    prim_type: u32,
+    prim_type: PrimType,
 
     /// Stroke width.
     width: f32,
