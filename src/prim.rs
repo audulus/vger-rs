@@ -33,7 +33,13 @@ pub enum PrimType {
     PathFill
 }
 
-#[derive(Copy, Clone)]
+impl Default for PrimType {
+    fn default() -> PrimType {
+        PrimType::Circle
+    }
+}
+
+#[derive(Copy, Clone, Default)]
 pub struct Prim {
     /// Type of primitive.
     prim_type: PrimType,
