@@ -106,6 +106,8 @@ impl VGER {
         {
             let mut rpass = encoder.begin_render_pass(render_pass);
 
+            let bind_group = self.scenes[self.cur_scene].bind_group(&self.device, self.cur_layer);
+            // rpass.set_bind_group(0, &bind_group, &[]);
         }
         self.queue.submit(Some(encoder.finish()));
     }
