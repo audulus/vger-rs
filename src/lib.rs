@@ -12,6 +12,9 @@ mod path;
 use path::*;
 use std::mem::size_of;
 
+mod scene;
+use scene::*;
+
 struct LocalSpace {}
 type LocalToWorld = Transform2D<f32, LocalSpace, WorldSpace>;
 
