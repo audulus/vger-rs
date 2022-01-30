@@ -19,7 +19,7 @@ pub struct Paint {
     image: i32,
 }
 
-const MAX_LAYERS: usize = 4;
+pub const MAX_LAYERS: usize = 4;
 
 pub struct Scene {
     pub prims: [GPUVec<Prim>; MAX_LAYERS],
