@@ -31,8 +31,7 @@ pub struct VGER {
     cur_layer: usize,
     tx_stack: Vec<LocalToWorld>,
     device_px_ratio: f32,
-    screen_size: ScreenSize,
-    bind_group: wgpu::BindGroup
+    screen_size: ScreenSize
 }
 
 impl VGER {
@@ -77,39 +76,6 @@ impl VGER {
             Scene::new(&device),
         ];
 
-        let bind_group_layout = device.create_bind_group_layout(
-            &wgpu::BindGroupLayoutDescriptor {
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::FRAGMENT,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Storage{read_only: false},
-                            has_dynamic_offset: true,
-                            min_binding_size: None
-                        },
-                        count: None,
-                    },
-                ],
-                label: Some("bind_group_layout"),
-            }
-        );
-
-        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            layout: &bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding{
-                        buffer: scenes[0].prims[0].buffer(),
-                        offset: 0,
-                        size: None
-                    }),
-                },
-            ],
-            label: Some("vger bind group"),
-        });
-
         Self {
             device,
             queue,
@@ -120,7 +86,6 @@ impl VGER {
             tx_stack: vec![],
             device_px_ratio: 1.0,
             screen_size: ScreenSize::new(512.0,512.0),
-            bind_group
         }
     }
 
