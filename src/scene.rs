@@ -5,7 +5,6 @@ use euclid::*;
 use std::mem::size_of;
 use wgpu::*;
 
-pub struct LocalSpace {}
 type LocalToWorld = Transform2D<f32, LocalSpace, WorldSpace>;
 
 #[derive(Clone, Copy)]
