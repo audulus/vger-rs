@@ -6,15 +6,20 @@ use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
 };
+use euclid::*;
 
 mod path;
 use path::*;
 use std::mem::size_of;
 
+struct LocalSpace {}
+type LocalToWorld = Transform2D<f32, LocalSpace, WorldSpace>;
+
 pub struct VGER {
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
-    pub prim_buffer: wgpu::Buffer
+    pub prim_buffer: wgpu::Buffer,
+    pub xform_buffer: wgpu::Buffer
 }
 
 const MAX_PRIMS: usize = 65536;
@@ -102,7 +107,16 @@ impl VGER {
             }
         );
 
-        Self { device, queue, prim_buffer }
+        let xform_buffer = device.create_buffer(
+            &wgpu::BufferDescriptor {
+                label: Some("Prim Buffer"),
+                size: (MAX_PRIMS * size_of::<LocalToWorld>()) as u64,
+                usage: BufferUsages::MAP_WRITE,
+                mapped_at_creation: true
+            }
+        );
+
+        Self { device, queue, prim_buffer, xform_buffer }
     }
 
 }
