@@ -13,7 +13,7 @@ impl<T: Copy> GPUVec<T> {
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
             size: mem_align.byte_size() as _,
-            usage: BufferUsages::MAP_WRITE,
+            usage: BufferUsages::MAP_WRITE | BufferUsages::STORAGE,
             mapped_at_creation: true,
         });
 
@@ -22,6 +22,10 @@ impl<T: Copy> GPUVec<T> {
 
     pub fn capacity(&self) -> usize {
         self.mem_align.capacity()
+    }
+
+    pub fn buffer(&self) -> &wgpu::Buffer {
+        &self.buffer
     }
 }
 
