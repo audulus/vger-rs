@@ -23,6 +23,7 @@ pub struct VGER {
     pub queue: wgpu::Queue,
     pub scenes: [Scene; 3],
     pub cur_prim: [usize; MAX_LAYERS],
+    pub cur_scene: usize,
     pub cur_layer: usize
 }
 
@@ -68,16 +69,13 @@ impl VGER {
             Scene::new(&device),
         ];
 
-        let cur_prim = [0,0,0,0];
-
-        let cur_layer = 0;
-
         Self {
             device,
             queue,
             scenes,
-            cur_prim,
-            cur_layer
+            cur_prim: [0,0,0,0],
+            cur_scene: 0,
+            cur_layer: 0
         }
     }
 }
