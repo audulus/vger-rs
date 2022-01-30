@@ -122,7 +122,7 @@ impl VGER {
 
         let xform_buffer = device.create_buffer(
             &wgpu::BufferDescriptor {
-                label: Some("Prim Buffer"),
+                label: Some("Xform Buffer"),
                 size: (MAX_PRIMS * size_of::<LocalToWorld>()) as u64,
                 usage: BufferUsages::MAP_WRITE,
                 mapped_at_creation: true
