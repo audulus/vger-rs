@@ -24,7 +24,6 @@ type ScreenSize = Size2D<f32, ScreenCoordinates>;
 
 pub struct VGER {
     device: wgpu::Device,
-    queue: wgpu::Queue,
     scenes: [Scene; 3],
     cur_prim: [usize; MAX_LAYERS],
     cur_scene: usize,
@@ -35,33 +34,8 @@ pub struct VGER {
 }
 
 impl VGER {
-    async fn setup() -> (wgpu::Device, wgpu::Queue) {
-        let backend = wgpu::Backends::all();
-        let instance = wgpu::Instance::new(backend);
 
-        let adapter = wgpu::util::initialize_adapter_from_env_or_default(&instance, backend, None)
-            .await
-            .expect("No suitable GPU adapters found on the system!");
-
-        let adapter_info = adapter.get_info();
-        println!("Using {} ({:?})", adapter_info.name, adapter_info.backend);
-
-        let trace_dir = std::env::var("WGPU_TRACE");
-        adapter
-            .request_device(
-                &wgpu::DeviceDescriptor {
-                    label: None,
-                    features: wgpu::Features::default(),
-                    limits: wgpu::Limits::default(),
-                },
-                trace_dir.ok().as_ref().map(std::path::Path::new),
-            )
-            .await
-            .expect("Unable to find a suitable GPU adapter!")
-    }
-
-    pub fn new() -> Self {
-        let (device, queue) = block_on(VGER::setup());
+    pub fn new(device: wgpu::Device) -> Self {
 
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
             label: None,
@@ -78,7 +52,6 @@ impl VGER {
 
         Self {
             device,
-            queue,
             scenes,
             cur_prim: [0, 0, 0, 0],
             cur_scene: 0,
@@ -101,9 +74,8 @@ impl VGER {
     /// Encode all rendering to a command buffer.
     pub fn encode(
         &mut self,
-        command_buffer: wgpu::CommandBuffer,
         render_pass: &wgpu::RenderPassDescriptor,
-    ) {
+    ) -> wgpu::CommandBuffer {
         let mut encoder = self
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
@@ -119,7 +91,7 @@ impl VGER {
                 &[],
             );
         }
-        self.queue.submit(Some(encoder.finish()));
+        encoder.finish()
     }
 
     fn render(&mut self, prim: Prim) {
@@ -169,8 +141,35 @@ mod tests {
 
     use super::*;
 
+    async fn setup() -> (wgpu::Device, wgpu::Queue) {
+        let backend = wgpu::Backends::all();
+        let instance = wgpu::Instance::new(backend);
+
+        let adapter = wgpu::util::initialize_adapter_from_env_or_default(&instance, backend, None)
+            .await
+            .expect("No suitable GPU adapters found on the system!");
+
+        let adapter_info = adapter.get_info();
+        println!("Using {} ({:?})", adapter_info.name, adapter_info.backend);
+
+        let trace_dir = std::env::var("WGPU_TRACE");
+        adapter
+            .request_device(
+                &wgpu::DeviceDescriptor {
+                    label: None,
+                    features: wgpu::Features::default(),
+                    limits: wgpu::Limits::default(),
+                },
+                trace_dir.ok().as_ref().map(std::path::Path::new),
+            )
+            .await
+            .expect("Unable to find a suitable GPU adapter!")
+    }
+
     #[test]
     fn create_vger() {
-        let _ = VGER::new();
+        let (device, queue) = block_on(setup());
+
+        let _ = VGER::new(device);
     }
 }
