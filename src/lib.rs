@@ -19,7 +19,8 @@ pub struct VGER {
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
     pub prim_buffer: wgpu::Buffer,
-    pub xform_buffer: wgpu::Buffer
+    pub xform_buffer: wgpu::Buffer,
+    pub paint_buffer: wgpu::Buffer
 }
 
 const MAX_PRIMS: usize = 65536;
@@ -58,6 +59,18 @@ struct Prim {
 
     /// Min and max coordinates in texture space. (used internally)
     tex_bounds: [f32; 4]
+
+}
+
+struct Paint {
+
+    xform: LocalToWorld,
+
+    inner_color: [f32; 4],
+    outer_color: [f32; 4],
+
+    glow: f32,
+    image: i32,
 
 }
 
@@ -116,7 +129,16 @@ impl VGER {
             }
         );
 
-        Self { device, queue, prim_buffer, xform_buffer }
+        let paint_buffer = device.create_buffer(
+            &wgpu::BufferDescriptor {
+                label: Some("Paint Buffer"),
+                size: (MAX_PRIMS * size_of::<Paint>()) as u64,
+                usage: BufferUsages::MAP_WRITE,
+                mapped_at_creation: true
+            }
+        );
+
+        Self { device, queue, prim_buffer, xform_buffer, paint_buffer }
     }
 
 }
