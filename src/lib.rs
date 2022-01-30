@@ -17,6 +17,8 @@ use scene::*;
 
 mod prim;
 
+mod gpu_vec;
+
 pub struct VGER {
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
