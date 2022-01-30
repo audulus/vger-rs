@@ -25,7 +25,8 @@ pub struct VGER {
     pub scenes: [Scene; 3],
     pub cur_prim: [usize; MAX_LAYERS],
     pub cur_scene: usize,
-    pub cur_layer: usize
+    pub cur_layer: usize,
+    tx_stack: Vec<LocalToWorld>
 }
 
 impl VGER {
@@ -76,7 +77,8 @@ impl VGER {
             scenes,
             cur_prim: [0,0,0,0],
             cur_scene: 0,
-            cur_layer: 0
+            cur_layer: 0,
+            tx_stack: vec![]
         }
     }
 
