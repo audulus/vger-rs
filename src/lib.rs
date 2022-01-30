@@ -9,10 +9,51 @@ use winit::{
 
 mod path;
 use path::*;
+use std::mem::size_of;
 
 pub struct VGER {
     pub device: wgpu::Device,
-    pub queue: wgpu::Queue
+    pub queue: wgpu::Queue,
+    pub prim_buffer: wgpu::Buffer
+}
+
+const MAX_PRIMS: usize = 65536;
+
+struct Prim {
+
+    /// Type of primitive.
+    prim_type: u32,
+
+    /// Stroke width.
+    width: f32,
+
+    /// Radius of circles. Corner radius for rounded rectangles.
+    radius: f32,
+
+    /// Control vertices.
+    cvs: [f32; 6],
+
+    /// Start of the control vertices, if they're in a separate buffer.
+    start: u32,
+
+    /// Number of control vertices (vgerCurve and vgerPathFill)
+    count: u32,
+
+    /// Index of paint applied to drawing region.
+    paint: u32,
+
+    /// Glyph region index. (used internally)
+    glyph: u32,
+
+    /// Index of transform applied to drawing region. (used internally)
+    xform: u32,
+
+    /// Min and max coordinates of the quad we're rendering. (used internally)
+    quad_bounds: [f32; 4],
+
+    /// Min and max coordinates in texture space. (used internally)
+    tex_bounds: [f32; 4]
+
 }
 
 impl VGER {
@@ -52,7 +93,16 @@ impl VGER {
             source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!("shader.wgsl"))),
         });
 
-        Self { device, queue }
+        let prim_buffer = device.create_buffer(
+            &wgpu::BufferDescriptor {
+                label: Some("Prim Buffer"),
+                size: (MAX_PRIMS * size_of::<Prim>()) as u64,
+                usage: BufferUsages::MAP_WRITE,
+                mapped_at_creation: true
+            }
+        );
+
+        Self { device, queue, prim_buffer }
     }
 
 }
