@@ -22,6 +22,7 @@ pub struct VGER {
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
     pub scenes: [Scene; 3],
+    pub cur_prim: [usize; MAX_LAYERS]
 }
 
 impl VGER {
@@ -66,10 +67,13 @@ impl VGER {
             Scene::new(&device),
         ];
 
+        let cur_prim = [0,0,0,0];
+
         Self {
             device,
             queue,
             scenes,
+            cur_prim
         }
     }
 }
