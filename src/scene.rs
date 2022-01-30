@@ -27,7 +27,7 @@ pub struct Scene {
     pub paints: GPUVec<Paint>,
 }
 
-const MAX_PRIMS: usize = 65536;
+pub const MAX_PRIMS: usize = 65536;
 
 impl Scene {
     pub fn new(device: &wgpu::Device) -> Self {
