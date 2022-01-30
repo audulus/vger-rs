@@ -1,12 +1,11 @@
-
-use wgpu::*;
+use euclid::*;
 use futures::executor::block_on;
+use wgpu::*;
 use winit::{
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
 };
-use euclid::*;
 
 mod path;
 use path::*;
@@ -22,18 +21,15 @@ mod gpu_vec;
 pub struct VGER {
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
-    pub scenes: [Scene; 3]
+    pub scenes: [Scene; 3],
 }
 
 impl VGER {
-
     async fn setup() -> (wgpu::Device, wgpu::Queue) {
-
         let backend = wgpu::Backends::all();
         let instance = wgpu::Instance::new(backend);
 
-        let adapter =
-        wgpu::util::initialize_adapter_from_env_or_default(&instance, backend, None)
+        let adapter = wgpu::util::initialize_adapter_from_env_or_default(&instance, backend, None)
             .await
             .expect("No suitable GPU adapters found on the system!");
 
@@ -59,14 +55,23 @@ impl VGER {
 
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
             label: None,
-            source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!("shader.wgsl"))),
+            source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!(
+                "shader.wgsl"
+            ))),
         });
 
-        let scenes = [Scene::new(&device), Scene::new(&device), Scene::new(&device)];
+        let scenes = [
+            Scene::new(&device),
+            Scene::new(&device),
+            Scene::new(&device),
+        ];
 
-        Self { device, queue, scenes }
+        Self {
+            device,
+            queue,
+            scenes,
+        }
     }
-
 }
 
 #[cfg(test)]

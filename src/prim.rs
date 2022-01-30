@@ -1,8 +1,5 @@
-
-
 #[derive(Copy, Clone)]
 pub struct Prim {
-
     /// Type of primitive.
     prim_type: u32,
 
@@ -34,6 +31,5 @@ pub struct Prim {
     quad_bounds: [f32; 4],
 
     /// Min and max coordinates in texture space. (used internally)
-    tex_bounds: [f32; 4]
-
+    tex_bounds: [f32; 4],
 }

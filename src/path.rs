@@ -6,13 +6,13 @@ pub type WorldPoint = Point2D<f32, WorldSpace>;
 
 struct Interval {
     a: f32,
-    b: f32
+    b: f32,
 }
 
 struct PathSegment {
     cvs: [WorldPoint; 3],
     next: Option<usize>,
-    previous: Option<usize>
+    previous: Option<usize>,
 }
 
 impl PathSegment {
@@ -21,7 +21,7 @@ impl PathSegment {
             // Fatten the interval slightly to prevent artifacts by
             // slightly missing a curve in a band.
             a: self.cvs[0].y.min(self.cvs[1].y).min(self.cvs[2].y) - 1.0,
-            b: self.cvs[0].y.min(self.cvs[1].y).max(self.cvs[2].y) + 1.0
+            b: self.cvs[0].y.min(self.cvs[1].y).max(self.cvs[2].y) + 1.0,
         }
     }
 }
@@ -30,7 +30,7 @@ impl PathSegment {
 struct PathScannerNode {
     coord: f32,
     seg: usize,
-    end: bool
+    end: bool,
 }
 
 pub struct PathScanner {
@@ -38,7 +38,7 @@ pub struct PathScanner {
     nodes: Vec<PathScannerNode>,
     index: usize,
     interval: Interval,
-    first: Option<usize>
+    first: Option<usize>,
 }
 
 impl PathScanner {
@@ -47,21 +47,20 @@ impl PathScanner {
             segments: vec![],
             nodes: vec![],
             index: 0,
-            interval: Interval{a: 0.0, b: 0.0},
-            first: None
+            interval: Interval { a: 0.0, b: 0.0 },
+            first: None,
         }
     }
 
     pub fn begin(&mut self, cvs: &[WorldPoint]) {
-
         self.segments.clear();
 
         let mut i = 0;
-        while i < cvs.len()-2 {
-            self.segments.push(PathSegment{
-                cvs: [cvs[i], cvs[i+1], cvs[i+2]],
+        while i < cvs.len() - 2 {
+            self.segments.push(PathSegment {
+                cvs: [cvs[i], cvs[i + 1], cvs[i + 2]],
                 next: None,
-                previous: None
+                previous: None,
             });
             i += 2;
         }
@@ -72,10 +71,10 @@ impl PathScanner {
                 let start = first.cvs[0];
                 let end = last.cvs[2];
                 if start != end {
-                    self.segments.push(PathSegment{
+                    self.segments.push(PathSegment {
                         cvs: [end, start.lerp(end, 0.5), start],
                         next: None,
-                        previous: None
+                        previous: None,
                     })
                 }
             }
@@ -87,15 +86,18 @@ impl PathScanner {
         for i in 0..self.segments.len() {
             let y_interval = self.segments[i].y_interval();
             self.nodes.push(PathScannerNode {
-                coord: y_interval.a, seg: i, end: false
+                coord: y_interval.a,
+                seg: i,
+                end: false,
             });
             self.nodes.push(PathScannerNode {
-                coord: y_interval.b, seg: i, end: true
+                coord: y_interval.b,
+                seg: i,
+                end: true,
             });
         }
-        
-        self.nodes.sort_by(|a, b| a.partial_cmp(b).unwrap());
 
+        self.nodes.sort_by(|a, b| a.partial_cmp(b).unwrap());
     }
 
     fn next(&mut self) -> bool {
@@ -104,7 +106,6 @@ impl PathScanner {
         let n = self.nodes.len();
 
         while self.index < n && self.nodes[self.index].coord == y {
-
             let node = &self.nodes[self.index];
             assert!(node.seg < self.segments.len());
 
@@ -136,9 +137,7 @@ impl PathScanner {
         }
 
         self.index < n
-
     }
-    
 }
 
 #[cfg(test)]
@@ -148,19 +147,18 @@ mod tests {
 
     #[test]
     fn test_path_scanner() {
-
         let mut scan = PathScanner::new();
 
         let cvs = vec![
-            WorldPoint::new(1.0,0.0),
-            WorldPoint::new(1.0,1.0),
-            WorldPoint::new(0.0,1.0),
-            WorldPoint::new(-1.0,1.0),
-            WorldPoint::new(-1.0,0.0),
-            WorldPoint::new(-1.0,-1.0),
-            WorldPoint::new(0.0,-1.0),
-            WorldPoint::new(1.0,-1.0),
-            WorldPoint::new(1.0,0.0)
+            WorldPoint::new(1.0, 0.0),
+            WorldPoint::new(1.0, 1.0),
+            WorldPoint::new(0.0, 1.0),
+            WorldPoint::new(-1.0, 1.0),
+            WorldPoint::new(-1.0, 0.0),
+            WorldPoint::new(-1.0, -1.0),
+            WorldPoint::new(0.0, -1.0),
+            WorldPoint::new(1.0, -1.0),
+            WorldPoint::new(1.0, 0.0),
         ];
 
         scan.begin(&cvs);
@@ -168,7 +166,10 @@ mod tests {
         assert_eq!(scan.segments.len(), 4);
 
         while scan.next() {
-            print!("interval {:?} {:?} active: ", scan.interval.a, scan.interval.b);
+            print!(
+                "interval {:?} {:?} active: ",
+                scan.interval.a, scan.interval.b
+            );
 
             let mut index = scan.first;
             while let Some(i) = index {
@@ -177,8 +178,6 @@ mod tests {
             }
 
             print!("\n");
-
         }
-
     }
 }
