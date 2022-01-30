@@ -35,3 +35,12 @@ impl<T: Copy> std::ops::Index<usize> for GPUVec<T> {
         &slice[index]
     }
 }
+
+impl<T: Copy> std::ops::IndexMut<usize> for GPUVec<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        let view = self.buffer.slice(..).get_mapped_range();
+        let slice =
+            unsafe { std::slice::from_raw_parts_mut(view.as_ptr() as *mut T, self.capacity()) };
+        &mut slice[index]
+    }
+}
