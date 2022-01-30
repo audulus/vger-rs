@@ -19,8 +19,10 @@ pub struct Paint {
     image: i32,
 }
 
+const MAX_LAYERS: usize = 4;
+
 pub struct Scene {
-    pub prims: GPUVec<Prim>,
+    pub prims: [GPUVec<Prim>; MAX_LAYERS],
     pub xforms: GPUVec<LocalToWorld>,
     pub paints: GPUVec<Paint>,
 }
@@ -30,7 +32,12 @@ const MAX_PRIMS: usize = 65536;
 impl Scene {
     pub fn new(device: &wgpu::Device) -> Self {
         Self {
-            prims: GPUVec::new(device, MAX_PRIMS, "Prim Buffer"),
+            prims: [
+                GPUVec::new(device, MAX_PRIMS, "Prim Buffer"),
+                GPUVec::new(device, MAX_PRIMS, "Prim Buffer"),
+                GPUVec::new(device, MAX_PRIMS, "Prim Buffer"),
+                GPUVec::new(device, MAX_PRIMS, "Prim Buffer")
+            ],
             xforms: GPUVec::new(device, MAX_PRIMS, "Xform Buffer"),
             paints: GPUVec::new(device, MAX_PRIMS, "Paint Buffer"),
         }
