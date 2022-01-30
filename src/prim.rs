@@ -1,5 +1,6 @@
 
 
+#[derive(Copy, Clone)]
 pub struct Prim {
 
     /// Type of primitive.
