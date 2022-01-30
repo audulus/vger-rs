@@ -5,16 +5,16 @@ use euclid::*;
 use std::mem::size_of;
 use wgpu::*;
 
+pub struct LocalSpace {}
+type LocalToWorld = Transform2D<f32, LocalSpace, WorldSpace>;
+
 pub struct Scene {
     pub prim_buffer: GPUVec<Prim>,
-    pub xform_buffer: wgpu::Buffer,
+    pub xform_buffer: GPUVec<LocalToWorld>,
     pub paint_buffer: wgpu::Buffer,
 }
 
 const MAX_PRIMS: usize = 65536;
-
-struct LocalSpace {}
-type LocalToWorld = Transform2D<f32, LocalSpace, WorldSpace>;
 
 struct Paint {
     xform: LocalToWorld,
@@ -29,13 +29,7 @@ struct Paint {
 impl Scene {
     pub fn new(device: &wgpu::Device) -> Self {
         let prim_buffer = GPUVec::new(device, MAX_PRIMS, "Prim Buffer");
-
-        let xform_buffer = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("Xform Buffer"),
-            size: (MAX_PRIMS * size_of::<LocalToWorld>()) as u64,
-            usage: BufferUsages::MAP_WRITE,
-            mapped_at_creation: true,
-        });
+        let xform_buffer = GPUVec::new(device, MAX_PRIMS, "Xform Buffer");
 
         let paint_buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Paint Buffer"),
