@@ -33,10 +33,10 @@ impl Scene {
     pub fn new(device: &wgpu::Device) -> Self {
         Self {
             prims: [
-                GPUVec::new(device, MAX_PRIMS, "Prim Buffer"),
-                GPUVec::new(device, MAX_PRIMS, "Prim Buffer"),
-                GPUVec::new(device, MAX_PRIMS, "Prim Buffer"),
-                GPUVec::new(device, MAX_PRIMS, "Prim Buffer")
+                GPUVec::new(device, MAX_PRIMS, "Prim Buffer 0"),
+                GPUVec::new(device, MAX_PRIMS, "Prim Buffer 1"),
+                GPUVec::new(device, MAX_PRIMS, "Prim Buffer 2"),
+                GPUVec::new(device, MAX_PRIMS, "Prim Buffer 3")
             ],
             xforms: GPUVec::new(device, MAX_PRIMS, "Xform Buffer"),
             paints: GPUVec::new(device, MAX_PRIMS, "Paint Buffer"),
