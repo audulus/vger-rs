@@ -10,7 +10,7 @@ impl<T> GPUVec<T>
 where
     T: Copy,
 {
-    fn new(device: &wgpu::Device, capacity: usize, label: &str) -> Self {
+    pub fn new(device: &wgpu::Device, capacity: usize, label: &str) -> Self {
         let mem_align = MemAlign::new(capacity);
 
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
@@ -23,7 +23,7 @@ where
         Self { buffer, mem_align }
     }
 
-    fn capacity(&self) -> usize {
+    pub fn capacity(&self) -> usize {
         self.mem_align.capacity()
     }
 }
