@@ -24,4 +24,17 @@ impl<T> GPUVec<T> where T:Copy {
             mem_align
         }
     }
+
+    fn capacity(&self) -> usize {
+        self.mem_align.capacity()
+    }
+}
+
+impl<T: Copy> std::ops::Index<usize> for GPUVec<T> {
+    type Output = T;
+    fn index(&self, index: usize) -> &Self::Output {
+        let view = self.buffer.slice(..).get_mapped_range();
+        let slice = unsafe { std::slice::from_raw_parts(view.as_ptr() as *const T, self.capacity()) };
+        &slice[index]
+    }
 }
