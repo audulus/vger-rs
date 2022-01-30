@@ -95,6 +95,7 @@ impl VGER {
         self.cur_layer = 0;
         self.screen_size = ScreenSize::new(window_width, window_height);
         self.cur_scene = (self.cur_scene + 1) % 3;
+        self.tx_stack.clear();
     }
 
     fn render(&mut self, prim: Prim) {
