@@ -20,7 +20,7 @@ mod prim;
 pub struct VGER {
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
-    pub scene: Scene
+    pub scenes: [Scene; 3]
 }
 
 impl VGER {
@@ -60,9 +60,9 @@ impl VGER {
             source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!("shader.wgsl"))),
         });
 
-        let scene = Scene::new(&device);
+        let scenes = [Scene::new(&device), Scene::new(&device), Scene::new(&device)];
 
-        Self { device, queue, scene }
+        Self { device, queue, scenes }
     }
 
 }
