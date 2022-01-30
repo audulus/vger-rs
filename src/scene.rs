@@ -24,14 +24,13 @@ pub struct Scene {
     pub prims: [GPUVec<Prim>; MAX_LAYERS],
     pub xforms: GPUVec<LocalToWorld>,
     pub paints: GPUVec<Paint>,
-    pub bind_groups: [wgpu::BindGroup; MAX_LAYERS]
+    pub bind_groups: [wgpu::BindGroup; MAX_LAYERS],
 }
 
 pub const MAX_PRIMS: usize = 65536;
 
 impl Scene {
     pub fn new(device: &wgpu::Device) -> Self {
-
         let prims = [
             GPUVec::new(device, MAX_PRIMS, "Prim Buffer 0"),
             GPUVec::new(device, MAX_PRIMS, "Prim Buffer 1"),
@@ -50,44 +49,36 @@ impl Scene {
             prims,
             xforms: GPUVec::new(device, MAX_PRIMS, "Xform Buffer"),
             paints: GPUVec::new(device, MAX_PRIMS, "Paint Buffer"),
-            bind_groups
+            bind_groups,
         }
     }
 
     fn bind_group(device: &wgpu::Device, prims: &GPUVec<Prim>) -> wgpu::BindGroup {
-
-        let bind_group_layout = device.create_bind_group_layout(
-            &wgpu::BindGroupLayoutDescriptor {
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::FRAGMENT,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Storage{read_only: false},
-                            has_dynamic_offset: true,
-                            min_binding_size: None
-                        },
-                        count: None,
-                    },
-                ],
-                label: Some("bind_group_layout"),
-            }
-        );
+        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            entries: &[wgpu::BindGroupLayoutEntry {
+                binding: 0,
+                visibility: wgpu::ShaderStages::FRAGMENT,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Storage { read_only: false },
+                    has_dynamic_offset: true,
+                    min_binding_size: None,
+                },
+                count: None,
+            }],
+            label: Some("bind_group_layout"),
+        });
 
         device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding{
-                        buffer: prims.buffer(),
-                        offset: 0,
-                        size: None
-                    }),
-                },
-            ],
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                    buffer: prims.buffer(),
+                    offset: 0,
+                    size: None,
+                }),
+            }],
             label: Some("vger bind group"),
         })
-
     }
 }

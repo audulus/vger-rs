@@ -31,7 +31,7 @@ pub struct VGER {
     cur_layer: usize,
     tx_stack: Vec<LocalToWorld>,
     device_px_ratio: f32,
-    screen_size: ScreenSize
+    screen_size: ScreenSize,
 }
 
 impl VGER {
@@ -85,13 +85,13 @@ impl VGER {
             cur_layer: 0,
             tx_stack: vec![],
             device_px_ratio: 1.0,
-            screen_size: ScreenSize::new(512.0,512.0),
+            screen_size: ScreenSize::new(512.0, 512.0),
         }
     }
 
     pub fn begin(&mut self, window_width: f32, window_height: f32, device_px_ratio: f32) {
         self.device_px_ratio = device_px_ratio;
-        self.cur_prim = [0,0,0,0];
+        self.cur_prim = [0, 0, 0, 0];
         self.cur_layer = 0;
         self.screen_size = ScreenSize::new(window_width, window_height);
         self.cur_scene = (self.cur_scene + 1) % 3;
@@ -99,14 +99,25 @@ impl VGER {
     }
 
     /// Encode all rendering to a command buffer.
-    pub fn encode(&mut self, command_buffer: wgpu::CommandBuffer, render_pass: &wgpu::RenderPassDescriptor) {
-
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("vger encoder") });
+    pub fn encode(
+        &mut self,
+        command_buffer: wgpu::CommandBuffer,
+        render_pass: &wgpu::RenderPassDescriptor,
+    ) {
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("vger encoder"),
+            });
 
         {
             let mut rpass = encoder.begin_render_pass(render_pass);
 
-            rpass.set_bind_group(0, &self.scenes[self.cur_scene].bind_groups[self.cur_layer], &[]);
+            rpass.set_bind_group(
+                0,
+                &self.scenes[self.cur_scene].bind_groups[self.cur_layer],
+                &[],
+            );
         }
         self.queue.submit(Some(encoder.finish()));
     }
