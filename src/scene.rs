@@ -8,15 +8,8 @@ use wgpu::*;
 pub struct LocalSpace {}
 type LocalToWorld = Transform2D<f32, LocalSpace, WorldSpace>;
 
-pub struct Scene {
-    pub prim_buffer: GPUVec<Prim>,
-    pub xform_buffer: GPUVec<LocalToWorld>,
-    pub paint_buffer: wgpu::Buffer,
-}
-
-const MAX_PRIMS: usize = 65536;
-
-struct Paint {
+#[derive(Clone, Copy)]
+pub struct Paint {
     xform: LocalToWorld,
 
     inner_color: [f32; 4],
@@ -26,17 +19,19 @@ struct Paint {
     image: i32,
 }
 
+pub struct Scene {
+    pub prim_buffer: GPUVec<Prim>,
+    pub xform_buffer: GPUVec<LocalToWorld>,
+    pub paint_buffer: GPUVec<Paint>,
+}
+
+const MAX_PRIMS: usize = 65536;
+
 impl Scene {
     pub fn new(device: &wgpu::Device) -> Self {
         let prim_buffer = GPUVec::new(device, MAX_PRIMS, "Prim Buffer");
         let xform_buffer = GPUVec::new(device, MAX_PRIMS, "Xform Buffer");
-
-        let paint_buffer = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("Paint Buffer"),
-            size: (MAX_PRIMS * size_of::<Paint>()) as u64,
-            usage: BufferUsages::MAP_WRITE,
-            mapped_at_creation: true,
-        });
+        let paint_buffer = GPUVec::new(device, MAX_PRIMS, "Paint Buffer");
 
         Self {
             prim_buffer,
