@@ -1,5 +1,5 @@
+#![allow(dead_code)]
 
-use std::cmp::Ord;
 use euclid::*;
 pub struct WorldSpace;
 pub type WorldPoint = Point2D<f32, WorldSpace>;
@@ -18,8 +18,10 @@ struct PathSegment {
 impl PathSegment {
     pub fn y_interval(&self) -> Interval {
         Interval {
-            a: self.cvs[0].y.min(self.cvs[1].y).min(self.cvs[2].y),
-            b: self.cvs[0].y.min(self.cvs[1].y).max(self.cvs[2].y)
+            // Fatten the interval slightly to prevent artifacts by
+            // slightly missing a curve in a band.
+            a: self.cvs[0].y.min(self.cvs[1].y).min(self.cvs[2].y) - 1.0,
+            b: self.cvs[0].y.min(self.cvs[1].y).max(self.cvs[2].y) + 1.0
         }
     }
 }
@@ -163,8 +165,19 @@ mod tests {
 
         scan.begin(&cvs);
 
+        assert_eq!(scan.segments.len(), 4);
+
         while scan.next() {
-            println!("interval {:?} {:?}", scan.interval.a, scan.interval.b);
+            print!("interval {:?} {:?} active: ", scan.interval.a, scan.interval.b);
+
+            let mut index = scan.first;
+            while let Some(i) = index {
+                print!("{:?} ", i);
+                index = scan.segments[i].next;
+            }
+
+            print!("\n");
+
         }
 
     }
