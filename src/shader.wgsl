@@ -466,7 +466,7 @@ fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
 
 struct VertexOutput {
     [[builtin(position)]] position: vec4<f32>;
-    //prim_index: i32;
+    [[location(0)]] prim_index: i32;
     //t: vec2<f32>;
 };
 
