@@ -59,6 +59,8 @@ mod tests {
             Color{r:0.0, g: 0.0, b: 0.0, a: 0.0},
             Color{r:0.0, g: 0.0, b: 0.0, a: 0.0},
             0.0);
+
+        let c = paint.apply(WorldPoint::new(0.0,0.0));
     }
 
 }
