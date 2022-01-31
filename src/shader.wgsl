@@ -472,6 +472,7 @@ struct VertexOutput {
 
 [[stage(vertex)]]
 fn vs_main(
+    [[builtin(vertex_index)]] vertex_index: u32,
     [[builtin(instance_index)]] instance: u32
     // [[location(0)]] position: vec2<f32>,
 ) -> VertexOutput {
