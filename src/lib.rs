@@ -17,10 +17,12 @@ use scene::*;
 mod prim;
 use prim::*;
 
-mod gpu_vec;
+mod defs;
+use defs::*;
 
-struct ScreenCoordinates;
-type ScreenSize = Size2D<f32, ScreenCoordinates>;
+mod paint;
+
+mod gpu_vec;
 
 pub struct VGER {
     device: wgpu::Device,

@@ -1,8 +1,6 @@
 #![allow(dead_code)]
 
-use euclid::*;
-pub struct WorldSpace;
-pub type WorldPoint = Point2D<f32, WorldSpace>;
+use crate::defs::*;
 
 struct Interval {
     a: f32,

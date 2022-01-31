@@ -4,19 +4,8 @@ use crate::prim::*;
 use euclid::*;
 use std::mem::size_of;
 use wgpu::*;
-
-pub type LocalToWorld = Transform2D<f32, LocalSpace, WorldSpace>;
-
-#[derive(Clone, Copy)]
-pub struct Paint {
-    xform: LocalToWorld,
-
-    inner_color: [f32; 4],
-    outer_color: [f32; 4],
-
-    glow: f32,
-    image: i32,
-}
+use crate::defs::*;
+use crate::paint::*;
 
 pub const MAX_LAYERS: usize = 4;
 
