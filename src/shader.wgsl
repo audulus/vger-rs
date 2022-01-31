@@ -478,8 +478,7 @@ struct VertexOutput {
 };
 
 struct ViewSize {
-    x: u32;
-    y: u32;
+    size: vec2<f32>;
 };
 
 [[group(0), binding(3)]]
@@ -520,6 +519,7 @@ fn vs_main(
     q = q * xforms.xforms[prim.xform];
 
     let p = vec2<f32>(q.x/q.z, q.y/q.z);
+    // out.position = vec4<f32>(2.0 * p / view_size.size - 1.0, 0.0, 1.0);
 
     return out;
 }
