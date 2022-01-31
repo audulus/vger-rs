@@ -61,6 +61,8 @@ mod tests {
             0.0);
 
         assert_eq!(paint.apply(WorldPoint::new(0.0,0.0)), Color::gray(0.0));
+        assert_eq!(paint.apply(WorldPoint::new(0.5,0.0)), Color::gray(0.5));
+        assert_eq!(paint.apply(WorldPoint::new(1.0,0.0)), Color::gray(1.0));
     }
 
 }
