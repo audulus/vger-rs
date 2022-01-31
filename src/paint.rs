@@ -45,3 +45,20 @@ impl Paint {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_linear_gradient() {
+        let paint = Paint::linear_gradient(
+            LocalPoint::new(0.0,0.0),
+            LocalPoint::new(1.0,0.0),
+            Color{r:0.0, g: 0.0, b: 0.0, a: 0.0},
+            Color{r:0.0, g: 0.0, b: 0.0, a: 0.0},
+            0.0);
+    }
+
+}
