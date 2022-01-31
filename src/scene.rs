@@ -73,7 +73,7 @@ impl Scene {
         }
     }
 
-    pub fn bind_group_layout(device: &wgpu::Device) {
+    pub fn bind_group_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
         device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             entries: &[
                 Scene::bind_group_layout_entry(0),
@@ -82,7 +82,7 @@ impl Scene {
                 Scene::bind_group_layout_entry(3),
             ],
             label: Some("bind_group_layout"),
-        });
+        })
     }
 
     fn bind_group_entry(binding: u32, buffer: &wgpu::Buffer) -> wgpu::BindGroupEntry {
