@@ -488,10 +488,22 @@ fn vs_main(
 
     let prim = prims.prims[instance];
 
-    //var q: vec3<f32>;
-    //if(vid == 0u) {
-     //   q = vec3<f32>(prim.quad_bounds[0], 1.0);
-    //}
+    var q: vec3<f32>;
+    switch(vid) {
+        case 0u: {
+            q = vec3<f32>(prim.quad_bounds[0], 1.0);
+        }
+        case 1u: {
+            q = vec3<f32>(prim.quad_bounds[0].x, prim.quad_bounds[1].y, 1.0);
+        }
+        case 2u: {
+            q = vec3<f32>(prim.quad_bounds[1].x, prim.quad_bounds[0].y, 1.0);
+        }
+        case 3u: {
+            q = vec3<f32>(prim.quad_bounds[1], 1.0);
+        }
+        default: { }
+    }
 
     return out;
 }
