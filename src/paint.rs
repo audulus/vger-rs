@@ -83,5 +83,21 @@ mod tests {
             assert_eq!(paint.apply(WorldPoint::new(0.0, 0.0)), Color::gray(0.0));
             assert_eq!(paint.apply(WorldPoint::new(0.0, 1.0)), Color::gray(1.0));
         }
+
+        {
+            let paint = Paint::linear_gradient(
+                LocalPoint::new(1.0, 0.0),
+                LocalPoint::new(2.0, 0.0),
+                Color::gray(0.0),
+                Color::gray(1.0),
+                0.0,
+            );
+
+            assert_eq!(paint.apply(WorldPoint::new(0.0, 0.0)), Color::gray(0.0));
+            assert_eq!(paint.apply(WorldPoint::new(1.0, 0.0)), Color::gray(0.0));
+            assert_eq!(paint.apply(WorldPoint::new(1.5, 0.0)), Color::gray(0.5));
+            assert_eq!(paint.apply(WorldPoint::new(2.0, 0.0)), Color::gray(1.0));
+            assert_eq!(paint.apply(WorldPoint::new(3.0, 0.0)), Color::gray(1.0));
+        }
     }
 }
