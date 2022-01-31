@@ -27,46 +27,94 @@ impl Scene {
             GPUVec::new(device, MAX_PRIMS, "Prim Buffer 3"),
         ];
 
+        let xforms = GPUVec::new(device, MAX_PRIMS, "Xform Buffer");
+        let paints = GPUVec::new(device, MAX_PRIMS, "Paint Buffer");
+
         let bind_groups = [
-            Scene::bind_group(device, &prims[0]),
-            Scene::bind_group(device, &prims[1]),
-            Scene::bind_group(device, &prims[2]),
-            Scene::bind_group(device, &prims[3]),
+            Scene::bind_group(device, &prims[0], &xforms, &paints),
+            Scene::bind_group(device, &prims[1], &xforms, &paints),
+            Scene::bind_group(device, &prims[2], &xforms, &paints),
+            Scene::bind_group(device, &prims[3], &xforms, &paints),
         ];
 
         Self {
             prims,
-            xforms: GPUVec::new(device, MAX_PRIMS, "Xform Buffer"),
-            paints: GPUVec::new(device, MAX_PRIMS, "Paint Buffer"),
+            xforms,
+            paints,
             bind_groups,
         }
     }
 
-    fn bind_group(device: &wgpu::Device, prims: &GPUVec<Prim>) -> wgpu::BindGroup {
+    fn bind_group(
+        device: &wgpu::Device,
+        prims: &GPUVec<Prim>,
+        xforms: &GPUVec<LocalToWorld>,
+        paints: &GPUVec<Paint>
+    ) -> wgpu::BindGroup {
         let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::FRAGMENT,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Storage { read_only: false },
-                    has_dynamic_offset: true,
-                    min_binding_size: None,
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: false },
+                        has_dynamic_offset: true,
+                        min_binding_size: None,
+                    },
+                    count: None,
                 },
-                count: None,
-            }],
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: false },
+                        has_dynamic_offset: true,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 2,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: false },
+                        has_dynamic_offset: true,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                }
+            ],
             label: Some("bind_group_layout"),
         });
 
         device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &bind_group_layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
-                    buffer: prims.buffer(),
-                    offset: 0,
-                    size: None,
-                }),
-            }],
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                        buffer: prims.buffer(),
+                        offset: 0,
+                        size: None,
+                    }),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                        buffer: xforms.buffer(),
+                        offset: 0,
+                        size: None,
+                    }),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                        buffer: paints.buffer(),
+                        offset: 0,
+                        size: None,
+                    }),
+                }
+            ],
             label: Some("vger bind group"),
         })
     }
