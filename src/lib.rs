@@ -68,12 +68,12 @@ impl VGER {
                     count: None,
                 },
             ],
-            label: Some("bind_group_layout"),
+            label: Some("uniform_bind_group_layout"),
         });
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
-            bind_group_layouts: &[&Scene::bind_group_layout(&device)],
+            bind_group_layouts: &[&Scene::bind_group_layout(&device), &uniform_bind_group_layout],
             push_constant_ranges: &[],
         });
 
