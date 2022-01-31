@@ -505,6 +505,8 @@ fn vs_main(
         default: { }
     }
 
+    q = q * xforms.xforms[prim.xform];
+
     return out;
 }
 
