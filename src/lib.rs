@@ -21,6 +21,7 @@ mod defs;
 use defs::*;
 
 mod paint;
+use paint::*;
 
 mod gpu_vec;
 
@@ -35,6 +36,7 @@ pub struct VGER {
     tx_stack: Vec<LocalToWorld>,
     device_px_ratio: f32,
     screen_size: ScreenSize,
+    paint_count: usize
 }
 
 impl VGER {
@@ -61,6 +63,7 @@ impl VGER {
             tx_stack: vec![],
             device_px_ratio: 1.0,
             screen_size: ScreenSize::new(512.0, 512.0),
+            paint_count: 0
         }
     }
 
@@ -71,6 +74,7 @@ impl VGER {
         self.screen_size = ScreenSize::new(window_width, window_height);
         self.cur_scene = (self.cur_scene + 1) % 3;
         self.tx_stack.clear();
+        self.paint_count = 0;
     }
 
     /// Encode all rendering to a command buffer.
@@ -137,6 +141,15 @@ impl VGER {
         prim.paint = paint_index as u32;
 
         self.render(prim);
+    }
+
+    fn add_paint(&mut self, paint: Paint) -> usize {
+        if self.paint_count < MAX_PRIMS {
+            self.scenes[self.cur_scene].paints[self.paint_count] = paint;
+            self.paint_count += 1;
+            return self.paint_count-1;
+        }
+        0
     }
 }
 
