@@ -53,26 +53,31 @@ mod tests {
 
     #[test]
     fn test_linear_gradient() {
-        let paint = Paint::linear_gradient(
-            LocalPoint::new(0.0,0.0),
-            LocalPoint::new(1.0,0.0),
-            Color::gray(0.0),
-            Color::gray(1.0),
-            0.0);
 
-        assert_eq!(paint.apply(WorldPoint::new(0.0,0.0)), Color::gray(0.0));
-        assert_eq!(paint.apply(WorldPoint::new(0.5,0.0)), Color::gray(0.5));
-        assert_eq!(paint.apply(WorldPoint::new(1.0,0.0)), Color::gray(1.0));
+        {
+            let paint = Paint::linear_gradient(
+                LocalPoint::new(0.0,0.0),
+                LocalPoint::new(1.0,0.0),
+                Color::gray(0.0),
+                Color::gray(1.0),
+                0.0);
 
-        let paint2 = Paint::linear_gradient(
-            LocalPoint::new(0.0,0.0),
-            LocalPoint::new(0.0,1.0),
-            Color::gray(0.0),
-            Color::gray(1.0),
-            0.0);
+            assert_eq!(paint.apply(WorldPoint::new(0.0,0.0)), Color::gray(0.0));
+            assert_eq!(paint.apply(WorldPoint::new(0.5,0.0)), Color::gray(0.5));
+            assert_eq!(paint.apply(WorldPoint::new(1.0,0.0)), Color::gray(1.0));
+        }
 
-        assert_eq!(paint2.apply(WorldPoint::new(0.0,0.0)), Color::gray(0.0));
-        assert_eq!(paint2.apply(WorldPoint::new(0.0,1.0)), Color::gray(1.0));
+        {
+            let paint = Paint::linear_gradient(
+                LocalPoint::new(0.0,0.0),
+                LocalPoint::new(0.0,1.0),
+                Color::gray(0.0),
+                Color::gray(1.0),
+                0.0);
+
+            assert_eq!(paint.apply(WorldPoint::new(0.0,0.0)), Color::gray(0.0));
+            assert_eq!(paint.apply(WorldPoint::new(0.0,1.0)), Color::gray(1.0));
+        }
     }
 
 }
