@@ -61,6 +61,17 @@ impl Scene {
         }
     }
 
+    fn bind_group_entry(binding: u32, buffer: &wgpu::Buffer) -> wgpu::BindGroupEntry {
+        wgpu::BindGroupEntry {
+            binding: binding,
+            resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                buffer: buffer,
+                offset: 0,
+                size: None,
+            }),
+        }
+    }
+
     fn bind_group(
         device: &wgpu::Device,
         prims: &GPUVec<Prim>,
@@ -81,38 +92,10 @@ impl Scene {
         device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &bind_group_layout,
             entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
-                        buffer: prims.buffer(),
-                        offset: 0,
-                        size: None,
-                    }),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
-                        buffer: cvs.buffer(),
-                        offset: 0,
-                        size: None,
-                    }),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
-                        buffer: xforms.buffer(),
-                        offset: 0,
-                        size: None,
-                    }),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 3,
-                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
-                        buffer: paints.buffer(),
-                        offset: 0,
-                        size: None,
-                    }),
-                }
+                Scene::bind_group_entry(0, prims.buffer()),
+                Scene::bind_group_entry(1, cvs.buffer()),
+                Scene::bind_group_entry(2, xforms.buffer()),
+                Scene::bind_group_entry(3, paints.buffer()),
             ],
             label: Some("vger bind group"),
         })
