@@ -3,7 +3,7 @@ use crate::defs::*;
 
 #[derive(Clone, Copy)]
 pub struct Paint {
-    xform: LocalToWorld,
+    xform: WorldToLocal,
 
     inner_color: [f32; 4],
     outer_color: [f32; 4],
