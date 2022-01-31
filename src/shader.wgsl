@@ -481,7 +481,7 @@ struct ViewSize {
     size: vec2<f32>;
 };
 
-[[group(0), binding(3)]]
+[[group(0), binding(4)]]
 var<uniform> view_size: ViewSize;
 
 [[stage(vertex)]]
