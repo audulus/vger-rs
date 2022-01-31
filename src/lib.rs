@@ -57,7 +57,7 @@ impl VGER {
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
-            bind_group_layouts: &[],
+            bind_group_layouts: &[&Scene::bind_group_layout(&device)],
             push_constant_ranges: &[],
         });
 
