@@ -42,7 +42,9 @@ struct vgerPrim {
     radius: f32;
 
     /// Control vertices.
-    cvs: array<vec2<f32>,3>;
+    cv0: vec2<f32>;
+    cv1: vec2<f32>;
+    cv2: vec2<f32>;
 
     /// Start of the control vertices, if they're in a separate buffer.
     start: u32;
@@ -60,10 +62,10 @@ struct vgerPrim {
     xform: u32;
 
     /// Min and max coordinates of the quad we're rendering. (used internally)
-    quad_bounds: array<vec2<f32>,2>;
+    //quad_bounds: array<vec2<f32>,2>;
 
     /// Min and max coordinates in texture space. (used internally)
-    tex_bounds: array<vec2<f32>, 2>;
+    //tex_bounds: array<vec2<f32>, 2>;
 
 };
 
@@ -286,28 +288,28 @@ fn sdPrimBounds(prim: vgerPrim) -> BBox {
     var b: BBox;
     switch (prim.prim_type) {
         case 0: { // vgerCircle
-            b.min = prim.cvs[0] - prim.radius;
-            b.max = prim.cvs[0] + prim.radius;
+            b.min = prim.cv0 - prim.radius;
+            b.max = prim.cv0 + prim.radius;
         }
         case 1: { // vgerArc
-            b.min = prim.cvs[0] - prim.radius;
-            b.max = prim.cvs[0] + prim.radius;
+            b.min = prim.cv0 - prim.radius;
+            b.max = prim.cv0 + prim.radius;
         }
         case 2: { // vgerRect
-            b.min = prim.cvs[0];
-            b.max = prim.cvs[1];
+            b.min = prim.cv0;
+            b.max = prim.cv1;
         }
         case 3: { // vgerRectStroke
-            b.min = prim.cvs[0];
-            b.max = prim.cvs[1];
+            b.min = prim.cv0;
+            b.max = prim.cv1;
         }
         case 4: { // vgerBezier
-            b.min = min(min(prim.cvs[0], prim.cvs[1]), prim.cvs[2]);
-            b.max = max(max(prim.cvs[0], prim.cvs[1]), prim.cvs[2]);
+            b.min = min(min(prim.cv0, prim.cv1), prim.cv2);
+            b.max = max(max(prim.cv0, prim.cv1), prim.cv2);
         }
         case 5: { // vgerSegment
-            b.min = min(prim.cvs[0], prim.cvs[1]);
-            b.max = max(prim.cvs[0], prim.cvs[1]);
+            b.min = min(prim.cv0, prim.cv1);
+            b.max = max(prim.cv0, prim.cv1);
         }
         case 6: { // vgerCurve
             b.min = vec2<f32>(1e10, 1e10);
@@ -317,12 +319,12 @@ fn sdPrimBounds(prim: vgerPrim) -> BBox {
             }
         }
         case 7: { // vgerSegment
-            b.min = min(prim.cvs[0], prim.cvs[1]);
-            b.max = max(prim.cvs[0], prim.cvs[1]);
+            b.min = min(prim.cv0, prim.cv1);
+            b.max = max(prim.cv0, prim.cv1);
         }
         case 8: { // vgerGlyph
-            b.min = prim.cvs[0];
-            b.max = prim.cvs[1];
+            b.min = prim.cv0;
+            b.max = prim.cv1;
         }
         case 9: { // vgerPathFill
             b.min = vec2<f32>(1e10, 1e10);
@@ -378,26 +380,26 @@ fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
     var s = 1.0;
     switch(prim.prim_type) {
         case 0: { // vgerCircle
-            d = sdCircle(p - prim.cvs[0], prim.radius);
+            d = sdCircle(p - prim.cv0, prim.radius);
         }
         case 1: { // vgerArc
-            d = sdArc2(p - prim.cvs[0], prim.cvs[1], prim.cvs[2], prim.radius, prim.width/2.0);
+            d = sdArc2(p - prim.cv0, prim.cv1, prim.cv2, prim.radius, prim.width/2.0);
         }
         case 2: { // vgerRect
-            let center = 0.5*(prim.cvs[1] + prim.cvs[0]);
-            let size = prim.cvs[1] - prim.cvs[0];
+            let center = 0.5*(prim.cv1 + prim.cv0);
+            let size = prim.cv1 - prim.cv0;
             d = sdBox(p - center, 0.5*size, prim.radius);
         }
         case 3: { // vgerRectStroke
-            let center = 0.5*(prim.cvs[1] + prim.cvs[0]);
-            let size = prim.cvs[1] - prim.cvs[0];
+            let center = 0.5*(prim.cv1 + prim.cv0);
+            let size = prim.cv1 - prim.cv0;
             d = abs(sdBox(p - center, 0.5*size, prim.radius)) - prim.width/2.0;
         }
         case 4: { // vgerBezier
-            d = sdBezierApprox(p, prim.cvs[0], prim.cvs[1], prim.cvs[2]) - prim.width;
+            d = sdBezierApprox(p, prim.cv0, prim.cv1, prim.cv2) - prim.width;
         }
         case 5: { // vgerSegment
-            d = sdSegment2(p, prim.cvs[0], prim.cvs[1], prim.width);
+            d = sdSegment2(p, prim.cv0, prim.cv1, prim.width);
         }
         case 6: { // vgerCurve
             for(var i=0; i<i32(prim.count); i = i+1) {
@@ -406,11 +408,11 @@ fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
             }
         }
         case 7: { // vgerSegment
-            d = sdSegment2(p, prim.cvs[0], prim.cvs[1], prim.width);
+            d = sdSegment2(p, prim.cv0, prim.cv1, prim.width);
         }
         case 8: { // vgerGlyph
-            let center = 0.5*(prim.cvs[1] + prim.cvs[0]);
-            let size = prim.cvs[1] - prim.cvs[0];
+            let center = 0.5*(prim.cv1 + prim.cv0);
+            let size = prim.cv1 - prim.cv0;
             d = sdBox(p - center, 0.5*size, prim.radius);
         }
         case 9: { // vgerPathFill
@@ -462,4 +464,18 @@ fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
     return d;
 }
 
-fn vs_main() { }
+// struct VertexOutput {
+//     position: vec2<f32>;
+//     prim_index: i32;
+//     t: vec2<f32>;
+// };
+
+// [[stage(vertex)]]
+// fn vs_main(
+//     [[location(0)]] position: vec2<f32>,
+// ) -> VertexOutput {
+//     var out: VertexOutput;
+//     //out.tex_coord = tex_coord;
+//     //out.position = r_locals.transform * position;
+//     return out;
+// }

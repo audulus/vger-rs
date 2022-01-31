@@ -36,7 +36,8 @@ pub struct VGER {
     tx_stack: Vec<LocalToWorld>,
     device_px_ratio: f32,
     screen_size: ScreenSize,
-    paint_count: usize
+    paint_count: usize,
+    // pipeline: wgpu::RenderPipeline,
 }
 
 impl VGER {
@@ -54,6 +55,36 @@ impl VGER {
             Scene::new(&device),
         ];
 
+        /*
+        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[],
+            push_constant_ranges: &[],
+        });
+
+        let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: None,
+            layout: Some(&pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &shader,
+                entry_point: "vs_main",
+                buffers: &[],
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &shader,
+                entry_point: "fs_main",
+                targets: &[],
+            }),
+            primitive: wgpu::PrimitiveState {
+                cull_mode: Some(wgpu::Face::Back),
+                ..Default::default()
+            },
+            depth_stencil: None,
+            multisample: wgpu::MultisampleState::default(),
+            multiview: None,
+        });
+        */
+        
         Self {
             device,
             scenes,
@@ -63,7 +94,8 @@ impl VGER {
             tx_stack: vec![],
             device_px_ratio: 1.0,
             screen_size: ScreenSize::new(512.0, 512.0),
-            paint_count: 0
+            paint_count: 0,
+            // pipeline
         }
     }
 
