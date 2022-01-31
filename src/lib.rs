@@ -38,9 +38,7 @@ pub struct VGER {
 }
 
 impl VGER {
-
     pub fn new(device: wgpu::Device) -> Self {
-
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!(
@@ -76,10 +74,7 @@ impl VGER {
     }
 
     /// Encode all rendering to a command buffer.
-    pub fn encode(
-        &mut self,
-        render_pass: &wgpu::RenderPassDescriptor,
-    ) -> wgpu::CommandBuffer {
+    pub fn encode(&mut self, render_pass: &wgpu::RenderPassDescriptor) -> wgpu::CommandBuffer {
         let mut encoder = self
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
@@ -96,8 +91,9 @@ impl VGER {
             );
 
             rpass.draw(
-                /*vertices*/0..4,
-                /*instances*/0..(self.cur_prim[self.cur_layer] as u32))
+                /*vertices*/ 0..4,
+                /*instances*/ 0..(self.cur_prim[self.cur_layer] as u32),
+            )
         }
         encoder.finish()
     }

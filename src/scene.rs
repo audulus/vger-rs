@@ -1,11 +1,11 @@
+use crate::defs::*;
 use crate::gpu_vec::*;
+use crate::paint::*;
 use crate::path::*;
 use crate::prim::*;
 use euclid::*;
 use std::mem::size_of;
 use wgpu::*;
-use crate::defs::*;
-use crate::paint::*;
 
 pub const MAX_LAYERS: usize = 4;
 
@@ -77,7 +77,7 @@ impl Scene {
         prims: &GPUVec<Prim>,
         cvs: &GPUVec<LocalPoint>,
         xforms: &GPUVec<LocalToWorld>,
-        paints: &GPUVec<Paint>
+        paints: &GPUVec<Paint>,
     ) -> wgpu::BindGroup {
         let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             entries: &[

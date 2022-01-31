@@ -1,5 +1,5 @@
-use euclid::*;
 use crate::defs::*;
+use euclid::*;
 
 #[derive(Copy, Clone)]
 pub enum PrimType {

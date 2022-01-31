@@ -1,4 +1,3 @@
-
 use euclid::*;
 
 pub struct ScreenSpace;
