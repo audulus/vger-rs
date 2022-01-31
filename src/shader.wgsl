@@ -65,7 +65,7 @@ struct vgerPrim {
     quad_bounds: array<vec2<f32>,2>;
 
     /// Min and max coordinates in texture space. (used internally)
-    //tex_bounds: array<vec2<f32>, 2>;
+    tex_bounds: array<vec2<f32>, 2>;
 
 };
 
@@ -492,15 +492,19 @@ fn vs_main(
     switch(vid) {
         case 0u: {
             q = vec3<f32>(prim.quad_bounds[0], 1.0);
+            out.t = prim.tex_bounds[0];
         }
         case 1u: {
             q = vec3<f32>(prim.quad_bounds[0].x, prim.quad_bounds[1].y, 1.0);
+            out.t = vec2<f32>(prim.tex_bounds[0].x, prim.tex_bounds[1].y);
         }
         case 2u: {
             q = vec3<f32>(prim.quad_bounds[1].x, prim.quad_bounds[0].y, 1.0);
+            out.t = vec2<f32>(prim.tex_bounds[1].x, prim.tex_bounds[0].y);
         }
         case 3u: {
             q = vec3<f32>(prim.quad_bounds[1], 1.0);
+            out.t = prim.tex_bounds[1];
         }
         default: { }
     }
