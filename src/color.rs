@@ -8,6 +8,13 @@ pub struct Color {
 }
 
 impl Color {
+
+    pub fn gray(lightness: f32) -> Color {
+        Self {
+            r: lightness, g: lightness, b: lightness, a: 1.0
+        }
+    }
+
     pub fn mix(&self, rhs: Color, s: f32) -> Color {
         Color {
             r: (1.0-s) * self.r + s * rhs.r,
