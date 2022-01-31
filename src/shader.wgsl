@@ -464,6 +464,13 @@ fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
     return d;
 }
 
+struct XForms {
+    xforms: array<mat3x3<f32>>;
+};
+
+[[group(0), binding(2)]]
+var<storage> xforms: XForms;
+
 struct VertexOutput {
     [[builtin(position)]] position: vec4<f32>;
     [[location(0)]] prim_index: u32;
