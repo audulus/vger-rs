@@ -14,6 +14,7 @@ pub struct Scene {
     pub cvs: GPUVec<LocalPoint>,
     pub xforms: GPUVec<LocalToWorld>,
     pub paints: GPUVec<Paint>,
+    pub bind_group_layout: wgpu::BindGroupLayout,
     pub bind_groups: [wgpu::BindGroup; MAX_LAYERS],
 }
 
@@ -32,6 +33,16 @@ impl Scene {
         let xforms = GPUVec::new(device, MAX_PRIMS, "Xform Buffer");
         let paints = GPUVec::new(device, MAX_PRIMS, "Paint Buffer");
 
+        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            entries: &[
+                Scene::bind_group_layout_entry(0),
+                Scene::bind_group_layout_entry(1),
+                Scene::bind_group_layout_entry(2),
+                Scene::bind_group_layout_entry(3),
+            ],
+            label: Some("bind_group_layout"),
+        });
+
         let bind_groups = [
             Scene::bind_group(device, &prims[0], &cvs, &xforms, &paints),
             Scene::bind_group(device, &prims[1], &cvs, &xforms, &paints),
@@ -44,6 +55,7 @@ impl Scene {
             cvs,
             xforms,
             paints,
+            bind_group_layout,
             bind_groups,
         }
     }
