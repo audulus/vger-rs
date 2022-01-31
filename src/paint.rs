@@ -21,4 +21,27 @@ impl Paint {
 
         self.inner_color.mix(self.outer_color, d)
     }
+
+    pub fn linear_gradient(start: LocalPoint,
+                           end: LocalPoint,
+                           inner_color: Color,
+                           outer_color: Color,
+                           glow: f32) -> Self {
+
+        // Calculate transform aligned to the line
+        let mut d = end - start;
+        if d.length() < 0.0001 {
+            d = LocalVector::new(0.0,1.0);
+        }
+
+        let xform = LocalToWorld::new(d.x, d.y, -d.y, d.x, start.x, start.y).inverse().unwrap();
+
+        Self {
+            xform,
+            inner_color,
+            outer_color,
+            image: -1,
+            glow
+        }
+    }
 }
