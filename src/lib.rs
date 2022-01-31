@@ -24,6 +24,8 @@ mod paint;
 
 mod gpu_vec;
 
+mod color;
+
 pub struct VGER {
     device: wgpu::Device,
     scenes: [Scene; 3],
