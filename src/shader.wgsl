@@ -466,15 +466,17 @@ fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
 
 struct VertexOutput {
     [[builtin(position)]] position: vec4<f32>;
-    [[location(0)]] prim_index: i32;
+    [[location(0)]] prim_index: u32;
     [[location(1)]] t: vec2<f32>;
 };
 
 [[stage(vertex)]]
 fn vs_main(
+    [[builtin(instance_index)]] instance: u32
     // [[location(0)]] position: vec2<f32>,
 ) -> VertexOutput {
     var out: VertexOutput;
+    out.prim_index = instance;
     //out.tex_coord = tex_coord;
     //out.position = r_locals.transform * position;
     return out;
