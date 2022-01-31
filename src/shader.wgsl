@@ -507,6 +507,8 @@ fn vs_main(
 
     q = q * xforms.xforms[prim.xform];
 
+    let p = vec2<f32>(q.x/q.z, q.y/q.z);
+
     return out;
 }
 
