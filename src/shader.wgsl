@@ -477,6 +477,14 @@ struct VertexOutput {
     [[location(1)]] t: vec2<f32>;
 };
 
+struct ViewSize {
+    x: u32;
+    y: u32;
+};
+
+[[group(0), binding(3)]]
+var<uniform> view_size: ViewSize;
+
 [[stage(vertex)]]
 fn vs_main(
     [[builtin(vertex_index)]] vid: u32,
