@@ -62,7 +62,7 @@ struct vgerPrim {
     xform: u32;
 
     /// Min and max coordinates of the quad we're rendering. (used internally)
-    //quad_bounds: array<vec2<f32>,2>;
+    quad_bounds: array<vec2<f32>,2>;
 
     /// Min and max coordinates in texture space. (used internally)
     //tex_bounds: array<vec2<f32>, 2>;
