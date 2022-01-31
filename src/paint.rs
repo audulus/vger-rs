@@ -56,8 +56,8 @@ mod tests {
         let paint = Paint::linear_gradient(
             LocalPoint::new(0.0,0.0),
             LocalPoint::new(1.0,0.0),
-            Color{r:0.0, g: 0.0, b: 0.0, a: 1.0},
-            Color{r:0.0, g: 0.0, b: 0.0, a: 1.0},
+            Color::gray(0.0),
+            Color::gray(1.0),
             0.0);
 
         assert_eq!(paint.apply(WorldPoint::new(0.0,0.0)), Color::gray(0.0));
