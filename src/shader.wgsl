@@ -479,7 +479,7 @@ struct VertexOutput {
 
 [[stage(vertex)]]
 fn vs_main(
-    [[builtin(vertex_index)]] vertex_index: u32,
+    [[builtin(vertex_index)]] vid: u32,
     [[builtin(instance_index)]] instance: u32
     // [[location(0)]] position: vec2<f32>,
 ) -> VertexOutput {
@@ -487,6 +487,14 @@ fn vs_main(
     out.prim_index = instance;
     //out.tex_coord = tex_coord;
     //out.position = r_locals.transform * position;
+
+    // let prim = prims.prims[instance];
+
+    //var q: vec3<f32>;
+    //if(vid == 0u) {
+     //   q = vec3<f32>(prim.quad_bounds[0], 1.0);
+    //}
+
     return out;
 }
 
