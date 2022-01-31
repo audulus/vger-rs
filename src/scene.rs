@@ -80,6 +80,18 @@ impl Scene {
                 Scene::bind_group_layout_entry(1),
                 Scene::bind_group_layout_entry(2),
                 Scene::bind_group_layout_entry(3),
+                /*
+                wgpu::BindGroupLayoutEntry {
+                    binding: 4,
+                    visibility: wgpu::ShaderStages::VERTEX,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                */
             ],
             label: Some("bind_group_layout"),
         })
@@ -103,15 +115,7 @@ impl Scene {
         xforms: &GPUVec<LocalToWorld>,
         paints: &GPUVec<Paint>,
     ) -> wgpu::BindGroup {
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[
-                Scene::bind_group_layout_entry(0),
-                Scene::bind_group_layout_entry(1),
-                Scene::bind_group_layout_entry(2),
-                Scene::bind_group_layout_entry(3),
-            ],
-            label: Some("bind_group_layout"),
-        });
+        let bind_group_layout = Self::bind_group_layout(device);
 
         device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &bind_group_layout,
