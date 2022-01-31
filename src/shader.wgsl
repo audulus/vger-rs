@@ -477,12 +477,12 @@ struct VertexOutput {
     [[location(1)]] t: vec2<f32>;
 };
 
-struct ViewSize {
+struct Uniforms {
     size: vec2<f32>;
 };
 
-[[group(0), binding(4)]]
-var<uniform> view_size: ViewSize;
+[[group(1), binding(0)]]
+var<uniform> uniforms: Uniforms;
 
 [[stage(vertex)]]
 fn vs_main(
