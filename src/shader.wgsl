@@ -519,7 +519,7 @@ fn vs_main(
     q = q * xforms.xforms[prim.xform];
 
     let p = vec2<f32>(q.x/q.z, q.y/q.z);
-    // out.position = vec4<f32>(2.0 * p / uniforms.size - 1.0, 0.0, 1.0);
+    out.position = vec4<f32>(2.0 * p / uniforms.size - 1.0, 0.0, 1.0);
 
     return out;
 }
