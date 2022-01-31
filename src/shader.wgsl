@@ -479,3 +479,13 @@ fn vs_main(
     //out.position = r_locals.transform * position;
     return out;
 }
+
+[[stage(fragment)]]
+fn fs_main(
+    in: VertexOutput,
+) -> [[location(0)]] vec4<f32> {
+
+    var color: vec4<f32>;
+
+    return color;
+}
