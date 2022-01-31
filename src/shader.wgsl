@@ -485,8 +485,6 @@ fn vs_main(
 ) -> VertexOutput {
     var out: VertexOutput;
     out.prim_index = instance;
-    //out.tex_coord = tex_coord;
-    //out.position = r_locals.transform * position;
 
     // let prim = prims.prims[instance];
 
