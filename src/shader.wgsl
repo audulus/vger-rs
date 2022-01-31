@@ -472,7 +472,7 @@ struct VertexOutput {
 
 [[stage(vertex)]]
 fn vs_main(
-    [[location(0)]] position: vec2<f32>,
+    // [[location(0)]] position: vec2<f32>,
 ) -> VertexOutput {
     var out: VertexOutput;
     //out.tex_coord = tex_coord;
