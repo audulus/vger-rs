@@ -486,7 +486,7 @@ fn vs_main(
     var out: VertexOutput;
     out.prim_index = instance;
 
-    // let prim = prims.prims[instance];
+    let prim = prims.prims[instance];
 
     //var q: vec3<f32>;
     //if(vid == 0u) {
