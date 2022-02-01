@@ -6,6 +6,8 @@ use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
 };
+use png::*;
+use std::fs::File;
 
 mod path;
 use path::*;
@@ -328,6 +330,12 @@ mod tests {
         queue.submit(Some(vger.encode(&device, &desc)));
 
         device.poll(wgpu::Maintain::Wait);
+
+        let mut png_encoder = png::Encoder::new(
+            File::create("circle.png").unwrap(),
+            512,
+            512,
+        );
 
     }
 }
