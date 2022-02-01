@@ -44,7 +44,7 @@ pub struct VGER {
     screen_size: ScreenSize,
     paint_count: usize,
     pipeline: wgpu::RenderPipeline,
-    //uniform_bind_group: wgpu::BindGroup,
+    uniform_bind_group: wgpu::BindGroup,
     uniforms: GPUVec<Uniforms>,
 }
 
@@ -79,7 +79,15 @@ impl VGER {
             label: Some("uniform_bind_group_layout"),
         });
 
-        let uniforms = GPUVec::new(device, 1, "uniforms");
+        let uniforms = GPUVec::new_uniforms(device, "uniforms");
+
+        let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            layout: &uniform_bind_group_layout,
+            entries: &[
+                uniforms.bind_group_entry(0)
+            ],
+            label: Some("vger bind group"),
+        });
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
@@ -119,7 +127,8 @@ impl VGER {
             screen_size: ScreenSize::new(512.0, 512.0),
             paint_count: 0,
             pipeline,
-            uniforms
+            uniforms,
+            uniform_bind_group
         }
     }
 
