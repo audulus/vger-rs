@@ -257,6 +257,8 @@ mod tests {
     fn create_vger() {
         let (device, queue) = block_on(setup());
 
-        let _ = VGER::new(device);
+        let mut vger = VGER::new(device);
+
+        vger.begin(512.0, 512.0, 1.0);
     }
 }
