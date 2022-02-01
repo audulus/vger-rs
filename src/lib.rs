@@ -26,6 +26,7 @@ use paint::*;
 mod gpu_vec;
 
 mod color;
+use color::{Color};
 
 pub struct VGER {
     device: wgpu::Device,
@@ -206,6 +207,16 @@ impl VGER {
         }
         0
     }
+
+    pub fn linear_gradient(
+        &mut self,
+        start: LocalPoint,
+        end: LocalPoint,
+        inner_color: Color,
+        outer_color: Color,
+        glow: f32) -> usize {
+            self.add_paint(Paint::linear_gradient(start, end, inner_color, outer_color, glow))
+        }
 }
 
 #[cfg(test)]
