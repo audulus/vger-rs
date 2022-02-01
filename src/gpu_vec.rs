@@ -20,12 +20,36 @@ impl<T: Copy> GPUVec<T> {
         Self { buffer, mem_align }
     }
 
+    pub fn new_uniforms(device: &wgpu::Device, label: &str) -> Self {
+        let mem_align = MemAlign::new(1);
+
+        let buffer = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some(label),
+            size: mem_align.byte_size() as _,
+            usage: BufferUsages::UNIFORM,
+            mapped_at_creation: true,
+        });
+
+        Self { buffer, mem_align }
+    }
+
     pub fn capacity(&self) -> usize {
         self.mem_align.capacity()
     }
 
     pub fn buffer(&self) -> &wgpu::Buffer {
         &self.buffer
+    }
+
+    pub fn bind_group_entry(&self, binding: u32) -> wgpu::BindGroupEntry {
+        wgpu::BindGroupEntry {
+            binding: binding,
+            resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                buffer: &self.buffer,
+                offset: 0,
+                size: None,
+            }),
+        }
     }
 }
 
