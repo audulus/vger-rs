@@ -51,6 +51,10 @@ impl<T: Copy> GPUVec<T> {
             }),
         }
     }
+
+    pub fn unmap(&self) {
+        self.buffer.unmap();
+    }
 }
 
 impl<T: Copy> std::ops::Index<usize> for GPUVec<T> {
