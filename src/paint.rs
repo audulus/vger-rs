@@ -3,6 +3,7 @@ use crate::defs::*;
 use euclid::*;
 
 #[derive(Clone, Copy)]
+#[repr(C)]
 pub struct Paint {
     xform: WorldToLocal,
 
