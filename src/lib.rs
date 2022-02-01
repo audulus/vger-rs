@@ -208,6 +208,10 @@ impl VGER {
         0
     }
 
+    pub fn color_paint(&mut self, color: Color) -> usize {
+        self.add_paint(Paint::solid_color(color))
+    }
+
     pub fn linear_gradient(
         &mut self,
         start: LocalPoint,
