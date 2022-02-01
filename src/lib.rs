@@ -153,6 +153,10 @@ impl VGER {
 
     /// Encode all rendering to a command buffer.
     pub fn encode(&mut self, device: &wgpu::Device, render_pass: &wgpu::RenderPassDescriptor) -> wgpu::CommandBuffer {
+
+        self.scenes[self.cur_scene].unmap();
+        self.uniforms.unmap();
+
         let mut encoder = device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
                 label: Some("vger encoder"),
@@ -321,7 +325,7 @@ mod tests {
             depth_stencil_attachment: None,
         };
 
-        vger.encode(&device, &desc);
-        
+        queue.submit(Some(vger.encode(&device, &desc)));
+
     }
 }
