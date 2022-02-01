@@ -534,6 +534,13 @@ struct Paint {
     image: i32;
 };
 
+struct Paints {
+    paints: array<Paint>;
+};
+
+[[group(0), binding(3)]]
+var<storage> paints: Paints;
+
 [[stage(fragment)]]
 fn fs_main(
     in: VertexOutput,
