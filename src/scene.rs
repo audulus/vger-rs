@@ -33,15 +33,7 @@ impl Scene {
         let xforms = GPUVec::new(device, MAX_PRIMS, "Xform Buffer");
         let paints = GPUVec::new(device, MAX_PRIMS, "Paint Buffer");
 
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[
-                Scene::bind_group_layout_entry(0),
-                Scene::bind_group_layout_entry(1),
-                Scene::bind_group_layout_entry(2),
-                Scene::bind_group_layout_entry(3),
-            ],
-            label: Some("bind_group_layout"),
-        });
+        let bind_group_layout = Self::bind_group_layout(device);
 
         let bind_groups = [
             Scene::bind_group(device, &prims[0], &cvs, &xforms, &paints),
