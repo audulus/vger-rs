@@ -24,6 +24,16 @@ impl Paint {
         self.inner_color.mix(self.outer_color, d)
     }
 
+    pub fn solid_color(color: Color) -> Self {
+        Self {
+            xform: WorldToLocal::identity(),
+            inner_color: color,
+            outer_color: color,
+            image: -1,
+            glow: 0.0
+        }
+    }
+
     pub fn linear_gradient(
         start: LocalPoint,
         end: LocalPoint,
