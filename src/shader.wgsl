@@ -525,7 +525,7 @@ fn vs_main(
 }
 
 struct Paint {
-    xform: mat3x3<f32>;
+    xform: mat3x2<f32>;
 
     inner_color: vec4<f32>;
     outer_color: vec4<f32>;
@@ -543,7 +543,7 @@ var<storage> paints: Paints;
 
 fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
     let local_point = paint.xform * vec3<f32>(p, 1.0);
-    let d = clamp(local_point, vec3<f32>(0.0), vec3<f32>(1.0)).x;
+    let d = clamp(local_point, vec2<f32>(0.0), vec2<f32>(1.0)).x;
 
     return mix(paint.inner_color, paint.outer_color, d);
 }
