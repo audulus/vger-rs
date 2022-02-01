@@ -77,17 +77,6 @@ impl Scene {
         })
     }
 
-    fn bind_group_entry(binding: u32, buffer: &wgpu::Buffer) -> wgpu::BindGroupEntry {
-        wgpu::BindGroupEntry {
-            binding: binding,
-            resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
-                buffer: buffer,
-                offset: 0,
-                size: None,
-            }),
-        }
-    }
-
     fn bind_group(
         device: &wgpu::Device,
         prims: &GPUVec<Prim>,
@@ -100,10 +89,10 @@ impl Scene {
         device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &bind_group_layout,
             entries: &[
-                Scene::bind_group_entry(0, prims.buffer()),
-                Scene::bind_group_entry(1, cvs.buffer()),
-                Scene::bind_group_entry(2, xforms.buffer()),
-                Scene::bind_group_entry(3, paints.buffer()),
+                prims.bind_group_entry(0),
+                cvs.bind_group_entry(1),
+                xforms.bind_group_entry(2),
+                paints.bind_group_entry(3),
             ],
             label: Some("vger bind group"),
         })
