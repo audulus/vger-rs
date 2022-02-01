@@ -141,6 +141,8 @@ impl VGER {
         {
             let mut rpass = encoder.begin_render_pass(render_pass);
 
+            rpass.set_pipeline(&self.pipeline);
+
             rpass.set_bind_group(
                 0,
                 &self.scenes[self.cur_scene].bind_groups[self.cur_layer],
