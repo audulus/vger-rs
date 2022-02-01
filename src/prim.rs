@@ -41,6 +41,7 @@ impl Default for PrimType {
 }
 
 #[derive(Copy, Clone, Default)]
+#[repr(C)]
 pub struct Prim {
     /// Type of primitive.
     pub prim_type: PrimType,
