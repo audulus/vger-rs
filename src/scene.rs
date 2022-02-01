@@ -97,4 +97,13 @@ impl Scene {
             label: Some("vger bind group"),
         })
     }
+
+    pub fn unmap(&self) {
+        for i in 0..4 {
+            self.prims[i].unmap();
+        }
+        self.cvs.unmap();
+        self.xforms.unmap();
+        self.paints.unmap();
+    }
 }
