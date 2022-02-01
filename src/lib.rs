@@ -260,5 +260,7 @@ mod tests {
         let mut vger = VGER::new(device);
 
         vger.begin(512.0, 512.0, 1.0);
+        let cyan = vger.color_paint(Color{r: 0.0, g: 1.0, b: 1.0, a: 1.0});
+        vger.fill_circle(LocalPoint::new(100.0,100.0), 20.0, cyan);
     }
 }
