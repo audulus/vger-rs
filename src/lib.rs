@@ -254,7 +254,7 @@ mod tests {
     }
 
     #[test]
-    fn create_vger() {
+    fn fill_circle() {
         let (device, queue) = block_on(setup());
 
         let mut vger = VGER::new(device);
