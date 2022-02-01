@@ -257,6 +257,24 @@ mod tests {
     fn fill_circle() {
         let (device, queue) = block_on(setup());
 
+        let texture_size = wgpu::Extent3d {
+            width: 512,
+            height: 512,
+            depth_or_array_layers: 1,
+        };
+
+        let render_texture = device.create_texture(
+            &wgpu::TextureDescriptor {
+                size: texture_size,
+                mip_level_count: 1,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format: wgpu::TextureFormat::Rgba8UnormSrgb,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+                label: Some("render_texture"),
+            }
+        );
+
         let mut vger = VGER::new(device);
 
         vger.begin(512.0, 512.0, 1.0);
