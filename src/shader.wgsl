@@ -548,6 +548,11 @@ fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
     return mix(paint.inner_color, paint.outer_color, d);
 }
 
+fn smoothstep(low: f32, high: f32, x: f32) -> f32 {
+    let t = clamp((x - low) / (high - low), 0.0, 1.0);
+    return t * t * (3.0 - 2.0 * t);
+}
+
 [[stage(fragment)]]
 fn fs_main(
     in: VertexOutput,
@@ -559,5 +564,5 @@ fn fs_main(
     let prim = prims.prims[in.prim_index];
     let d = sdPrim(prim, in.t, false, fw);
 
-    return color;
+    return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
 }
