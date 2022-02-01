@@ -29,7 +29,6 @@ mod color;
 use color::{Color};
 
 pub struct VGER {
-    device: wgpu::Device,
     scenes: [Scene; 3],
     cur_prim: [usize; MAX_LAYERS],
     cur_scene: usize,
@@ -42,7 +41,7 @@ pub struct VGER {
 }
 
 impl VGER {
-    pub fn new(device: wgpu::Device) -> Self {
+    pub fn new(device: &wgpu::Device) -> Self {
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!(
@@ -101,7 +100,6 @@ impl VGER {
         });
 
         Self {
-            device,
             scenes,
             cur_prim: [0, 0, 0, 0],
             cur_scene: 0,
@@ -134,9 +132,8 @@ impl VGER {
     }
 
     /// Encode all rendering to a command buffer.
-    pub fn encode(&mut self, render_pass: &wgpu::RenderPassDescriptor) -> wgpu::CommandBuffer {
-        let mut encoder = self
-            .device
+    pub fn encode(&mut self, device: &wgpu::Device, render_pass: &wgpu::RenderPassDescriptor) -> wgpu::CommandBuffer {
+        let mut encoder = device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
                 label: Some("vger encoder"),
             });
@@ -275,10 +272,31 @@ mod tests {
             }
         );
 
-        let mut vger = VGER::new(device);
+        let view = render_texture.create_view(&wgpu::TextureViewDescriptor::default());
+
+        let mut vger = VGER::new(&device);
 
         vger.begin(512.0, 512.0, 1.0);
         let cyan = vger.color_paint(Color{r: 0.0, g: 1.0, b: 1.0, a: 1.0});
         vger.fill_circle(LocalPoint::new(100.0,100.0), 20.0, cyan);
+
+        let mut encoder =
+            device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+
+        {
+            let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: None,
+                color_attachments: &[wgpu::RenderPassColorAttachment {
+                    view: &view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                        store: true,
+                    },
+                }],
+                depth_stencil_attachment: None,
+            });
+        }
+        
     }
 }
