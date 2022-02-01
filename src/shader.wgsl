@@ -524,6 +524,16 @@ fn vs_main(
     return out;
 }
 
+struct Paint {
+    xform: mat3x3<f32>;
+
+    inner_color: vec4<f32>;
+    outer_color: vec4<f32>;
+
+    glow: f32;
+    image: i32;
+};
+
 [[stage(fragment)]]
 fn fs_main(
     in: VertexOutput,
