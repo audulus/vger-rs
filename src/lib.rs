@@ -166,7 +166,13 @@ impl VGER {
             rpass.set_bind_group(
                 0,
                 &self.scenes[self.cur_scene].bind_groups[self.cur_layer],
-                &[],
+                &[], // dynamic offsets
+            );
+
+            rpass.set_bind_group(
+                1,
+                &self.uniform_bind_group,
+                &[]
             );
 
             rpass.draw(
@@ -315,7 +321,7 @@ mod tests {
             depth_stencil_attachment: None,
         };
 
-        // vger.encode(&device, &desc);
+        vger.encode(&device, &desc);
         
     }
 }
