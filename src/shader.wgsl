@@ -465,7 +465,7 @@ fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
 }
 
 struct XForms {
-    xforms: array<mat3x3<f32>>;
+    xforms: array<mat3x2<f32>>;
 };
 
 [[group(0), binding(2)]]
@@ -516,9 +516,7 @@ fn vs_main(
         default: { }
     }
 
-    q = q * xforms.xforms[prim.xform];
-
-    let p = vec2<f32>(q.x/q.z, q.y/q.z);
+    let p = xforms.xforms[prim.xform] * q;
     out.position = vec4<f32>(2.0 * p / uniforms.size - 1.0, 0.0, 1.0);
 
     return out;
