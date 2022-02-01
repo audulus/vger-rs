@@ -327,7 +327,7 @@ mod tests {
 
         queue.submit(Some(vger.encode(&device, &desc)));
 
-        // block_on(queue.on_submitted_work_done());
+        device.poll(wgpu::Maintain::Wait);
 
     }
 }
