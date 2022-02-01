@@ -336,6 +336,8 @@ mod tests {
             512,
             512,
         );
+        png_encoder.set_depth(png::BitDepth::Eight);
+        png_encoder.set_color(png::ColorType::Rgba);
 
     }
 }
