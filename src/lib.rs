@@ -124,6 +124,14 @@ impl VGER {
         self.paint_count = 0;
     }
 
+    pub fn save(&mut self) {
+        self.tx_stack.push(*self.tx_stack.last().unwrap())
+    }
+
+    pub fn restore(&mut self) {
+        self.tx_stack.pop();
+    }
+
     /// Encode all rendering to a command buffer.
     pub fn encode(&mut self, render_pass: &wgpu::RenderPassDescriptor) -> wgpu::CommandBuffer {
         let mut encoder = self
