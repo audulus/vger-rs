@@ -555,5 +555,9 @@ fn fs_main(
 
     var color: vec4<f32>;
 
+    let fw = length(fwidth(in.t));
+    let prim = prims.prims[in.prim_index];
+    let d = sdPrim(prim, in.t, false, fw);
+
     return color;
 }
