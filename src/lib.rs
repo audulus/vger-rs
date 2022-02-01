@@ -24,9 +24,15 @@ mod paint;
 use paint::*;
 
 mod gpu_vec;
+use gpu_vec::*;
 
 mod color;
 use color::{Color};
+
+#[derive(Copy, Clone, Debug)]
+struct Uniforms {
+    size: [f32; 2]
+}
 
 pub struct VGER {
     scenes: [Scene; 3],
@@ -38,6 +44,8 @@ pub struct VGER {
     screen_size: ScreenSize,
     paint_count: usize,
     pipeline: wgpu::RenderPipeline,
+    //uniform_bind_group: wgpu::BindGroup,
+    uniforms: GPUVec<Uniforms>,
 }
 
 impl VGER {
@@ -70,6 +78,8 @@ impl VGER {
             ],
             label: Some("uniform_bind_group_layout"),
         });
+
+        let uniforms = GPUVec::new(device, 1, "uniforms");
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
@@ -108,7 +118,8 @@ impl VGER {
             device_px_ratio: 1.0,
             screen_size: ScreenSize::new(512.0, 512.0),
             paint_count: 0,
-            pipeline
+            pipeline,
+            uniforms
         }
     }
 
