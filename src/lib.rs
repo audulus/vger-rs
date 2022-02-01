@@ -88,7 +88,7 @@ impl VGER {
             fragment: Some(wgpu::FragmentState {
                 module: &shader,
                 entry_point: "fs_main",
-                targets: &[],
+                targets: &[wgpu::ColorTargetState::from(wgpu::TextureFormat::Rgba8UnormSrgb)],
             }),
             primitive: wgpu::PrimitiveState {
                 cull_mode: None,
