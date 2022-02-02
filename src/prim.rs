@@ -44,7 +44,7 @@ impl Default for PrimType {
 #[repr(C)]
 pub struct Prim {
     /// Type of primitive.
-    pub prim_type: PrimType,
+    pub prim_type: u32,
 
     /// Stroke width.
     pub width: f32,

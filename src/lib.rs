@@ -208,7 +208,7 @@ impl VGER {
 
     pub fn fill_circle(&mut self, center: LocalPoint, radius: f32, paint_index: usize) {
         let mut prim = Prim::default();
-        prim.prim_type = PrimType::Circle;
+        prim.prim_type = 0;
         prim.cvs[0] = center;
         prim.radius = radius;
         prim.paint = paint_index as u32;
@@ -232,7 +232,7 @@ impl VGER {
         paint_index: usize,
     ) {
         let mut prim = Prim::default();
-        prim.prim_type = PrimType::Arc;
+        prim.prim_type = 1;
         prim.radius = radius;
         prim.cvs = [
             center,
