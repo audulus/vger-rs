@@ -55,16 +55,16 @@ struct vgerPrim {
     /// Index of paint applied to drawing region.
     paint: u32;
 
-    /// Glyph region index. (used internally)
+    /// Glyph region index.
     glyph: u32;
 
-    /// Index of transform applied to drawing region. (used internally)
+    /// Index of transform applied to drawing region.
     xform: u32;
 
-    /// Min and max coordinates of the quad we're rendering. (used internally)
+    /// Min and max coordinates of the quad we're rendering.
     quad_bounds: array<vec2<f32>,2>;
 
-    /// Min and max coordinates in texture space. (used internally)
+    /// Min and max coordinates in texture space.
     tex_bounds: array<vec2<f32>, 2>;
 
 };
