@@ -7,6 +7,7 @@ use winit::{
     window::WindowBuilder,
 };
 use png::*;
+use std::io::prelude::*;
 use std::fs::File;
 
 mod path;
@@ -284,6 +285,81 @@ mod tests {
             .expect("Unable to find a suitable GPU adapter!")
     }
 
+    // See https://github.com/gfx-rs/wgpu/blob/master/wgpu/examples/capture/main.rs
+    struct BufferDimensions {
+        width: usize,
+        height: usize,
+        unpadded_bytes_per_row: usize,
+        padded_bytes_per_row: usize,
+    }
+
+    impl BufferDimensions {
+        fn new(width: usize, height: usize) -> Self {
+            let bytes_per_pixel = size_of::<u32>();
+            let unpadded_bytes_per_row = width * bytes_per_pixel;
+            let align = wgpu::COPY_BYTES_PER_ROW_ALIGNMENT as usize;
+            let padded_bytes_per_row_padding = (align - unpadded_bytes_per_row % align) % align;
+            let padded_bytes_per_row = unpadded_bytes_per_row + padded_bytes_per_row_padding;
+            Self {
+                width,
+                height,
+                unpadded_bytes_per_row,
+                padded_bytes_per_row,
+            }
+        }
+    }
+
+    async fn create_png(
+        png_output_path: &str,
+        device: Device,
+        output_buffer: Buffer,
+        buffer_dimensions: &BufferDimensions,
+    ) {
+        // Note that we're not calling `.await` here.
+        let buffer_slice = output_buffer.slice(..);
+        let buffer_future = buffer_slice.map_async(wgpu::MapMode::Read);
+    
+        // Poll the device in a blocking manner so that our future resolves.
+        // In an actual application, `device.poll(...)` should
+        // be called in an event loop or on another thread.
+        device.poll(wgpu::Maintain::Wait);
+        // If a file system is available, write the buffer as a PNG
+        let has_file_system_available = cfg!(not(target_arch = "wasm32"));
+        if !has_file_system_available {
+            return;
+        }
+    
+        if let Ok(()) = buffer_future.await {
+            let padded_buffer = buffer_slice.get_mapped_range();
+    
+            let mut png_encoder = png::Encoder::new(
+                File::create(png_output_path).unwrap(),
+                buffer_dimensions.width as u32,
+                buffer_dimensions.height as u32,
+            );
+            png_encoder.set_depth(png::BitDepth::Eight);
+            png_encoder.set_color(png::ColorType::RGBA);
+            let mut png_writer = png_encoder
+                .write_header()
+                .unwrap()
+                .into_stream_writer_with_size(buffer_dimensions.unpadded_bytes_per_row);
+    
+            // from the padded_buffer we write just the unpadded bytes into the image
+            for chunk in padded_buffer.chunks(buffer_dimensions.padded_bytes_per_row) {
+                png_writer
+                    .write_all(&chunk[..buffer_dimensions.unpadded_bytes_per_row])
+                    .unwrap();
+            }
+            png_writer.finish().unwrap();
+    
+            // With the current interface, we have to make sure all mapped views are
+            // dropped before we unmap the buffer.
+            drop(padded_buffer);
+    
+            output_buffer.unmap();
+        }
+    }
+
     #[test]
     fn fill_circle() {
         let (device, queue) = block_on(setup());
@@ -305,6 +381,13 @@ mod tests {
                 label: Some("render_texture"),
             }
         );
+
+        let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 512 * 512 * 4,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
 
         let view = render_texture.create_view(&wgpu::TextureViewDescriptor::default());
 
@@ -331,13 +414,8 @@ mod tests {
 
         device.poll(wgpu::Maintain::Wait);
 
-        let mut png_encoder = png::Encoder::new(
-            File::create("circle.png").unwrap(),
-            512,
-            512,
-        );
-        png_encoder.set_depth(png::BitDepth::Eight);
-        png_encoder.set_color(png::ColorType::Rgba);
+        let buffer_dimensions = BufferDimensions::new(512, 512);
+        block_on(create_png("circle.png", device, output_buffer, &buffer_dimensions));
 
     }
 }
