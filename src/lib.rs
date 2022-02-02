@@ -241,6 +241,7 @@ impl VGER {
         ];
         prim.width = width;
         prim.paint = paint_index as u32;
+        prim.xform = self.add_xform() as u32;
 
         self.render(prim);
     }
