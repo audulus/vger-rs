@@ -425,6 +425,8 @@ mod tests {
 
         let mut vger = VGER::new(&device);
 
+        device.start_capture();
+
         vger.begin(512.0, 512.0, 1.0);
         let cyan = vger.color_paint(Color{r: 0.0, g: 1.0, b: 1.0, a: 1.0});
         vger.fill_circle(LocalPoint::new(100.0,100.0), 20.0, cyan);
@@ -479,6 +481,8 @@ mod tests {
         queue.submit(Some(command_buffer));
 
         device.poll(wgpu::Maintain::Wait);
+
+        device.stop_capture();
 
         block_on(create_png("circle.png", device, output_buffer, &buffer_dimensions));
 
