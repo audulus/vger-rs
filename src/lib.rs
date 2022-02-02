@@ -378,7 +378,7 @@ mod tests {
                 sample_count: 1,
                 dimension: wgpu::TextureDimension::D2,
                 format: wgpu::TextureFormat::Rgba8UnormSrgb,
-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
                 label: Some("render_texture"),
             }
         );
@@ -413,9 +413,42 @@ mod tests {
 
         queue.submit(Some(vger.encode(&device, &desc)));
 
+        let buffer_dimensions = BufferDimensions::new(512, 512);
+
+        let texture_extent = wgpu::Extent3d {
+            width: buffer_dimensions.width as u32,
+            height: buffer_dimensions.height as u32,
+            depth_or_array_layers: 1,
+        };
+
+        let command_buffer = {
+            let mut encoder =
+                device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+    
+            // Copy the data from the texture to the buffer
+            encoder.copy_texture_to_buffer(
+                render_texture.as_image_copy(),
+                wgpu::ImageCopyBuffer {
+                    buffer: &output_buffer,
+                    layout: wgpu::ImageDataLayout {
+                        offset: 0,
+                        bytes_per_row: Some(
+                            std::num::NonZeroU32::new(buffer_dimensions.padded_bytes_per_row as u32)
+                                .unwrap(),
+                        ),
+                        rows_per_image: None,
+                    },
+                },
+                texture_extent,
+            );
+    
+            encoder.finish()
+        };
+
+        queue.submit(Some(command_buffer));
+
         device.poll(wgpu::Maintain::Wait);
 
-        let buffer_dimensions = BufferDimensions::new(512, 512);
         block_on(create_png("circle.png", device, output_buffer, &buffer_dimensions));
 
     }
