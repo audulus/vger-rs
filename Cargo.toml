@@ -16,3 +16,4 @@ futures = "0.3"
 euclid = "0.22.6"
 mem_align = { git="https://github.com/adamnemecek/mem_align" }
 png = "0.16"
+naga = { git = "https://github.com/audulus/naga", branch = "MSL-address-space-fix" }
