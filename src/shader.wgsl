@@ -32,6 +32,10 @@ let vgerPathFill = 9;
 
 struct vgerPrim {
 
+    /// Min and max coordinates of the quad we're rendering.
+    quad_bounds_min: vec2<f32>;
+    quad_bounds_max: vec2<f32>;
+
     /// Type of primitive.
     prim_type: u32;
 
@@ -60,10 +64,6 @@ struct vgerPrim {
 
     /// Index of transform applied to drawing region.
     xform: u32;
-
-    /// Min and max coordinates of the quad we're rendering.
-    quad_bounds_min: vec2<f32>;
-    quad_bounds_max: vec2<f32>;
 
     /// Min and max coordinates in texture space.
     tex_bounds_min: vec2<f32>;
