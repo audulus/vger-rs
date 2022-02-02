@@ -57,10 +57,11 @@ impl<T: Copy> GPUVec<T> {
     }
 
     pub fn set(&mut self, index: usize, value: T) {
-        let view = self.buffer.slice(..).get_mapped_range_mut();
-        let slice =
-            unsafe { std::slice::from_raw_parts_mut(view.as_ptr() as *mut T, self.capacity()) };
-        slice[index] = value;
+        let mut view = self.buffer.slice(..).get_mapped_range_mut();
+        let slice = &mut *view;
+        let slice2 =
+            unsafe { std::slice::from_raw_parts_mut(slice.as_ptr() as *mut T, self.capacity()) };
+        slice2[index] = value;
     }
 }
 
