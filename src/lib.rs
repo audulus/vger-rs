@@ -184,9 +184,12 @@ impl VGER {
                 &[]
             );
 
+            let n = self.cur_prim[self.cur_layer];
+            println!("encoding {:?} prims", n);
+
             rpass.draw(
                 /*vertices*/ 0..4,
-                /*instances*/ 0..(self.cur_prim[self.cur_layer] as u32),
+                /*instances*/ 0..(n as u32),
             )
         }
         encoder.finish()
