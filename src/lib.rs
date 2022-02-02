@@ -113,6 +113,7 @@ impl VGER {
             }),
             primitive: wgpu::PrimitiveState {
                 cull_mode: None,
+                topology: wgpu::PrimitiveTopology::TriangleStrip,
                 ..Default::default()
             },
             depth_stencil: None,
