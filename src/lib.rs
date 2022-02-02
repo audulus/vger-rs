@@ -256,6 +256,12 @@ impl VGER {
         0
     }
 
+    pub fn translate(&mut self, offset: Vector2D<f32, LocalSpace>) {
+        if let Some(m) = self.tx_stack.last_mut() {
+            *m = (*m).pre_translate(offset);
+        }
+    }
+
     fn add_paint(&mut self, paint: Paint) -> usize {
         if self.paint_count < MAX_PRIMS {
             self.scenes[self.cur_scene].paints[self.paint_count] = paint;
