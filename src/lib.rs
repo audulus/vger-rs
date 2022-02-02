@@ -140,6 +140,7 @@ impl VGER {
         self.cur_prim = [0, 0, 0, 0];
         self.cur_layer = 0;
         self.screen_size = ScreenSize::new(window_width, window_height);
+        self.uniforms[0] = Uniforms{ size: [window_width, window_height] };
         self.cur_scene = (self.cur_scene + 1) % 3;
         self.tx_stack.clear();
         self.tx_stack.push(LocalToWorld::identity());
