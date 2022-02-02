@@ -49,6 +49,7 @@ pub struct VGER {
     pipeline: wgpu::RenderPipeline,
     uniform_bind_group: wgpu::BindGroup,
     uniforms: GPUVec<Uniforms>,
+    xform_count: usize
 }
 
 impl VGER {
@@ -132,7 +133,8 @@ impl VGER {
             paint_count: 0,
             pipeline,
             uniforms,
-            uniform_bind_group
+            uniform_bind_group,
+            xform_count: 0
         }
     }
 
@@ -146,6 +148,7 @@ impl VGER {
         self.tx_stack.clear();
         self.tx_stack.push(LocalToWorld::identity());
         self.paint_count = 0;
+        self.xform_count = 0;
     }
 
     pub fn save(&mut self) {
@@ -214,6 +217,7 @@ impl VGER {
         prim.quad_bounds[2] = center.x + radius;
         prim.quad_bounds[3] = center.y + radius;
         prim.tex_bounds = prim.quad_bounds;
+        prim.xform = self.add_xform() as u32;
         
         self.render(prim);
     }
@@ -239,6 +243,16 @@ impl VGER {
         prim.paint = paint_index as u32;
 
         self.render(prim);
+    }
+
+    fn add_xform(&mut self) -> usize {
+        if self.xform_count < MAX_PRIMS {
+            self.scenes[self.cur_scene].xforms[self.xform_count] = *self.tx_stack.last().unwrap();
+            let n = self.xform_count;
+            self.xform_count += 1;
+            return n;
+        }
+        0
     }
 
     fn add_paint(&mut self, paint: Paint) -> usize {
