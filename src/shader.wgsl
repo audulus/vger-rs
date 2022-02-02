@@ -62,10 +62,12 @@ struct vgerPrim {
     xform: u32;
 
     /// Min and max coordinates of the quad we're rendering.
-    quad_bounds: array<vec2<f32>,2>;
+    quad_bounds_min: vec2<f32>;
+    quad_bounds_max: vec2<f32>;
 
     /// Min and max coordinates in texture space.
-    tex_bounds: array<vec2<f32>, 2>;
+    tex_bounds_min: vec2<f32>;
+    tex_bounds_max: vec2<f32>;
 
 };
 
@@ -498,20 +500,24 @@ fn vs_main(
     var q: vec3<f32>;
     switch(vid) {
         case 0u: {
-            q = vec3<f32>(prim.quad_bounds[0], 1.0);
-            out.t = prim.tex_bounds[0];
+            q = vec3<f32>(prim.quad_bounds_min, 1.0);
+            //q = vec3<f32>(80.0, 80.0, 1.0); 
+            out.t = prim.tex_bounds_min;
         }
         case 1u: {
-            q = vec3<f32>(prim.quad_bounds[0].x, prim.quad_bounds[1].y, 1.0);
-            out.t = vec2<f32>(prim.tex_bounds[0].x, prim.tex_bounds[1].y);
+            q = vec3<f32>(prim.quad_bounds_min.x, prim.quad_bounds_max.y, 1.0);
+            //q = vec3<f32>(80.0,120.0, 1.0); 
+            out.t = vec2<f32>(prim.tex_bounds_min.x, prim.tex_bounds_max.y);
         }
         case 2u: {
-            q = vec3<f32>(prim.quad_bounds[1].x, prim.quad_bounds[0].y, 1.0);
-            out.t = vec2<f32>(prim.tex_bounds[1].x, prim.tex_bounds[0].y);
+            q = vec3<f32>(prim.quad_bounds_max.x, prim.quad_bounds_min.y, 1.0);
+            //q = vec3<f32>(120.0,80.0, 1.0); 
+            out.t = vec2<f32>(prim.tex_bounds_max.x, prim.tex_bounds_min.y);
         }
         case 3u: {
-            q = vec3<f32>(prim.quad_bounds[1], 1.0);
-            out.t = prim.tex_bounds[1];
+            q = vec3<f32>(prim.quad_bounds_max, 1.0);
+            //q = vec3<f32>(120.0,120.0, 1.0); 
+            out.t = prim.tex_bounds_max;
         }
         default: { }
     }
@@ -551,12 +557,14 @@ fn fs_main(
     in: VertexOutput,
 ) -> [[location(0)]] vec4<f32> {
 
-    let fw = length(fwidth(in.t));
-    let prim = prims.prims[in.prim_index];
-    let d = sdPrim(prim, in.t, false, fw);
+    return vec4<f32>(0.0,1.0,1.0,1.0);
 
-    let paint = paints.paints[prim.paint];
-    let color = apply(paint, in.t);
+    // let fw = length(fwidth(in.t));
+    // let prim = prims.prims[in.prim_index];
+    // let d = sdPrim(prim, in.t, false, fw);
 
-    return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothStep(-fw/2.0,fw/2.0,d) );
+    // let paint = paints.paints[prim.paint];
+    // let color = apply(paint, in.t);
+
+    // return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothStep(-fw/2.0,fw/2.0,d) );
 }
