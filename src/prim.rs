@@ -53,7 +53,7 @@ pub struct Prim {
     pub radius: f32,
 
     /// Control vertices.
-    pub cvs: [LocalPoint; 3],
+    pub cvs: [f32; 6],
 
     /// Start of the control vertices, if they're in a separate buffer.
     pub start: u32,

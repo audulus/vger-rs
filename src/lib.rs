@@ -209,7 +209,8 @@ impl VGER {
     pub fn fill_circle(&mut self, center: LocalPoint, radius: f32, paint_index: usize) {
         let mut prim = Prim::default();
         prim.prim_type = 0;
-        prim.cvs[0] = center;
+        prim.cvs[0] = center.x;
+        prim.cvs[1] = center.y;
         prim.radius = radius;
         prim.paint = paint_index as u32;
         prim.quad_bounds[0] = center.x - radius;
@@ -235,9 +236,9 @@ impl VGER {
         prim.prim_type = 1;
         prim.radius = radius;
         prim.cvs = [
-            center,
-            LocalPoint::new(rotation.sin(), rotation.cos()),
-            LocalPoint::new(aperture.sin(), aperture.cos()),
+            center.x, center.y,
+            rotation.sin(), rotation.cos(),
+            aperture.sin(), aperture.cos(),
         ];
         prim.width = width;
         prim.paint = paint_index as u32;
