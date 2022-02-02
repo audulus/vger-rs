@@ -1,40 +1,41 @@
 use mem_align::MemAlign;
 use wgpu::*;
+use std::mem::size_of;
 
 pub struct GPUVec<T: Copy> {
     buffer: wgpu::Buffer,
-    mem_align: MemAlign<T>,
+    // mem_align: MemAlign<T>,
+    capacity: usize,
+    phantom: std::marker::PhantomData<T>,
 }
 
 impl<T: Copy> GPUVec<T> {
     pub fn new(device: &wgpu::Device, capacity: usize, label: &str) -> Self {
-        let mem_align = MemAlign::new(capacity);
 
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
-            size: mem_align.byte_size() as _,
+            size: (size_of::<T>() * capacity) as u64,
             usage: BufferUsages::STORAGE,
             mapped_at_creation: true,
         });
 
-        Self { buffer, mem_align }
+        Self { buffer, capacity, phantom: Default::default() }
     }
 
     pub fn new_uniforms(device: &wgpu::Device, label: &str) -> Self {
-        let mem_align = MemAlign::new(1);
 
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
-            size: mem_align.byte_size() as _,
+            size: size_of::<T>() as _,
             usage: BufferUsages::UNIFORM,
             mapped_at_creation: true,
         });
 
-        Self { buffer, mem_align }
+        Self { buffer, capacity: 1, phantom: Default::default() }
     }
 
     pub fn capacity(&self) -> usize {
-        self.mem_align.capacity()
+        self.capacity
     }
 
     pub fn buffer(&self) -> &wgpu::Buffer {
@@ -60,7 +61,7 @@ impl<T: Copy> GPUVec<T> {
         let mut view = self.buffer.slice(..).get_mapped_range_mut();
         let slice = &mut *view;
         let slice2 =
-            unsafe { std::slice::from_raw_parts_mut(slice.as_ptr() as *mut T, self.capacity()) };
+            unsafe { std::slice::from_raw_parts_mut(slice.as_ptr() as *mut T, self.capacity) };
         slice2[index] = value;
     }
 }
@@ -70,7 +71,7 @@ impl<T: Copy> std::ops::Index<usize> for GPUVec<T> {
     fn index(&self, index: usize) -> &Self::Output {
         let view = self.buffer.slice(..).get_mapped_range();
         let slice =
-            unsafe { std::slice::from_raw_parts(view.as_ptr() as *const T, self.capacity()) };
+            unsafe { std::slice::from_raw_parts(view.as_ptr() as *const T, self.capacity) };
         &slice[index]
     }
 }
@@ -79,7 +80,7 @@ impl<T: Copy> std::ops::IndexMut<usize> for GPUVec<T> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         let mut view = self.buffer.slice(..).get_mapped_range_mut();
         let slice =
-            unsafe { std::slice::from_raw_parts_mut(view.as_mut_ptr() as *mut T, self.capacity()) };
+            unsafe { std::slice::from_raw_parts_mut(view.as_mut_ptr() as *mut T, self.capacity) };
         &mut slice[index]
     }
 }
