@@ -490,7 +490,6 @@ var<uniform> uniforms: Uniforms;
 fn vs_main(
     [[builtin(vertex_index)]] vid: u32,
     [[builtin(instance_index)]] instance: u32
-    // [[location(0)]] position: vec2<f32>,
 ) -> VertexOutput {
     var out: VertexOutput;
     out.prim_index = instance;
