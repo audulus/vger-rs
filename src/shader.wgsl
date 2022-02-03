@@ -272,19 +272,19 @@ fn expand(box: BBox, p: vec2<f32>) -> BBox {
     return result;
 }
 
-struct CVS {
-    cvs: array<vec2<f32>>;
-};
-
-[[group(0), binding(0)]]
-var<storage> cvs: CVS;
-
 struct Prims {
     prims: array<vgerPrim>;
 };
 
-[[group(0), binding(1)]]
+[[group(0), binding(0)]]
 var<storage> prims: Prims;
+
+struct CVS {
+    cvs: array<vec2<f32>>;
+};
+
+[[group(0), binding(1)]]
+var<storage> cvs: CVS;
 
 fn sdPrimBounds(prim: vgerPrim) -> BBox {
     var b: BBox;
