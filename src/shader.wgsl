@@ -36,6 +36,9 @@ struct vgerPrim {
     quad_bounds_min: vec2<f32>;
     quad_bounds_max: vec2<f32>;
 
+    /// Index of transform applied to drawing region.
+    xform: u32;
+
     /// Type of primitive.
     prim_type: u32;
 
@@ -61,9 +64,6 @@ struct vgerPrim {
 
     /// Glyph region index.
     glyph: u32;
-
-    /// Index of transform applied to drawing region.
-    xform: u32;
 
     /// Min and max coordinates in texture space.
     tex_bounds_min: vec2<f32>;
