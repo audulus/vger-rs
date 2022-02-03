@@ -52,26 +52,13 @@ impl Scene {
         }
     }
 
-    fn bind_group_layout_entry(binding: u32) -> wgpu::BindGroupLayoutEntry {
-        wgpu::BindGroupLayoutEntry {
-            binding: binding,
-            visibility: wgpu::ShaderStages::FRAGMENT | wgpu::ShaderStages::VERTEX,
-            ty: wgpu::BindingType::Buffer {
-                ty: wgpu::BufferBindingType::Storage { read_only: true },
-                has_dynamic_offset: false,
-                min_binding_size: None,
-            },
-            count: None,
-        }
-    }
-
     pub fn bind_group_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
         device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             entries: &[
-                Scene::bind_group_layout_entry(0),
-                Scene::bind_group_layout_entry(1),
-                Scene::bind_group_layout_entry(2),
-                Scene::bind_group_layout_entry(3),
+                GPUVec::<Prim>::bind_group_layout_entry(0),
+                GPUVec::<LocalPoint>::bind_group_layout_entry(1),
+                GPUVec::<LocalToWorld>::bind_group_layout_entry(2),
+                GPUVec::<Paint>::bind_group_layout_entry(3),
             ],
             label: Some("bind_group_layout"),
         })
