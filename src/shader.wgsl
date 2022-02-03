@@ -30,7 +30,7 @@ let vgerGlyph = 8;
 /// Path fills.
 let vgerPathFill = 9;
 
-struct vgerPrim {
+struct Prim {
 
     /// Min and max coordinates of the quad we're rendering.
     quad_bounds_min: vec2<f32>;
@@ -273,7 +273,7 @@ fn expand(box: BBox, p: vec2<f32>) -> BBox {
 }
 
 struct Prims {
-    prims: array<vgerPrim>;
+    prims: array<Prim>;
 };
 
 [[group(0), binding(0)]]
@@ -286,7 +286,7 @@ struct CVS {
 [[group(0), binding(1)]]
 var<storage> cvs: CVS;
 
-fn sdPrimBounds(prim: vgerPrim) -> BBox {
+fn sdPrimBounds(prim: Prim) -> BBox {
     var b: BBox;
     switch (prim.prim_type) {
         case 0: { // vgerCircle
@@ -377,7 +377,7 @@ fn bezierTest(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>, C: vec2<f32>) -> bool {
 
 }
 
-fn sdPrim(prim: vgerPrim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
+fn sdPrim(prim: Prim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
     var d = 1e10;
     var s = 1.0;
     switch(prim.prim_type) {
