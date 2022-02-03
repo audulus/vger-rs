@@ -276,14 +276,14 @@ struct CVS {
     cvs: array<vec2<f32>>;
 };
 
-[[group(0), binding(0)]]
+@group(0) @binding(0)
 var<storage> cvs: CVS;
 
 struct Prims {
     prims: array<vgerPrim>;
 };
 
-[[group(0), binding(1)]]
+@group(0) @binding(1)
 var<storage> prims: Prims;
 
 fn sdPrimBounds(prim: vgerPrim) -> BBox {
@@ -470,27 +470,26 @@ struct XForms {
     xforms: array<mat3x2<f32>>;
 };
 
-[[group(0), binding(2)]]
+@group(0) @binding(2)
 var<storage> xforms: XForms;
 
 struct VertexOutput {
-    [[builtin(position)]] position: vec4<f32>;
-    [[location(0)]] prim_index: u32;
-    [[location(1)]] t: vec2<f32>;
+    @builtin(position) position: vec4<f32>;
+    @location(0) prim_index: u32;
+    @location(1) t: vec2<f32>;
 };
 
 struct Uniforms {
     size: vec2<f32>;
 };
 
-[[group(1), binding(0)]]
+@group(1) @binding(0)
 var<uniform> uniforms: Uniforms;
 
-[[stage(vertex)]]
+@stage(vertex)
 fn vs_main(
-    [[builtin(vertex_index)]] vid: u32,
-    [[builtin(instance_index)]] instance: u32
-    // [[location(0)]] position: vec2<f32>,
+    @builtin(vertex_index) vid: u32,
+    @builtin(instance_index) instance: u32
 ) -> VertexOutput {
     var out: VertexOutput;
     out.prim_index = instance;
@@ -542,7 +541,7 @@ struct Paints {
     paints: array<Paint>;
 };
 
-[[group(0), binding(3)]]
+@group(0) @binding(3)
 var<storage> paints: Paints;
 
 fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
@@ -552,10 +551,10 @@ fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
     return mix(paint.inner_color, paint.outer_color, d);
 }
 
-[[stage(fragment)]]
+@stage(fragment)
 fn fs_main(
     in: VertexOutput,
-) -> [[location(0)]] vec4<f32> {
+) -> @location(0) vec4<f32> {
 
     return vec4<f32>(0.0,1.0,1.0,1.0);
 
