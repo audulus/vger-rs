@@ -4,22 +4,18 @@ use crate::defs::*;
 #[derive(Clone, Copy)]
 #[repr(C)]
 pub struct Paint {
-    xform: [f32; 8], // mat3x2<f32>
-
-    inner_color: Color, // vec4<f32>
-    outer_color: Color, // vec4<f32>
+    xform: WorldToLocal, // mat3x2<f32>
 
     glow: f32,
     image: i32,
 
-    pad: [i32; 2],
+    inner_color: Color, // vec4<f32>
+    outer_color: Color, // vec4<f32>
 }
 
 impl Paint {
     pub fn apply(&self, p: WorldPoint) -> Color {
-        let m = self.xform;
-        let xform = WorldToLocal::new(m[0],m[4],m[1],m[5],m[2],m[6]);
-        let local_point = xform.transform_point(p);
+        let local_point = self.xform.transform_point(p);
         let d = local_point
             .clamp(LocalPoint::zero(), LocalPoint::new(1.0, 1.0))
             .x;
@@ -29,12 +25,11 @@ impl Paint {
 
     pub fn solid_color(color: Color) -> Self {
         Self {
-            xform: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+            xform: WorldToLocal::identity(),
             inner_color: color,
             outer_color: color,
             image: -1,
             glow: 0.0,
-            pad: [0,0]
         }
     }
 
@@ -56,12 +51,11 @@ impl Paint {
             .unwrap();
 
         Self {
-            xform: to_mat3x2(xform),
+            xform: xform,
             inner_color,
             outer_color,
             image: -1,
             glow,
-            pad: [0,0]
         }
     }
 }
@@ -73,7 +67,7 @@ mod tests {
 
     #[test]
     fn test_paint_size() {
-        assert_eq!(std::mem::size_of::<Paint>(), 80);
+        assert_eq!(std::mem::size_of::<Paint>(), 64);
     }
 
     #[test]

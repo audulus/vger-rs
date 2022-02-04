@@ -527,14 +527,12 @@ fn vs_main(
     return out;
 }
 
-struct Paint {
-    xform: mat3x2<f32>;
-
-    inner_color: vec4<f32>;
-    outer_color: vec4<f32>;
-
-    glow: f32;
-    image: i32;
+struct Paint {              // align  size
+    xform: mat3x2<f32>;     // 8      24
+    glow: f32;              // 4      4
+    image: i32;             // 4      4
+    inner_color: vec4<f32>; // 16     16
+    outer_color: vec4<f32>; // 16     16
 };
 
 struct Paints {
