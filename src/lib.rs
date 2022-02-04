@@ -13,7 +13,7 @@ use std::io::prelude::*;
 use std::fs::File;
 
 mod path;
-use path::*;
+// use path::*;
 use std::mem::size_of;
 
 mod scene;
