@@ -1,7 +1,7 @@
 #[allow(dead_code)]
 
 use euclid::*;
-use wgpu::*;
+// use wgpu::*;
 
 /*
 use winit::{
@@ -363,8 +363,8 @@ mod tests {
 
     async fn create_png(
         png_output_path: &str,
-        device: Device,
-        output_buffer: Buffer,
+        device: wgpu::Device,
+        output_buffer: wgpu::Buffer,
         buffer_dimensions: &BufferDimensions,
     ) {
         // Note that we're not calling `.await` here.
