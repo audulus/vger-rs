@@ -11,9 +11,6 @@ use winit::{
 };
 */
 
-use std::io::prelude::*;
-use std::fs::File;
-
 mod path;
 // use path::*;
 
@@ -311,6 +308,8 @@ mod tests {
     use super::*;
     use futures::executor::block_on;
     use std::mem::size_of;
+    use std::io::prelude::*;
+    use std::fs::File;
 
     async fn setup() -> (wgpu::Device, wgpu::Queue) {
         let backend = wgpu::Backends::all();
