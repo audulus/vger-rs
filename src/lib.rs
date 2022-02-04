@@ -493,7 +493,7 @@ mod tests {
 
         device.stop_capture();
 
-        block_on(create_png("circle.png", device, output_buffer, &buffer_dimensions));
+        block_on(create_png(name, device, output_buffer, &buffer_dimensions));
 
     }
 
