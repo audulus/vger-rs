@@ -16,6 +16,10 @@ impl Color {
         }
     }
 
+    pub fn new(r: f32, g: f32, b: f32, a: f32) -> Self {
+        Self { r, g, b, a }
+    }
+
     pub fn mix(&self, rhs: Color, s: f32) -> Color {
         Color {
             r: (1.0 - s) * self.r + s * rhs.r,
@@ -24,4 +28,7 @@ impl Color {
             a: (1.0 - s) * self.a + s * rhs.a,
         }
     }
+
+    pub const CYAN: Color = Color{r: 0.0, g: 1.0, b: 1.0, a: 1.0};
+    pub const MAGENTA: Color = Color{r: 1.0, g: 0.0, b: 1.0, a: 1.0};
 }
