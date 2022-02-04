@@ -1,5 +1,4 @@
 use euclid::*;
-use futures::executor::block_on;
 use wgpu::*;
 use winit::{
     event::{Event, WindowEvent},
@@ -306,6 +305,7 @@ impl VGER {
 mod tests {
 
     use super::*;
+    use futures::executor::block_on;
 
     async fn setup() -> (wgpu::Device, wgpu::Queue) {
         let backend = wgpu::Backends::all();
