@@ -556,14 +556,12 @@ fn fs_main(
     in: VertexOutput,
 ) -> [[location(0)]] vec4<f32> {
 
-    // return vec4<f32>(0.0,1.0,1.0,1.0);
-
     let fw = length(fwidth(in.t));
     let prim = prims.prims[in.prim_index];
     let d = sdPrim(prim, in.t, false, fw);
 
-    //let paint = paints.paints[prim.paint];
-    let color = vec4<f32>(0.0,1.0,1.0,1.0); // apply(paint, in.t);
+    let paint = paints.paints[prim.paint];
+    let color = apply(paint, in.t);
 
     return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothStep(-fw/2.0,fw/2.0,d) );
 }
