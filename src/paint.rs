@@ -56,7 +56,7 @@ impl Paint {
             .unwrap();
 
         Self {
-            xform: [xform.m11, xform.m21, xform.m31, 0.0, xform.m12, xform.m22, xform.m32, 0.0],
+            xform: to_mat3x2(xform),
             inner_color,
             outer_color,
             image: -1,
