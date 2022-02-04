@@ -262,6 +262,25 @@ impl VGER {
         self.render(prim);
     }
 
+    pub fn fill_rect(&mut self, min: LocalPoint, max: LocalPoint, radius: f32, paint_index: usize) {
+        let mut prim = Prim::default();
+        prim.prim_type = 2;
+        prim.cvs[0] = min.x;
+        prim.cvs[1] = min.y;
+        prim.cvs[2] = max.x;
+        prim.cvs[3] = max.y;
+        prim.radius = radius;
+        prim.paint = paint_index as u32;
+        prim.quad_bounds[0] = min.x;
+        prim.quad_bounds[1] = min.y;
+        prim.quad_bounds[2] = max.x;
+        prim.quad_bounds[3] = max.y;
+        prim.tex_bounds = prim.quad_bounds;
+        prim.xform = self.add_xform() as u32;
+        
+        self.render(prim);
+    }
+
     fn add_xform(&mut self) -> usize {
         if self.xform_count < MAX_PRIMS {
             self.scenes[self.cur_scene].xforms[self.xform_count] = *self.tx_stack.last().unwrap();
@@ -508,6 +527,20 @@ mod tests {
         vger.fill_circle(LocalPoint::new(100.0,100.0), 20.0, cyan);
 
         render_test(&mut vger, &device, &queue, "circle.png");
+
+    }
+
+    #[test]
+    fn fill_rect() {
+        let (device, queue) = block_on(setup());
+
+        let mut vger = VGER::new(&device);
+
+        vger.begin(512.0, 512.0, 1.0);
+        let cyan = vger.color_paint(Color{r: 0.0, g: 1.0, b: 1.0, a: 1.0});
+        vger.fill_rect(LocalPoint::new(100.0,100.0), LocalPoint::new(200.0,200.0), 10.0, cyan);
+
+        render_test(&mut vger, &device, &queue, "rect.png");
 
     }
 }
