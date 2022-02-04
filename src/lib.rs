@@ -6,7 +6,7 @@ use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
 };
-use png::*;
+
 use std::io::prelude::*;
 use std::fs::File;
 
