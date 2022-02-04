@@ -362,7 +362,7 @@ mod tests {
 
     async fn create_png(
         png_output_path: &str,
-        device: wgpu::Device,
+        device: &wgpu::Device,
         output_buffer: wgpu::Buffer,
         buffer_dimensions: &BufferDimensions,
     ) {
@@ -411,9 +411,7 @@ mod tests {
         }
     }
 
-    #[test]
-    fn fill_circle() {
-        let (device, queue) = block_on(setup());
+    fn render_test(vger: &mut VGER, device: &wgpu::Device, queue: &wgpu::Queue, name: &str) {
 
         let texture_size = wgpu::Extent3d {
             width: 512,
@@ -442,14 +440,6 @@ mod tests {
 
         let view = render_texture.create_view(&wgpu::TextureViewDescriptor::default());
 
-        let mut vger = VGER::new(&device);
-
-        device.start_capture();
-
-        vger.begin(512.0, 512.0, 1.0);
-        let cyan = vger.color_paint(Color{r: 0.0, g: 1.0, b: 1.0, a: 1.0});
-        vger.fill_circle(LocalPoint::new(100.0,100.0), 20.0, cyan);
-
         let desc = wgpu::RenderPassDescriptor {
             label: None,
             color_attachments: &[wgpu::RenderPassColorAttachment {
@@ -463,7 +453,7 @@ mod tests {
             depth_stencil_attachment: None,
         };
 
-        queue.submit(Some(vger.encode(&device, &desc)));
+        queue.submit(Some(vger.encode(device, &desc)));
 
         let buffer_dimensions = BufferDimensions::new(512, 512);
 
@@ -504,6 +494,20 @@ mod tests {
         device.stop_capture();
 
         block_on(create_png("circle.png", device, output_buffer, &buffer_dimensions));
+
+    }
+
+    #[test]
+    fn fill_circle() {
+        let (device, queue) = block_on(setup());
+
+        let mut vger = VGER::new(&device);
+
+        vger.begin(512.0, 512.0, 1.0);
+        let cyan = vger.color_paint(Color{r: 0.0, g: 1.0, b: 1.0, a: 1.0});
+        vger.fill_circle(LocalPoint::new(100.0,100.0), 20.0, cyan);
+
+        render_test(&mut vger, &device, &queue, "circle.png");
 
     }
 }
