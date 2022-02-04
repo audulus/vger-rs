@@ -1,6 +1,5 @@
 use crate::color::*;
 use crate::defs::*;
-use euclid::*;
 
 #[derive(Clone, Copy)]
 #[repr(C)]
