@@ -110,7 +110,22 @@ impl VGER {
             fragment: Some(wgpu::FragmentState {
                 module: &shader,
                 entry_point: "fs_main",
-                targets: &[wgpu::TextureFormat::Rgba8UnormSrgb.into()],
+                targets: &[wgpu::ColorTargetState {
+                    format: wgpu::TextureFormat::Rgba8UnormSrgb,
+                    blend: Some(wgpu::BlendState {
+                        color: wgpu::BlendComponent {
+                            operation: wgpu::BlendOperation::Add,
+                            src_factor: wgpu::BlendFactor::SrcAlpha,
+                            dst_factor: wgpu::BlendFactor::OneMinusSrcAlpha,
+                        },
+                        alpha: wgpu::BlendComponent {
+                            operation: wgpu::BlendOperation::Add,
+                            src_factor: wgpu::BlendFactor::SrcAlpha,
+                            dst_factor: wgpu::BlendFactor::OneMinusSrcAlpha,
+                        },
+                    }),
+                    write_mask: wgpu::ColorWrites::ALL,
+                }],
             }),
             primitive: wgpu::PrimitiveState {
                 cull_mode: None,
