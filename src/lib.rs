@@ -538,7 +538,7 @@ mod tests {
 
         vger.begin(512.0, 512.0, 1.0);
         let cyan = vger.color_paint(Color{r: 0.0, g: 1.0, b: 1.0, a: 1.0});
-        vger.fill_rect(LocalPoint::new(100.0,100.0), LocalPoint::new(200.0,200.0), 10.0, cyan);
+        vger.fill_rect([100.0,100.0].into(), [200.0,200.0].into(), 10.0, cyan);
 
         render_test(&mut vger, &device, &queue, "rect.png");
 
