@@ -16,7 +16,6 @@ use std::fs::File;
 
 mod path;
 // use path::*;
-use std::mem::size_of;
 
 mod scene;
 use scene::*;
@@ -311,6 +310,7 @@ mod tests {
 
     use super::*;
     use futures::executor::block_on;
+    use std::mem::size_of;
 
     async fn setup() -> (wgpu::Device, wgpu::Queue) {
         let backend = wgpu::Backends::all();
