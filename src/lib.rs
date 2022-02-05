@@ -10,7 +10,7 @@ use winit::{
 */
 
 mod path;
-// use path::*;
+use path::*;
 
 mod scene;
 use scene::*;
@@ -53,6 +53,7 @@ pub struct VGER {
     uniform_bind_group: wgpu::BindGroup,
     uniforms: GPUVec<Uniforms>,
     xform_count: usize,
+    path_scanner: PathScanner,
 }
 
 impl VGER {
@@ -151,6 +152,7 @@ impl VGER {
             uniforms,
             uniform_bind_group,
             xform_count: 0,
+            path_scanner: PathScanner::new(),
         }
     }
 
