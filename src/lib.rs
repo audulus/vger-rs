@@ -36,6 +36,7 @@ struct Uniforms {
     size: [f32; 2],
 }
 
+#[derive(Copy, Clone, Debug)]
 pub struct PaintIndex {
     index: usize,
 }
