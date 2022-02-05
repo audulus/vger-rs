@@ -59,19 +59,7 @@ impl PathScanner {
         }
     }
 
-    pub fn begin(&mut self, cvs: &[LocalPoint]) {
-        self.segments.clear();
-
-        let mut i = 0;
-        while i < cvs.len() - 2 {
-            self.segments.push(PathSegment {
-                cvs: [cvs[i], cvs[i + 1], cvs[i + 2]],
-                next: None,
-                previous: None,
-            });
-            i += 2;
-        }
-
+    pub fn init(&mut self) {
         // Close the path if necessary.
         if let Some(first) = self.segments.first() {
             if let Some(last) = self.segments.last() {
@@ -105,6 +93,22 @@ impl PathScanner {
         }
 
         self.nodes.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    }
+
+    pub fn begin(&mut self, cvs: &[LocalPoint]) {
+        self.segments.clear();
+
+        let mut i = 0;
+        while i < cvs.len() - 2 {
+            self.segments.push(PathSegment {
+                cvs: [cvs[i], cvs[i + 1], cvs[i + 2]],
+                next: None,
+                previous: None,
+            });
+            i += 2;
+        }
+
+        self.init();
     }
 
     fn next(&mut self) -> bool {
