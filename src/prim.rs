@@ -43,12 +43,11 @@ impl Default for PrimType {
 #[derive(Copy, Clone, Default)]
 #[repr(C)]
 pub struct Prim {
-
     /// Min and max coordinates of the quad we're rendering.
     pub quad_bounds: [f32; 4],
 
     /// Index of transform applied to drawing region.
-    pub xform: u32,   
+    pub xform: u32,
 
     /// Type of primitive.
     pub prim_type: u32,

@@ -1,6 +1,6 @@
 use mem_align::MemAlign;
-use wgpu::*;
 use std::mem::size_of;
+use wgpu::*;
 
 pub struct GPUVec<T: Copy> {
     buffer: wgpu::Buffer,
@@ -11,7 +11,6 @@ pub struct GPUVec<T: Copy> {
 
 impl<T: Copy> GPUVec<T> {
     pub fn new(device: &wgpu::Device, capacity: usize, label: &str) -> Self {
-
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
             size: (size_of::<T>() * capacity) as u64,
@@ -19,11 +18,14 @@ impl<T: Copy> GPUVec<T> {
             mapped_at_creation: true,
         });
 
-        Self { buffer, capacity, phantom: Default::default() }
+        Self {
+            buffer,
+            capacity,
+            phantom: Default::default(),
+        }
     }
 
     pub fn new_uniforms(device: &wgpu::Device, label: &str) -> Self {
-
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
             size: size_of::<T>() as _,
@@ -31,7 +33,11 @@ impl<T: Copy> GPUVec<T> {
             mapped_at_creation: true,
         });
 
-        Self { buffer, capacity: 1, phantom: Default::default() }
+        Self {
+            buffer,
+            capacity: 1,
+            phantom: Default::default(),
+        }
     }
 
     pub fn capacity(&self) -> usize {
@@ -83,8 +89,7 @@ impl<T: Copy> std::ops::Index<usize> for GPUVec<T> {
     type Output = T;
     fn index(&self, index: usize) -> &Self::Output {
         let view = self.buffer.slice(..).get_mapped_range();
-        let slice =
-            unsafe { std::slice::from_raw_parts(view.as_ptr() as *const T, self.capacity) };
+        let slice = unsafe { std::slice::from_raw_parts(view.as_ptr() as *const T, self.capacity) };
         &slice[index]
     }
 }

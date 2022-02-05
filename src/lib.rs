@@ -1,5 +1,4 @@
 #[allow(dead_code)]
-
 use euclid::*;
 // use wgpu::*;
 
@@ -30,15 +29,15 @@ mod gpu_vec;
 use gpu_vec::*;
 
 mod color;
-use color::{Color};
+use color::Color;
 
 #[derive(Copy, Clone, Debug)]
 struct Uniforms {
-    size: [f32; 2]
+    size: [f32; 2],
 }
 
 pub struct PaintIndex {
-    index: usize
+    index: usize,
 }
 
 pub struct VGER {
@@ -53,7 +52,7 @@ pub struct VGER {
     pipeline: wgpu::RenderPipeline,
     uniform_bind_group: wgpu::BindGroup,
     uniforms: GPUVec<Uniforms>,
-    xform_count: usize
+    xform_count: usize,
 }
 
 impl VGER {
@@ -71,9 +70,9 @@ impl VGER {
             Scene::new(&device),
         ];
 
-        let uniform_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
+        let uniform_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[wgpu::BindGroupLayoutEntry {
                     binding: 0,
                     visibility: wgpu::ShaderStages::VERTEX,
                     ty: wgpu::BindingType::Buffer {
@@ -82,24 +81,24 @@ impl VGER {
                         min_binding_size: None,
                     },
                     count: None,
-                },
-            ],
-            label: Some("uniform_bind_group_layout"),
-        });
+                }],
+                label: Some("uniform_bind_group_layout"),
+            });
 
         let uniforms = GPUVec::new_uniforms(device, "uniforms");
 
         let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &uniform_bind_group_layout,
-            entries: &[
-                uniforms.bind_group_entry(0)
-            ],
+            entries: &[uniforms.bind_group_entry(0)],
             label: Some("vger bind group"),
         });
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
-            bind_group_layouts: &[&Scene::bind_group_layout(&device), &uniform_bind_group_layout],
+            bind_group_layouts: &[
+                &Scene::bind_group_layout(&device),
+                &uniform_bind_group_layout,
+            ],
             push_constant_ranges: &[],
         });
 
@@ -153,7 +152,7 @@ impl VGER {
             pipeline,
             uniforms,
             uniform_bind_group,
-            xform_count: 0
+            xform_count: 0,
         }
     }
 
@@ -162,7 +161,9 @@ impl VGER {
         self.cur_prim = [0, 0, 0, 0];
         self.cur_layer = 0;
         self.screen_size = ScreenSize::new(window_width, window_height);
-        self.uniforms[0] = Uniforms{ size: [window_width, window_height] };
+        self.uniforms[0] = Uniforms {
+            size: [window_width, window_height],
+        };
         self.cur_scene = (self.cur_scene + 1) % 3;
         self.tx_stack.clear();
         self.tx_stack.push(LocalToWorld::identity());
@@ -179,15 +180,17 @@ impl VGER {
     }
 
     /// Encode all rendering to a command buffer.
-    pub fn encode(&mut self, device: &wgpu::Device, render_pass: &wgpu::RenderPassDescriptor) -> wgpu::CommandBuffer {
-
+    pub fn encode(
+        &mut self,
+        device: &wgpu::Device,
+        render_pass: &wgpu::RenderPassDescriptor,
+    ) -> wgpu::CommandBuffer {
         self.scenes[self.cur_scene].unmap();
         self.uniforms.unmap();
 
-        let mut encoder = device
-            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                label: Some("vger encoder"),
-            });
+        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("vger encoder"),
+        });
 
         {
             let mut rpass = encoder.begin_render_pass(render_pass);
@@ -200,19 +203,12 @@ impl VGER {
                 &[], // dynamic offsets
             );
 
-            rpass.set_bind_group(
-                1,
-                &self.uniform_bind_group,
-                &[]
-            );
+            rpass.set_bind_group(1, &self.uniform_bind_group, &[]);
 
             let n = self.cur_prim[self.cur_layer];
             println!("encoding {:?} prims", n);
 
-            rpass.draw(
-                /*vertices*/ 0..4,
-                /*instances*/ 0..(n as u32),
-            )
+            rpass.draw(/*vertices*/ 0..4, /*instances*/ 0..(n as u32))
         }
         encoder.finish()
     }
@@ -238,7 +234,7 @@ impl VGER {
         prim.quad_bounds[3] = center.y + radius;
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
-        
+
         self.render(prim);
     }
 
@@ -255,9 +251,12 @@ impl VGER {
         prim.prim_type = 1;
         prim.radius = radius;
         prim.cvs = [
-            center.x, center.y,
-            rotation.sin(), rotation.cos(),
-            aperture.sin(), aperture.cos(),
+            center.x,
+            center.y,
+            rotation.sin(),
+            rotation.cos(),
+            aperture.sin(),
+            aperture.cos(),
         ];
         prim.width = width;
         prim.paint = paint_index.index as u32;
@@ -266,7 +265,13 @@ impl VGER {
         self.render(prim);
     }
 
-    pub fn fill_rect(&mut self, min: LocalPoint, max: LocalPoint, radius: f32, paint_index: PaintIndex) {
+    pub fn fill_rect(
+        &mut self,
+        min: LocalPoint,
+        max: LocalPoint,
+        radius: f32,
+        paint_index: PaintIndex,
+    ) {
         let mut prim = Prim::default();
         prim.prim_type = 2;
         prim.cvs[0] = min.x;
@@ -281,11 +286,18 @@ impl VGER {
         prim.quad_bounds[3] = max.y;
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
-        
+
         self.render(prim);
     }
 
-    pub fn stroke_rect(&mut self, min: LocalPoint, max: LocalPoint, radius: f32, width: f32, paint_index: PaintIndex) {
+    pub fn stroke_rect(
+        &mut self,
+        min: LocalPoint,
+        max: LocalPoint,
+        radius: f32,
+        width: f32,
+        paint_index: PaintIndex,
+    ) {
         let mut prim = Prim::default();
         prim.prim_type = 3;
         prim.cvs[0] = min.x;
@@ -295,13 +307,13 @@ impl VGER {
         prim.radius = radius;
         prim.width = width;
         prim.paint = paint_index.index as u32;
-        prim.quad_bounds[0] = min.x-width;
-        prim.quad_bounds[1] = min.y-width;
-        prim.quad_bounds[2] = max.x+width;
-        prim.quad_bounds[3] = max.y+width;
+        prim.quad_bounds[0] = min.x - width;
+        prim.quad_bounds[1] = min.y - width;
+        prim.quad_bounds[2] = max.x + width;
+        prim.quad_bounds[3] = max.y + width;
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
-        
+
         self.render(prim);
     }
 
@@ -325,9 +337,11 @@ impl VGER {
         if self.paint_count < MAX_PRIMS {
             self.scenes[self.cur_scene].paints[self.paint_count] = paint;
             self.paint_count += 1;
-            return PaintIndex{index: self.paint_count-1};
+            return PaintIndex {
+                index: self.paint_count - 1,
+            };
         }
-        PaintIndex{index: 0}
+        PaintIndex { index: 0 }
     }
 
     pub fn color_paint(&mut self, color: Color) -> PaintIndex {
@@ -340,9 +354,16 @@ impl VGER {
         end: LocalPoint,
         inner_color: Color,
         outer_color: Color,
-        glow: f32) -> PaintIndex {
-            self.add_paint(Paint::linear_gradient(start, end, inner_color, outer_color, glow))
-        }
+        glow: f32,
+    ) -> PaintIndex {
+        self.add_paint(Paint::linear_gradient(
+            start,
+            end,
+            inner_color,
+            outer_color,
+            glow,
+        ))
+    }
 }
 
 #[cfg(test)]
@@ -350,9 +371,9 @@ mod tests {
 
     use super::*;
     use futures::executor::block_on;
-    use std::mem::size_of;
-    use std::io::prelude::*;
     use std::fs::File;
+    use std::io::prelude::*;
+    use std::mem::size_of;
 
     async fn setup() -> (wgpu::Device, wgpu::Queue) {
         let backend = wgpu::Backends::all();
@@ -412,7 +433,7 @@ mod tests {
         // Note that we're not calling `.await` here.
         let buffer_slice = output_buffer.slice(..);
         let buffer_future = buffer_slice.map_async(wgpu::MapMode::Read);
-    
+
         // Poll the device in a blocking manner so that our future resolves.
         // In an actual application, `device.poll(...)` should
         // be called in an event loop or on another thread.
@@ -422,10 +443,10 @@ mod tests {
         if !has_file_system_available {
             return;
         }
-    
+
         if let Ok(()) = buffer_future.await {
             let padded_buffer = buffer_slice.get_mapped_range();
-    
+
             let mut png_encoder = png::Encoder::new(
                 File::create(png_output_path).unwrap(),
                 buffer_dimensions.width as u32,
@@ -437,7 +458,7 @@ mod tests {
                 .write_header()
                 .unwrap()
                 .into_stream_writer_with_size(buffer_dimensions.unpadded_bytes_per_row);
-    
+
             // from the padded_buffer we write just the unpadded bytes into the image
             for chunk in padded_buffer.chunks(buffer_dimensions.padded_bytes_per_row) {
                 png_writer
@@ -445,34 +466,31 @@ mod tests {
                     .unwrap();
             }
             png_writer.finish().unwrap();
-    
+
             // With the current interface, we have to make sure all mapped views are
             // dropped before we unmap the buffer.
             drop(padded_buffer);
-    
+
             output_buffer.unmap();
         }
     }
 
     fn render_test(vger: &mut VGER, device: &wgpu::Device, queue: &wgpu::Queue, name: &str) {
-
         let texture_size = wgpu::Extent3d {
             width: 512,
             height: 512,
             depth_or_array_layers: 1,
         };
 
-        let render_texture = device.create_texture(
-            &wgpu::TextureDescriptor {
-                size: texture_size,
-                mip_level_count: 1,
-                sample_count: 1,
-                dimension: wgpu::TextureDimension::D2,
-                format: wgpu::TextureFormat::Rgba8UnormSrgb,
-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
-                label: Some("render_texture"),
-            }
-        );
+        let render_texture = device.create_texture(&wgpu::TextureDescriptor {
+            size: texture_size,
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+            label: Some("render_texture"),
+        });
 
         let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
@@ -509,7 +527,7 @@ mod tests {
         let command_buffer = {
             let mut encoder =
                 device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
-    
+
             // Copy the data from the texture to the buffer
             encoder.copy_texture_to_buffer(
                 render_texture.as_image_copy(),
@@ -518,15 +536,17 @@ mod tests {
                     layout: wgpu::ImageDataLayout {
                         offset: 0,
                         bytes_per_row: Some(
-                            std::num::NonZeroU32::new(buffer_dimensions.padded_bytes_per_row as u32)
-                                .unwrap(),
+                            std::num::NonZeroU32::new(
+                                buffer_dimensions.padded_bytes_per_row as u32,
+                            )
+                            .unwrap(),
                         ),
                         rows_per_image: None,
                     },
                 },
                 texture_extent,
             );
-    
+
             encoder.finish()
         };
 
@@ -537,7 +557,6 @@ mod tests {
         device.stop_capture();
 
         block_on(create_png(name, device, output_buffer, &buffer_dimensions));
-
     }
 
     #[test]
@@ -551,7 +570,6 @@ mod tests {
         vger.fill_circle([100.0, 100.0].into(), 20.0, cyan);
 
         render_test(&mut vger, &device, &queue, "circle.png");
-
     }
 
     #[test]
@@ -562,41 +580,56 @@ mod tests {
 
         vger.begin(512.0, 512.0, 1.0);
         let cyan = vger.color_paint(Color::CYAN);
-        vger.fill_rect([100.0,100.0].into(), [200.0,200.0].into(), 10.0, cyan);
+        vger.fill_rect([100.0, 100.0].into(), [200.0, 200.0].into(), 10.0, cyan);
 
         render_test(&mut vger, &device, &queue, "rect.png");
-
     }
 
     #[test]
     fn fill_rect_gradient() {
-
         let (device, queue) = block_on(setup());
 
         let mut vger = VGER::new(&device);
 
         vger.begin(512.0, 512.0, 1.0);
-        
-        // vgerLinearGradient(vger, float2{50,450}, float2{100,450}, cyan, magenta, 0)
-        let paint = vger.linear_gradient([100.0,100.0].into(), [200.0,200.0].into(), Color::CYAN, Color::MAGENTA, 0.0);
 
-        vger.fill_rect([100.0,100.0].into(), [200.0,200.0].into(), 10.0, paint);
+        // vgerLinearGradient(vger, float2{50,450}, float2{100,450}, cyan, magenta, 0)
+        let paint = vger.linear_gradient(
+            [100.0, 100.0].into(),
+            [200.0, 200.0].into(),
+            Color::CYAN,
+            Color::MAGENTA,
+            0.0,
+        );
+
+        vger.fill_rect([100.0, 100.0].into(), [200.0, 200.0].into(), 10.0, paint);
 
         render_test(&mut vger, &device, &queue, "rect_gradient.png");
     }
 
     #[test]
     fn stroke_rect_gradient() {
-
         let (device, queue) = block_on(setup());
 
         let mut vger = VGER::new(&device);
 
         vger.begin(512.0, 512.0, 1.0);
-        
-        let paint = vger.linear_gradient([100.0,100.0].into(), [200.0,200.0].into(), Color::CYAN, Color::MAGENTA, 0.0);
 
-        vger.stroke_rect([100.0,100.0].into(), [200.0,200.0].into(), 10.0, 4.0, paint);
+        let paint = vger.linear_gradient(
+            [100.0, 100.0].into(),
+            [200.0, 200.0].into(),
+            Color::CYAN,
+            Color::MAGENTA,
+            0.0,
+        );
+
+        vger.stroke_rect(
+            [100.0, 100.0].into(),
+            [200.0, 200.0].into(),
+            10.0,
+            4.0,
+            paint,
+        );
 
         render_test(&mut vger, &device, &queue, "rect_stroke_gradient.png");
     }
