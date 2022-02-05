@@ -392,6 +392,7 @@ impl VGER {
             let mut prim = Prim::default();
             prim.paint = paint_index.index as u32;
             prim.xform = xform as u32;
+            prim.start = self.cv_count as u32;
 
             let mut x_interval = Interval{ a: std::f32::MAX, b: std::f32::MIN};
 
