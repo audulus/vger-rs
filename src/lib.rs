@@ -373,6 +373,34 @@ impl VGER {
         self.pen = c;
     }
 
+    pub fn fill(&mut self, paint_index: PaintIndex) {
+        let xform = self.add_xform();
+
+        self.path_scanner.init();
+
+        while self.path_scanner.next() {
+
+            let mut prim = Prim::default();
+            prim.paint = paint_index.index as u32;
+            prim.xform = xform as u32;
+
+            let mut x_interval = Interval{ a: std::f32::MAX, b: std::f32::MIN};
+
+            let mut index =  self.path_scanner.first;
+            while let Some(a) = index {
+
+                for i in 0..3 {
+                    let p = self.path_scanner.segments[a].cvs[i];
+                    // self.add_cv(p);
+                    x_interval.a = x_interval.a.min(p.x);
+                    x_interval.b = x_interval.b.max(p.x);
+                }
+
+                index = self.path_scanner.segments[a].next;
+            }
+        }
+    }
+
     fn add_xform(&mut self) -> usize {
         if self.xform_count < MAX_PRIMS {
             self.scenes[self.cur_scene].xforms[self.xform_count] = *self.tx_stack.last().unwrap();
