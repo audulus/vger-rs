@@ -399,6 +399,12 @@ impl VGER {
                 index = self.path_scanner.segments[a].next;
             }
 
+            prim.quad_bounds[0] = x_interval.a;
+            prim.quad_bounds[1] = self.path_scanner.interval.a;
+            prim.quad_bounds[2] = x_interval.b;
+            prim.quad_bounds[3] = self.path_scanner.interval.b;
+            prim.tex_bounds = prim.quad_bounds;
+
             self.render(prim);
         }
     }
