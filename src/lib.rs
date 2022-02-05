@@ -351,7 +351,12 @@ impl VGER {
         prim.cvs[5] = c.y;
         prim.width = width;
         prim.paint = paint_index.index as u32;
-        prim.quad_bounds = [a.x.min(b.x).min(c.x)-width, a.y.min(b.y).min(c.y)-width, a.x.max(b.x).max(c.x)+width, a.y.max(b.y).max(c.y)+width];
+        prim.quad_bounds = [
+            a.x.min(b.x).min(c.x) - width,
+            a.y.min(b.y).min(c.y) - width,
+            a.x.max(b.x).max(c.x) + width,
+            a.y.max(b.y).max(c.y) + width,
+        ];
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
 
@@ -691,7 +696,14 @@ mod tests {
             0.0,
         );
 
-        vger.stroke_arc([200.0,200.0].into(), 100.0, 4.0, 0.0, std::f32::consts::PI / 4.0, paint);
+        vger.stroke_arc(
+            [200.0, 200.0].into(),
+            100.0,
+            4.0,
+            0.0,
+            std::f32::consts::PI / 4.0,
+            paint,
+        );
 
         render_test(&mut vger, &device, &queue, "arc_stroke_gradient.png");
     }
@@ -712,12 +724,7 @@ mod tests {
             0.0,
         );
 
-        vger.stroke_segment(
-            [100.0, 100.0].into(),
-            [200.0, 200.0].into(),
-            4.0,
-            paint,
-        );
+        vger.stroke_segment([100.0, 100.0].into(), [200.0, 200.0].into(), 4.0, paint);
 
         render_test(&mut vger, &device, &queue, "segment_stroke_gradient.png");
     }
