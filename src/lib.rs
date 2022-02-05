@@ -395,6 +395,7 @@ impl VGER {
         while self.path_scanner.next() {
 
             let mut prim = Prim::default();
+            prim.prim_type = PrimType::PathFill as u32;
             prim.paint = paint_index.index as u32;
             prim.xform = xform as u32;
             prim.start = self.cv_count as u32;
