@@ -32,12 +32,6 @@ pub enum PrimType {
     PathFill,
 }
 
-impl Default for PrimType {
-    fn default() -> PrimType {
-        PrimType::Circle
-    }
-}
-
 #[derive(Copy, Clone, Default)]
 #[repr(C)]
 pub struct Prim {
