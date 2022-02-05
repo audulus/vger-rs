@@ -228,10 +228,12 @@ impl VGER {
         prim.cvs[1] = center.y;
         prim.radius = radius;
         prim.paint = paint_index.index as u32;
-        prim.quad_bounds[0] = center.x - radius;
-        prim.quad_bounds[1] = center.y - radius;
-        prim.quad_bounds[2] = center.x + radius;
-        prim.quad_bounds[3] = center.y + radius;
+        prim.quad_bounds = [
+            center.x - radius,
+            center.y - radius,
+            center.x + radius,
+            center.y + radius
+        ];
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
 
