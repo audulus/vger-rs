@@ -2,18 +2,27 @@
 
 use crate::defs::*;
 
-struct Interval {
+pub struct Interval {
     a: f32,
     b: f32,
 }
 
-struct PathSegment {
-    cvs: [WorldPoint; 3],
+pub struct PathSegment {
+    cvs: [LocalPoint; 3],
     next: Option<usize>,
     previous: Option<usize>,
 }
 
 impl PathSegment {
+
+    pub fn new(a: LocalPoint, b: LocalPoint, c: LocalPoint) -> Self {
+        Self {
+            cvs: [a,b,c],
+            next: None,
+            previous: None,
+        }
+    }
+
     pub fn y_interval(&self) -> Interval {
         Interval {
             // Fatten the interval slightly to prevent artifacts by
@@ -32,7 +41,7 @@ struct PathScannerNode {
 }
 
 pub struct PathScanner {
-    segments: Vec<PathSegment>,
+    pub segments: Vec<PathSegment>,
     nodes: Vec<PathScannerNode>,
     index: usize,
     interval: Interval,
@@ -50,7 +59,7 @@ impl PathScanner {
         }
     }
 
-    pub fn begin(&mut self, cvs: &[WorldPoint]) {
+    pub fn begin(&mut self, cvs: &[LocalPoint]) {
         self.segments.clear();
 
         let mut i = 0;
@@ -148,15 +157,15 @@ mod tests {
         let mut scan = PathScanner::new();
 
         let cvs = vec![
-            WorldPoint::new(1.0, 0.0),
-            WorldPoint::new(1.0, 1.0),
-            WorldPoint::new(0.0, 1.0),
-            WorldPoint::new(-1.0, 1.0),
-            WorldPoint::new(-1.0, 0.0),
-            WorldPoint::new(-1.0, -1.0),
-            WorldPoint::new(0.0, -1.0),
-            WorldPoint::new(1.0, -1.0),
-            WorldPoint::new(1.0, 0.0),
+            [1.0, 0.0].into(),
+            [1.0, 1.0].into(),
+            [0.0, 1.0].into(),
+            [-1.0, 1.0].into(),
+            [-1.0, 0.0].into(),
+            [-1.0, -1.0].into(),
+            [0.0, -1.0].into(),
+            [1.0, -1.0].into(),
+            [1.0, 0.0].into(),
         ];
 
         scan.begin(&cvs);
