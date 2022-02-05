@@ -670,4 +670,30 @@ mod tests {
 
         render_test(&mut vger, &device, &queue, "arc_stroke_gradient.png");
     }
+
+    #[test]
+    fn segment_stroke_gradient() {
+        let (device, queue) = block_on(setup());
+
+        let mut vger = VGER::new(&device);
+
+        vger.begin(512.0, 512.0, 1.0);
+
+        let paint = vger.linear_gradient(
+            [100.0, 100.0].into(),
+            [200.0, 200.0].into(),
+            Color::CYAN,
+            Color::MAGENTA,
+            0.0,
+        );
+
+        vger.stroke_segment(
+            [100.0, 100.0].into(),
+            [200.0, 200.0].into(),
+            4.0,
+            paint,
+        );
+
+        render_test(&mut vger, &device, &queue, "segment_stroke_gradient.png");
+    }
 }
