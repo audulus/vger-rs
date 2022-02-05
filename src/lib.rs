@@ -370,6 +370,10 @@ impl VGER {
         self.render(prim);
     }
 
+    pub fn move_to(&mut self, p: LocalPoint) {
+        self.pen = p;
+    }
+
     pub fn quad_to(&mut self, b: LocalPoint, c: LocalPoint) {
         self.path_scanner.segments.push(PathSegment::new(self.pen,b,c));
         self.pen = c;
@@ -477,6 +481,7 @@ mod tests {
     use std::fs::File;
     use std::io::prelude::*;
     use std::mem::size_of;
+    extern crate rand;
 
     async fn setup() -> (wgpu::Device, wgpu::Queue) {
         let backend = wgpu::Backends::all();
@@ -810,5 +815,42 @@ mod tests {
         );
 
         render_test(&mut vger, &device, &queue, "bezier_stroke_gradient.png");
+    }
+
+    fn rand2<T:rand::Rng>(rng: &mut T) -> LocalPoint {
+        LocalPoint::new(rng.gen_range(0.0, 512.0), rng.gen_range(0.0,512.0))
+    }
+
+    #[test]
+    fn path_fill() {
+
+        let (device, queue) = block_on(setup());
+
+        let mut vger = VGER::new(&device);
+
+        vger.begin(512.0, 512.0, 1.0);
+
+        let paint = vger.linear_gradient(
+            [100.0, 100.0].into(),
+            [200.0, 200.0].into(),
+            Color::CYAN,
+            Color::MAGENTA,
+            0.0,
+        );
+
+        let mut rng = rand::thread_rng();
+
+        let start = rand2(&mut rng);
+
+        vger.move_to(start);
+
+        for _ in 0 .. 10 {
+            vger.quad_to(rand2(&mut rng), rand2(&mut rng));
+        }
+
+        vger.quad_to(rand2(&mut rng), start);
+        vger.fill(paint);
+
+        render_test(&mut vger, &device, &queue, "path_fill.png");
     }
 }
