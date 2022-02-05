@@ -548,7 +548,7 @@ mod tests {
 
         vger.begin(512.0, 512.0, 1.0);
         let cyan = vger.color_paint(Color::CYAN);
-        vger.fill_circle(LocalPoint::new(100.0,100.0), 20.0, cyan);
+        vger.fill_circle([100.0, 100.0].into(), 20.0, cyan);
 
         render_test(&mut vger, &device, &queue, "circle.png");
 
