@@ -54,6 +54,7 @@ pub struct VGER {
     uniforms: GPUVec<Uniforms>,
     xform_count: usize,
     path_scanner: PathScanner,
+    pen: LocalPoint,
 }
 
 impl VGER {
@@ -153,6 +154,7 @@ impl VGER {
             uniform_bind_group,
             xform_count: 0,
             path_scanner: PathScanner::new(),
+            pen: LocalPoint::zero(),
         }
     }
 
@@ -169,6 +171,7 @@ impl VGER {
         self.tx_stack.push(LocalToWorld::identity());
         self.paint_count = 0;
         self.xform_count = 0;
+        self.pen = LocalPoint::zero();
     }
 
     pub fn save(&mut self) {
@@ -363,6 +366,11 @@ impl VGER {
         prim.xform = self.add_xform() as u32;
 
         self.render(prim);
+    }
+
+    pub fn quad_to(&mut self, b: LocalPoint, c: LocalPoint) {
+        self.path_scanner.segments.push(PathSegment::new(self.pen,b,c));
+        self.pen = c;
     }
 
     fn add_xform(&mut self) -> usize {
