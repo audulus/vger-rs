@@ -856,8 +856,8 @@ mod tests {
         vger.begin(512.0, 512.0, 1.0);
 
         let paint = vger.linear_gradient(
-            [100.0, 100.0].into(),
-            [200.0, 200.0].into(),
+            [0.0,0.0].into(),
+            [512.0, 512.0].into(),
             Color::CYAN,
             Color::MAGENTA,
             0.0,
