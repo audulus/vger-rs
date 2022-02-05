@@ -398,6 +398,8 @@ impl VGER {
 
                 index = self.path_scanner.segments[a].next;
             }
+
+            self.render(prim);
         }
     }
 
