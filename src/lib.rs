@@ -584,7 +584,12 @@ mod tests {
         }
     }
 
-    fn render_test(vger: &mut VGER, device: &wgpu::Device, queue: &wgpu::Queue, name: &str) {
+    fn render_test(vger: &mut VGER, device: &wgpu::Device, queue: &wgpu::Queue, name: &str, capture: bool) {
+
+        if capture {
+            device.start_capture();
+        }
+
         let texture_size = wgpu::Extent3d {
             width: 512,
             height: 512,
@@ -663,7 +668,9 @@ mod tests {
 
         device.poll(wgpu::Maintain::Wait);
 
-        device.stop_capture();
+        if capture {
+            device.stop_capture();
+        }
 
         block_on(create_png(name, device, output_buffer, &buffer_dimensions));
     }
@@ -678,7 +685,7 @@ mod tests {
         let cyan = vger.color_paint(Color::CYAN);
         vger.fill_circle([100.0, 100.0].into(), 20.0, cyan);
 
-        render_test(&mut vger, &device, &queue, "circle.png");
+        render_test(&mut vger, &device, &queue, "circle.png", false);
     }
 
     #[test]
@@ -694,7 +701,7 @@ mod tests {
             vger.fill_circle([100.0 * (i as f32), 100.0].into(), 20.0, cyan);
         }
 
-        render_test(&mut vger, &device, &queue, "circle_array.png");
+        render_test(&mut vger, &device, &queue, "circle_array.png", false);
     }
 
     #[test]
@@ -707,7 +714,7 @@ mod tests {
         let cyan = vger.color_paint(Color::CYAN);
         vger.fill_rect([100.0, 100.0].into(), [200.0, 200.0].into(), 10.0, cyan);
 
-        render_test(&mut vger, &device, &queue, "rect.png");
+        render_test(&mut vger, &device, &queue, "rect.png", false);
     }
 
     #[test]
@@ -728,7 +735,7 @@ mod tests {
 
         vger.fill_rect([100.0, 100.0].into(), [200.0, 200.0].into(), 10.0, paint);
 
-        render_test(&mut vger, &device, &queue, "rect_gradient.png");
+        render_test(&mut vger, &device, &queue, "rect_gradient.png", false);
     }
 
     #[test]
@@ -755,7 +762,7 @@ mod tests {
             paint,
         );
 
-        render_test(&mut vger, &device, &queue, "rect_stroke_gradient.png");
+        render_test(&mut vger, &device, &queue, "rect_stroke_gradient.png", false);
     }
 
     #[test]
@@ -783,7 +790,7 @@ mod tests {
             paint,
         );
 
-        render_test(&mut vger, &device, &queue, "arc_stroke_gradient.png");
+        render_test(&mut vger, &device, &queue, "arc_stroke_gradient.png", false);
     }
 
     #[test]
@@ -804,7 +811,7 @@ mod tests {
 
         vger.stroke_segment([100.0, 100.0].into(), [200.0, 200.0].into(), 4.0, paint);
 
-        render_test(&mut vger, &device, &queue, "segment_stroke_gradient.png");
+        render_test(&mut vger, &device, &queue, "segment_stroke_gradient.png", false);
     }
 
     #[test]
@@ -831,7 +838,7 @@ mod tests {
             paint,
         );
 
-        render_test(&mut vger, &device, &queue, "bezier_stroke_gradient.png");
+        render_test(&mut vger, &device, &queue, "bezier_stroke_gradient.png", false);
     }
 
     fn rand2<T:rand::Rng>(rng: &mut T) -> LocalPoint {
@@ -868,6 +875,6 @@ mod tests {
         vger.quad_to(rand2(&mut rng), start);
         vger.fill(paint);
 
-        render_test(&mut vger, &device, &queue, "path_fill.png");
+        render_test(&mut vger, &device, &queue, "path_fill.png", false);
     }
 }
