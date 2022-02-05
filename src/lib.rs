@@ -232,7 +232,7 @@ impl VGER {
             center.x - radius,
             center.y - radius,
             center.x + radius,
-            center.y + radius
+            center.y + radius,
         ];
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
