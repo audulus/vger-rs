@@ -44,7 +44,7 @@ pub struct PathScanner {
     pub segments: Vec<PathSegment>,
     nodes: Vec<PathScannerNode>,
     index: usize,
-    interval: Interval,
+    pub interval: Interval,
     pub first: Option<usize>,
 }
 
