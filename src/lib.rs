@@ -55,6 +55,7 @@ pub struct VGER {
     xform_count: usize,
     path_scanner: PathScanner,
     pen: LocalPoint,
+    cv_count: usize,
 }
 
 impl VGER {
@@ -155,6 +156,7 @@ impl VGER {
             xform_count: 0,
             path_scanner: PathScanner::new(),
             pen: LocalPoint::zero(),
+            cv_count: 0,
         }
     }
 
@@ -373,6 +375,13 @@ impl VGER {
         self.pen = c;
     }
 
+    fn add_cv(&mut self, p: LocalPoint) {
+        if self.cv_count < MAX_PRIMS {
+            self.scenes[self.cur_scene].cvs[self.cv_count] = p;
+            self.cv_count += 1;
+        }
+    }
+
     pub fn fill(&mut self, paint_index: PaintIndex) {
         let xform = self.add_xform();
 
@@ -391,7 +400,7 @@ impl VGER {
 
                 for i in 0..3 {
                     let p = self.path_scanner.segments[a].cvs[i];
-                    // self.add_cv(p);
+                    self.add_cv(p);
                     x_interval.a = x_interval.a.min(p.x);
                     x_interval.b = x_interval.b.max(p.x);
                 }
