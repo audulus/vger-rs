@@ -311,6 +311,28 @@ impl VGER {
         self.render(prim);
     }
 
+    pub fn stroke_segment(
+        &mut self,
+        a: LocalPoint,
+        b: LocalPoint,
+        width: f32,
+        paint_index: PaintIndex,
+    ) {
+        let mut prim = Prim::default();
+        prim.prim_type = PrimType::Segment as u32;
+        prim.cvs[0] = a.x;
+        prim.cvs[1] = a.y;
+        prim.cvs[2] = b.x;
+        prim.cvs[3] = b.y;
+        prim.width = width;
+        prim.paint = paint_index.index as u32;
+        prim.quad_bounds = [a.x.min(b.x), a.y.min(b.y), a.x.max(b.x), a.y.max(b.y)];
+        prim.tex_bounds = prim.quad_bounds;
+        prim.xform = self.add_xform() as u32;
+
+        self.render(prim);
+    }
+
     fn add_xform(&mut self) -> usize {
         if self.xform_count < MAX_PRIMS {
             self.scenes[self.cur_scene].xforms[self.xform_count] = *self.tx_stack.last().unwrap();
