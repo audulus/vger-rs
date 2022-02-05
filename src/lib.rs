@@ -682,6 +682,22 @@ mod tests {
     }
 
     #[test]
+    fn fill_circle_array() {
+        let (device, queue) = block_on(setup());
+
+        let mut vger = VGER::new(&device);
+
+        vger.begin(512.0, 512.0, 1.0);
+        let cyan = vger.color_paint(Color::CYAN);
+
+        for i in 0..5 {
+            vger.fill_circle([100.0 * (i as f32), 100.0].into(), 20.0, cyan);
+        }
+
+        render_test(&mut vger, &device, &queue, "circle_array.png");
+    }
+
+    #[test]
     fn fill_rect() {
         let (device, queue) = block_on(setup());
 
