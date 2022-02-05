@@ -19,3 +19,4 @@ futures = "0.3"
 euclid = "0.22.6"
 mem_align = { git="https://github.com/adamnemecek/mem_align" }
 png = "0.16"
+fontdue = "0.6.3"
