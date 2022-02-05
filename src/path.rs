@@ -3,13 +3,13 @@
 use crate::defs::*;
 
 pub struct Interval {
-    a: f32,
-    b: f32,
+    pub a: f32,
+    pub b: f32,
 }
 
 pub struct PathSegment {
-    cvs: [LocalPoint; 3],
-    next: Option<usize>,
+    pub cvs: [LocalPoint; 3],
+    pub next: Option<usize>,
     previous: Option<usize>,
 }
 
@@ -45,7 +45,7 @@ pub struct PathScanner {
     nodes: Vec<PathScannerNode>,
     index: usize,
     interval: Interval,
-    first: Option<usize>,
+    pub first: Option<usize>,
 }
 
 impl PathScanner {
@@ -111,7 +111,7 @@ impl PathScanner {
         self.init();
     }
 
-    fn next(&mut self) -> bool {
+    pub fn next(&mut self) -> bool {
         let y = self.nodes[self.index as usize].coord;
         self.interval.a = y;
         let n = self.nodes.len();
