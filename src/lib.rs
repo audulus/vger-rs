@@ -37,6 +37,10 @@ struct Uniforms {
     size: [f32; 2]
 }
 
+pub struct PaintIndex {
+    index: usize
+}
+
 pub struct VGER {
     scenes: [Scene; 3],
     cur_prim: [usize; MAX_LAYERS],
@@ -221,13 +225,13 @@ impl VGER {
         }
     }
 
-    pub fn fill_circle(&mut self, center: LocalPoint, radius: f32, paint_index: usize) {
+    pub fn fill_circle(&mut self, center: LocalPoint, radius: f32, paint_index: PaintIndex) {
         let mut prim = Prim::default();
         prim.prim_type = 0;
         prim.cvs[0] = center.x;
         prim.cvs[1] = center.y;
         prim.radius = radius;
-        prim.paint = paint_index as u32;
+        prim.paint = paint_index.index as u32;
         prim.quad_bounds[0] = center.x - radius;
         prim.quad_bounds[1] = center.y - radius;
         prim.quad_bounds[2] = center.x + radius;
@@ -245,7 +249,7 @@ impl VGER {
         width: f32,
         rotation: f32,
         aperture: f32,
-        paint_index: usize,
+        paint_index: PaintIndex,
     ) {
         let mut prim = Prim::default();
         prim.prim_type = 1;
@@ -256,13 +260,13 @@ impl VGER {
             aperture.sin(), aperture.cos(),
         ];
         prim.width = width;
-        prim.paint = paint_index as u32;
+        prim.paint = paint_index.index as u32;
         prim.xform = self.add_xform() as u32;
 
         self.render(prim);
     }
 
-    pub fn fill_rect(&mut self, min: LocalPoint, max: LocalPoint, radius: f32, paint_index: usize) {
+    pub fn fill_rect(&mut self, min: LocalPoint, max: LocalPoint, radius: f32, paint_index: PaintIndex) {
         let mut prim = Prim::default();
         prim.prim_type = 2;
         prim.cvs[0] = min.x;
@@ -270,7 +274,7 @@ impl VGER {
         prim.cvs[2] = max.x;
         prim.cvs[3] = max.y;
         prim.radius = radius;
-        prim.paint = paint_index as u32;
+        prim.paint = paint_index.index as u32;
         prim.quad_bounds[0] = min.x;
         prim.quad_bounds[1] = min.y;
         prim.quad_bounds[2] = max.x;
@@ -297,16 +301,16 @@ impl VGER {
         }
     }
 
-    fn add_paint(&mut self, paint: Paint) -> usize {
+    fn add_paint(&mut self, paint: Paint) -> PaintIndex {
         if self.paint_count < MAX_PRIMS {
             self.scenes[self.cur_scene].paints[self.paint_count] = paint;
             self.paint_count += 1;
-            return self.paint_count-1;
+            return PaintIndex{index: self.paint_count-1};
         }
-        0
+        PaintIndex{index: 0}
     }
 
-    pub fn color_paint(&mut self, color: Color) -> usize {
+    pub fn color_paint(&mut self, color: Color) -> PaintIndex {
         self.add_paint(Paint::solid_color(color))
     }
 
@@ -316,7 +320,7 @@ impl VGER {
         end: LocalPoint,
         inner_color: Color,
         outer_color: Color,
-        glow: f32) -> usize {
+        glow: f32) -> PaintIndex {
             self.add_paint(Paint::linear_gradient(start, end, inner_color, outer_color, glow))
         }
 }
