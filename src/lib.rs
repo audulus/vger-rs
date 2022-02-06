@@ -408,10 +408,10 @@ impl VGER {
                 for i in 0..3 {
                     let p = self.path_scanner.segments[a].cvs[i];
                     self.add_cv(p);
-                    prim.count += 1;
                     x_interval.a = x_interval.a.min(p.x);
                     x_interval.b = x_interval.b.max(p.x);
                 }
+                prim.count += 1;
 
                 index = self.path_scanner.segments[a].next;
             }
