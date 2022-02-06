@@ -30,6 +30,8 @@ use gpu_vec::*;
 mod color;
 use color::Color;
 
+mod atlas;
+
 #[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 struct Uniforms {
