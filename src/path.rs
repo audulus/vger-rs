@@ -14,10 +14,9 @@ pub struct PathSegment {
 }
 
 impl PathSegment {
-
     pub fn new(a: LocalPoint, b: LocalPoint, c: LocalPoint) -> Self {
         Self {
-            cvs: [a,b,c],
+            cvs: [a, b, c],
             next: None,
             previous: None,
         }

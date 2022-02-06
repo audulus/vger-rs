@@ -376,7 +376,9 @@ impl VGER {
     }
 
     pub fn quad_to(&mut self, b: LocalPoint, c: LocalPoint) {
-        self.path_scanner.segments.push(PathSegment::new(self.pen,b,c));
+        self.path_scanner
+            .segments
+            .push(PathSegment::new(self.pen, b, c));
         self.pen = c;
     }
 
@@ -393,18 +395,19 @@ impl VGER {
         self.path_scanner.init();
 
         while self.path_scanner.next() {
-
             let mut prim = Prim::default();
             prim.prim_type = PrimType::PathFill as u32;
             prim.paint = paint_index.index as u32;
             prim.xform = xform as u32;
             prim.start = self.cv_count as u32;
 
-            let mut x_interval = Interval{ a: std::f32::MAX, b: std::f32::MIN};
+            let mut x_interval = Interval {
+                a: std::f32::MAX,
+                b: std::f32::MIN,
+            };
 
-            let mut index =  self.path_scanner.first;
+            let mut index = self.path_scanner.first;
             while let Some(a) = index {
-
                 for i in 0..3 {
                     let p = self.path_scanner.segments[a].cvs[i];
                     self.add_cv(p);
@@ -585,8 +588,13 @@ mod tests {
         }
     }
 
-    fn render_test(vger: &mut VGER, device: &wgpu::Device, queue: &wgpu::Queue, name: &str, capture: bool) {
-
+    fn render_test(
+        vger: &mut VGER,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        name: &str,
+        capture: bool,
+    ) {
         if capture {
             device.start_capture();
         }
@@ -763,7 +771,13 @@ mod tests {
             paint,
         );
 
-        render_test(&mut vger, &device, &queue, "rect_stroke_gradient.png", false);
+        render_test(
+            &mut vger,
+            &device,
+            &queue,
+            "rect_stroke_gradient.png",
+            false,
+        );
     }
 
     #[test]
@@ -812,7 +826,13 @@ mod tests {
 
         vger.stroke_segment([100.0, 100.0].into(), [200.0, 200.0].into(), 4.0, paint);
 
-        render_test(&mut vger, &device, &queue, "segment_stroke_gradient.png", false);
+        render_test(
+            &mut vger,
+            &device,
+            &queue,
+            "segment_stroke_gradient.png",
+            false,
+        );
     }
 
     #[test]
@@ -839,16 +859,21 @@ mod tests {
             paint,
         );
 
-        render_test(&mut vger, &device, &queue, "bezier_stroke_gradient.png", false);
+        render_test(
+            &mut vger,
+            &device,
+            &queue,
+            "bezier_stroke_gradient.png",
+            false,
+        );
     }
 
-    fn rand2<T:rand::Rng>(rng: &mut T) -> LocalPoint {
-        LocalPoint::new(rng.gen_range(0.0, 512.0), rng.gen_range(0.0,512.0))
+    fn rand2<T: rand::Rng>(rng: &mut T) -> LocalPoint {
+        LocalPoint::new(rng.gen_range(0.0, 512.0), rng.gen_range(0.0, 512.0))
     }
 
     #[test]
     fn path_fill() {
-
         let (device, queue) = block_on(setup());
 
         let mut vger = VGER::new(&device);
@@ -856,7 +881,7 @@ mod tests {
         vger.begin(512.0, 512.0, 1.0);
 
         let paint = vger.linear_gradient(
-            [0.0,0.0].into(),
+            [0.0, 0.0].into(),
             [512.0, 512.0].into(),
             Color::CYAN,
             Color::MAGENTA,
@@ -869,13 +894,13 @@ mod tests {
 
         vger.move_to(start);
 
-        for _ in 0 .. 10 {
+        for _ in 0..10 {
             vger.quad_to(rand2(&mut rng), rand2(&mut rng));
         }
 
         vger.quad_to(rand2(&mut rng), start);
         vger.fill(paint);
 
-        render_test(&mut vger, &device, &queue, "path_fill.png", false);
+        render_test(&mut vger, &device, &queue, "path_fill.png", true);
     }
 }
