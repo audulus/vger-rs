@@ -11,7 +11,7 @@ struct GlyphInfo {
     metrics: fontdue::Metrics,
 }
 
-struct GlyphCache {
+pub struct GlyphCache {
     atlas: Atlas,
     font: fontdue::Font,
     info: HashMap<(char, u32), GlyphInfo>
