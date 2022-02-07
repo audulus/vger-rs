@@ -2,11 +2,12 @@
 use crate::atlas::Atlas;
 use crate::defs::*;
 use std::collections::HashMap;
+use rect_packer::Rect;
 
 #[derive(Copy, Clone, Debug)]
 struct GlyphInfo {
     size: u32,
-    region_index: Option<usize>,
+    rect: Rect,
     metrics: fontdue::Metrics,
 }
 
@@ -36,11 +37,11 @@ impl GlyphCache {
             None => {
                 let (metrics, data) = self.font.rasterize(c, size as f32);
 
-                self.atlas.add_region(&data, metrics.width as u32, metrics.height as u32);
+                let rect = self.atlas.add_region(&data, metrics.width as u32, metrics.height as u32).unwrap();
 
                 let info = GlyphInfo {
                     size,
-                    region_index: None,
+                    rect,
                     metrics
                 };
 
