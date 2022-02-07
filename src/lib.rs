@@ -33,6 +33,8 @@ use color::Color;
 mod atlas;
 use atlas::Atlas;
 
+mod glyphs;
+
 #[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 struct Uniforms {
