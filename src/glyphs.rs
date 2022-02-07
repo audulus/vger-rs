@@ -6,9 +6,9 @@ use rect_packer::Rect;
 
 #[derive(Copy, Clone, Debug)]
 pub struct GlyphInfo {
-    size: u32,
-    rect: Rect,
-    metrics: fontdue::Metrics,
+    pub size: u32,
+    pub rect: Rect,
+    pub metrics: fontdue::Metrics,
 }
 
 pub struct GlyphCache {
