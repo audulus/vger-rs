@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use rect_packer::Rect;
 
 #[derive(Copy, Clone, Debug)]
-struct GlyphInfo {
+pub struct GlyphInfo {
     size: u32,
     rect: Rect,
     metrics: fontdue::Metrics,
