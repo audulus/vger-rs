@@ -1,4 +1,5 @@
 use euclid::*;
+use fontdue::layout::{Layout, CoordinateSystem};
 // use wgpu::*;
 
 /*
@@ -63,6 +64,7 @@ pub struct VGER {
     pen: LocalPoint,
     cv_count: usize,
     atlas: Atlas,
+    layout: Layout,
 }
 
 impl VGER {
@@ -148,6 +150,8 @@ impl VGER {
             multiview: None,
         });
 
+        let mut layout = Layout::new(CoordinateSystem::PositiveYUp);
+
         Self {
             scenes,
             cur_prim: [0, 0, 0, 0],
@@ -165,6 +169,7 @@ impl VGER {
             pen: LocalPoint::zero(),
             cv_count: 0,
             atlas: Atlas::new(device),
+            layout,
         }
     }
 
@@ -434,6 +439,11 @@ impl VGER {
 
             self.render(prim);
         }
+    }
+
+    pub fn text(&mut self, text: &str) {
+
+        
     }
 
     fn add_xform(&mut self) -> usize {
