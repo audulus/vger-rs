@@ -210,6 +210,8 @@ impl VGER {
             label: Some("vger encoder"),
         });
 
+        self.glyph_cache.update(device, &mut encoder);
+
         {
             let mut rpass = encoder.begin_render_pass(render_pass);
 
