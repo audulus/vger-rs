@@ -1,5 +1,14 @@
 
 use crate::atlas::Atlas;
+use crate::defs::*;
+
+struct GlyphInfo {
+    size: f32,
+    region_index: Option<usize>,
+    texture_widht: usize,
+    texture_height: usize,
+    glyph_bounds: LocalRect,
+}
 
 struct GlyphCache {
     atlas: Atlas,
