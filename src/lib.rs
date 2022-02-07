@@ -31,6 +31,7 @@ mod color;
 use color::Color;
 
 mod atlas;
+use atlas::Atlas;
 
 #[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
@@ -59,6 +60,7 @@ pub struct VGER {
     path_scanner: PathScanner,
     pen: LocalPoint,
     cv_count: usize,
+    atlas: Atlas,
 }
 
 impl VGER {
@@ -160,6 +162,7 @@ impl VGER {
             path_scanner: PathScanner::new(),
             pen: LocalPoint::zero(),
             cv_count: 0,
+            atlas: Atlas::new(device),
         }
     }
 
