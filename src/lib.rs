@@ -460,6 +460,18 @@ impl VGER {
             let mut prim = Prim::default();
             prim.prim_type = PrimType::Glyph as u32;
             prim.xform = xform;
+            prim.quad_bounds = [
+                glyph.x,
+                glyph.y,
+                glyph.x + glyph.width as f32,
+                glyph.y + glyph.height as f32
+            ];
+            prim.tex_bounds = [
+                info.rect.x as f32,
+                info.rect.y as f32,
+                (info.rect.x + info.rect.width) as f32,
+                (info.rect.y + info.rect.height) as f32
+            ];
 
             prims.push(prim);
 
