@@ -1,7 +1,5 @@
-use rectangle_pack::*;
 use wgpu;
 use wgpu::util::DeviceExt;
-// use std::collections::BTreeMap;
 use rect_packer::Packer;
 
 #[derive(Debug)]
