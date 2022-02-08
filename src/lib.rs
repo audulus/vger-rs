@@ -96,6 +96,12 @@ impl VGER {
                         },
                         count: None,
                     },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 2,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                        count: None,
+                    },
                 ],
                 label: Some("uniform_bind_group_layout"),
             });
@@ -106,6 +112,13 @@ impl VGER {
 
         let uniforms = GPUVec::new_uniforms(device, "uniforms");
 
+        let glyph_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("glyph"),
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            ..Default::default()
+        });
+
         let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &uniform_bind_group_layout,
             entries: &[
@@ -113,6 +126,10 @@ impl VGER {
                 wgpu::BindGroupEntry {
                     binding: 1,
                     resource: wgpu::BindingResource::TextureView(&texture_view),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: wgpu::BindingResource::Sampler(&glyph_sampler),
                 },
             ],
             label: Some("vger bind group"),
