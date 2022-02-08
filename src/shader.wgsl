@@ -564,14 +564,13 @@ fn fs_main(
     let prim = prims.prims[in.prim_index];
     let paint = paints.paints[prim.paint];
 
+    // Look up glyph alpha (if not a glyph, still have to because of wgsl).
+    let a = textureSample(glyph_atlas, samp, in.t/1024.0).r;
+
     if(prim.prim_type == 8u) { // vgerGlyph
 
-        var color = vec4<f32>(0.0,1.0,1.0,1.0);
-        //constexpr sampler glyphSampler (mag_filter::linear,
-        //                                  min_filter::linear,
-        //                                  coord::pixel);
-
-                                        
+        let c = paint.inner_color;
+        var color = vec4<f32>(c.rgb, a);                                
 
         //auto c = paint.innerColor;
         //auto color = float4(c.rgb, c.a * glyphs.sample(glyphSampler, in.t).a);
