@@ -85,7 +85,7 @@ impl Atlas {
             let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("atlas temp buffer"),
                 contents: &padded_data,
-                usage: wgpu::BufferUsages::COPY_SRC,
+                usage: wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::MAP_WRITE,
             });
 
             let image_size = wgpu::Extent3d {
