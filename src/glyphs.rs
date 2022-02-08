@@ -7,7 +7,7 @@ use rect_packer::Rect;
 #[derive(Copy, Clone, Debug)]
 pub struct GlyphInfo {
     pub size: u32,
-    pub rect: Rect,
+    pub rect: Option<Rect>,
     pub metrics: fontdue::Metrics,
 }
 
@@ -37,7 +37,7 @@ impl GlyphCache {
             None => {
                 let (metrics, data) = self.font.rasterize(c, size as f32);
 
-                let rect = self.atlas.add_region(&data, metrics.width as u32, metrics.height as u32).unwrap();
+                let rect = self.atlas.add_region(&data, metrics.width as u32, metrics.height as u32);
 
                 let info = GlyphInfo {
                     size,

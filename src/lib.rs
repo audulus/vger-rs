@@ -457,25 +457,28 @@ impl VGER {
         let mut prims = vec![];
         for glyph in self.layout.glyphs() {
             let c = text.chars().nth(i).unwrap();
+            println!("glyph {:?}", c);
             let info = self.glyph_cache.get_glyph(c, size);
 
-            let mut prim = Prim::default();
-            prim.prim_type = PrimType::Glyph as u32;
-            prim.xform = xform;
-            prim.quad_bounds = [
-                glyph.x,
-                glyph.y,
-                glyph.x + glyph.width as f32,
-                glyph.y + glyph.height as f32
-            ];
-            prim.tex_bounds = [
-                info.rect.x as f32,
-                info.rect.y as f32,
-                (info.rect.x + info.rect.width) as f32,
-                (info.rect.y + info.rect.height) as f32
-            ];
-
-            prims.push(prim);
+            if let Some(rect) = info.rect {
+                let mut prim = Prim::default();
+                prim.prim_type = PrimType::Glyph as u32;
+                prim.xform = xform;
+                prim.quad_bounds = [
+                    glyph.x,
+                    glyph.y,
+                    glyph.x + glyph.width as f32,
+                    glyph.y + glyph.height as f32
+                ];
+                prim.tex_bounds = [
+                    rect.x as f32,
+                    rect.y as f32,
+                    (rect.x + rect.width) as f32,
+                    (rect.y + rect.height) as f32
+                ];
+    
+                prims.push(prim);
+            }            
 
             i += 1;
         }
