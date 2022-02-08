@@ -80,6 +80,8 @@ impl Atlas {
                 }
             }
 
+            assert!(padded_data.len() == (padded_width * data.rect.height) as usize);
+
             let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("atlas temp buffer"),
                 contents: &padded_data,
