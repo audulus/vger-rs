@@ -552,6 +552,9 @@ fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
 [[group(1), binding(1)]]
 var glyph_atlas: texture_2d<f32>;
 
+[[group(1), binding(2)]]
+var samp : sampler;
+
 [[stage(fragment)]]
 fn fs_main(
     in: VertexOutput,
