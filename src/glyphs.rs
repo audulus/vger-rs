@@ -34,6 +34,15 @@ impl GlyphCache {
             None => {
                 let (metrics, data) = self.font.rasterize(c, size as f32);
 
+                let mut i = 0;
+                for _ in 0..metrics.height {
+                    for _ in 0..metrics.width {
+                        print!("{} ", if data[i] != 0 { '*' } else { ' ' });
+                        i += 1;
+                    }
+                    print!("\n");
+                }
+
                 let rect =
                     self.atlas
                         .add_region(&data, metrics.width as u32, metrics.height as u32);
