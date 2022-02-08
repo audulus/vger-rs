@@ -1,6 +1,6 @@
+use rect_packer::{Packer, Rect};
 use wgpu;
 use wgpu::util::DeviceExt;
-use rect_packer::{Packer, Rect};
 
 #[derive(Debug)]
 struct ImageData {
@@ -11,7 +11,7 @@ struct ImageData {
 pub struct Atlas {
     packer: Packer,
     new_data: Vec<ImageData>,
-    atlas_texture: wgpu::Texture
+    atlas_texture: wgpu::Texture,
 }
 
 impl Atlas {
@@ -43,39 +43,31 @@ impl Atlas {
         Self {
             packer: Packer::new(config),
             new_data: vec![],
-            atlas_texture
+            atlas_texture,
         }
     }
 
     pub fn add_region(&mut self, data: &[u8], width: u32, height: u32) -> Option<Rect> {
-
-        if let Some(rect) = self
-            .packer
-            .pack(width as i32, height as i32, false) {
-
+        if let Some(rect) = self.packer.pack(width as i32, height as i32, false) {
             self.new_data.push(ImageData {
                 rect,
                 data: data.into(),
             });
 
             Some(rect)
-            
         } else {
             None
         }
-        
     }
 
     pub fn update(&mut self, device: &wgpu::Device, encoder: &mut wgpu::CommandEncoder) {
-
         for data in &self.new_data {
-
             // Pad data to wgpu::COPY_BYTES_PER_ROW_ALIGNMENT
             let align = wgpu::COPY_BYTES_PER_ROW_ALIGNMENT as i32;
             let padding = (align - data.rect.width % align) % align;
             let padded_width = data.rect.width + padding;
             let mut padded_data = vec![];
-            padded_data.reserve( (padded_width * data.rect.height) as usize );
+            padded_data.reserve((padded_width * data.rect.height) as usize);
 
             let mut i = 0;
             for _ in 0..data.rect.height {
@@ -107,13 +99,17 @@ impl Atlas {
                         offset: 0,
                         bytes_per_row: std::num::NonZeroU32::new(padded_width as u32),
                         rows_per_image: None,
-                    }
+                    },
                 },
                 wgpu::ImageCopyTexture {
                     texture: &self.atlas_texture,
                     mip_level: 0,
                     aspect: wgpu::TextureAspect::All,
-                    origin: wgpu::Origin3d{x: data.rect.x as u32, y: data.rect.y as u32, z: 0},
+                    origin: wgpu::Origin3d {
+                        x: data.rect.x as u32,
+                        y: data.rect.y as u32,
+                        z: 0,
+                    },
                 },
                 image_size,
             );

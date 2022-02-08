@@ -1,5 +1,5 @@
 use euclid::*;
-use fontdue::layout::{Layout, CoordinateSystem, LayoutSettings, TextStyle};
+use fontdue::layout::{CoordinateSystem, Layout, LayoutSettings, TextStyle};
 // use wgpu::*;
 
 /*
@@ -444,12 +444,14 @@ impl VGER {
     }
 
     pub fn text(&mut self, text: &str, size: u32) {
-
         self.layout.reset(&LayoutSettings {
             ..LayoutSettings::default()
         });
 
-        self.layout.append(&[&self.glyph_cache.font], &TextStyle::new(text, size as f32, 0));
+        self.layout.append(
+            &[&self.glyph_cache.font],
+            &TextStyle::new(text, size as f32, 0),
+        );
 
         let xform = self.add_xform() as u32;
 
@@ -468,17 +470,17 @@ impl VGER {
                     glyph.x,
                     glyph.y,
                     glyph.x + glyph.width as f32,
-                    glyph.y + glyph.height as f32
+                    glyph.y + glyph.height as f32,
                 ];
                 println!("quad_bounds: {:?}", prim.quad_bounds);
                 prim.tex_bounds = [
                     rect.x as f32,
                     rect.y as f32,
                     (rect.x + rect.width) as f32,
-                    (rect.y + rect.height) as f32
+                    (rect.y + rect.height) as f32,
                 ];
                 println!("tex_bounds: {:?}", prim.tex_bounds);
-    
+
                 prims.push(prim);
             }
 
