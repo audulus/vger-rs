@@ -121,6 +121,7 @@ impl Atlas {
     }
 
     pub fn create_view(&self) -> wgpu::TextureView {
-        self.atlas_texture.create_view(&wgpu::TextureViewDescriptor::default())
+        self.atlas_texture
+            .create_view(&wgpu::TextureViewDescriptor::default())
     }
 }
