@@ -35,7 +35,7 @@ impl Atlas {
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            format: wgpu::TextureFormat::R8Unorm,
             usage: wgpu::TextureUsages::COPY_DST,
             label: Some("atlas_texture"),
         });
