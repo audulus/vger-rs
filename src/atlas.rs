@@ -15,18 +15,21 @@ pub struct Atlas {
 }
 
 impl Atlas {
+
+    pub const ATLAS_SIZE: u32 = 1024;
+
     pub fn new(device: &wgpu::Device) -> Self {
         let config = rect_packer::Config {
-            width: 1024,
-            height: 1024,
+            width: Atlas::ATLAS_SIZE as i32,
+            height: Atlas::ATLAS_SIZE as i32,
 
             border_padding: 5,
             rectangle_padding: 10,
         };
 
         let texture_size = wgpu::Extent3d {
-            width: 1024,
-            height: 1024,
+            width: Atlas::ATLAS_SIZE,
+            height: Atlas::ATLAS_SIZE,
             depth_or_array_layers: 1,
         };
 
