@@ -768,6 +768,20 @@ mod tests {
     }
 
     #[test]
+    fn fill_circle_translate() {
+        let (device, queue) = block_on(setup());
+
+        let mut vger = VGER::new(&device);
+
+        vger.begin(512.0, 512.0, 1.0);
+        let cyan = vger.color_paint(Color::CYAN);
+        vger.translate([256.0, 256.0].into());
+        vger.fill_circle([0.0, 0.0].into(), 20.0, cyan);
+
+        render_test(&mut vger, &device, &queue, "circle_translate.png", false);
+    }
+
+    #[test]
     fn fill_rect() {
         let (device, queue) = block_on(setup());
 
