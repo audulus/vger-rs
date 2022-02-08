@@ -559,9 +559,28 @@ fn fs_main(
 
     let fw = length(fwidth(in.t));
     let prim = prims.prims[in.prim_index];
-    let d = sdPrim(prim, in.t, false, fw);
-
     let paint = paints.paints[prim.paint];
+
+    if(prim.prim_type == 8u) { // vgerGlyph
+
+        var color = vec4<f32>(0.0,1.0,1.0,1.0);
+        //constexpr sampler glyphSampler (mag_filter::linear,
+        //                                  min_filter::linear,
+        //                                  coord::pixel);
+
+                                        
+
+        //auto c = paint.innerColor;
+        //auto color = float4(c.rgb, c.a * glyphs.sample(glyphSampler, in.t).a);
+
+        //if(glow) {
+        //    color.a *= paint.glow;
+        //}
+
+        return color;
+    }
+
+    let d = sdPrim(prim, in.t, false, fw);
     let color = apply(paint, in.t);
 
     return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothStep(-fw/2.0,fw/2.0,d) );
