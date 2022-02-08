@@ -962,4 +962,27 @@ mod tests {
 
         render_test(&mut vger, &device, &queue, "path_fill.png", true);
     }
+
+    #[test]
+    fn text() {
+        let (device, queue) = block_on(setup());
+
+        println!("COPY_BYTES_PER_ROW_ALIGNMENT: {:?}", wgpu::COPY_BYTES_PER_ROW_ALIGNMENT);
+
+        let mut vger = VGER::new(&device);
+
+        vger.begin(512.0, 512.0, 1.0);
+
+        let paint = vger.linear_gradient(
+            [0.0, 0.0].into(),
+            [512.0, 512.0].into(),
+            Color::CYAN,
+            Color::MAGENTA,
+            0.0,
+        );
+
+        vger.text("This is a test", 18);
+
+        render_test(&mut vger, &device, &queue, "text.png", true);
+    }
 }
