@@ -36,7 +36,7 @@ impl Atlas {
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
             format: wgpu::TextureFormat::R8Unorm,
-            usage: wgpu::TextureUsages::COPY_DST,
+            usage: wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::TEXTURE_BINDING,
             label: Some("atlas_texture"),
         });
 
@@ -118,5 +118,9 @@ impl Atlas {
         }
 
         self.new_data.clear();
+    }
+
+    pub fn create_view(&self) -> wgpu::TextureView {
+        self.atlas_texture.create_view(&wgpu::TextureViewDescriptor::default())
     }
 }
