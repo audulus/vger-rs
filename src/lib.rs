@@ -1,14 +1,5 @@
 use euclid::*;
 use fontdue::layout::{CoordinateSystem, Layout, LayoutSettings, TextStyle};
-// use wgpu::*;
-
-/*
-use winit::{
-    event::{Event, WindowEvent},
-    event_loop::{ControlFlow, EventLoop},
-    window::WindowBuilder,
-};
-*/
 
 mod path;
 use path::*;
