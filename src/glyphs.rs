@@ -62,4 +62,8 @@ impl GlyphCache {
     pub fn update(&mut self, device: &wgpu::Device, encoder: &mut wgpu::CommandEncoder) {
         self.atlas.update(device, encoder);
     }
+
+    pub fn create_view(&self) -> wgpu::TextureView {
+        self.atlas.create_view()
+    }
 }
