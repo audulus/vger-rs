@@ -84,15 +84,36 @@ impl VGER {
                         min_binding_size: None,
                     },
                     count: None,
-                }],
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Texture {
+                        multisampled: false,
+                        sample_type: wgpu::TextureSampleType::Float{ filterable: true },
+                        view_dimension: wgpu::TextureViewDimension::D2,
+                    },
+                    count: None,
+                }
+                ],
                 label: Some("uniform_bind_group_layout"),
             });
+
+        let glyph_cache = GlyphCache::new(device);
+
+        let texture_view = glyph_cache.create_view();
 
         let uniforms = GPUVec::new_uniforms(device, "uniforms");
 
         let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &uniform_bind_group_layout,
-            entries: &[uniforms.bind_group_entry(0)],
+            entries: &[
+                uniforms.bind_group_entry(0),
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: wgpu::BindingResource::TextureView(&texture_view),
+                }
+            ],
             label: Some("vger bind group"),
         });
 
@@ -159,7 +180,7 @@ impl VGER {
             path_scanner: PathScanner::new(),
             pen: LocalPoint::zero(),
             cv_count: 0,
-            glyph_cache: GlyphCache::new(device),
+            glyph_cache,
             layout,
         }
     }
