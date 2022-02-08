@@ -549,6 +549,9 @@ fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
     return mix(paint.inner_color, paint.outer_color, d);
 }
 
+[[group(1), binding(1)]]
+var glyph_atlas: texture_2d<f32>;
+
 [[stage(fragment)]]
 fn fs_main(
     in: VertexOutput,
