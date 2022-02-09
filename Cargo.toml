@@ -2,7 +2,7 @@
 resolver = "2" # What does this do?
 
 [package]
-name = "vger-rs"
+name = "vger"
 version = "0.1.0"
 authors = ["Taylor Holliday <taylor@audulus.com>"]
 edition = "2018"
