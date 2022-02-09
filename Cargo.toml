@@ -13,7 +13,6 @@ edition = "2018"
 naga = { git = "https://github.com/audulus/naga", branch = "MSL-address-space-backport-v0.8" }
 
 [dependencies]
-winit = "0.26.0"
 wgpu = "0.12.0"
 futures = "0.3"
 euclid = "0.22.6"
