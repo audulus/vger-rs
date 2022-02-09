@@ -1033,4 +1033,28 @@ mod tests {
 
         render_test(&mut vger, &device, &queue, "text.png", true);
     }
+
+    #[test]
+    fn text_box() {
+        let (device, queue) = block_on(setup());
+
+        let mut vger = VGER::new(&device);
+
+        vger.begin(512.0, 512.0, 1.0);
+
+        let paint = vger.linear_gradient(
+            [0.0, 0.0].into(),
+            [512.0, 512.0].into(),
+            Color::CYAN,
+            Color::MAGENTA,
+            0.0,
+        );
+
+        let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+        vger.translate([32.0, 256.0].into());
+        vger.text(lorem, 18, Some(448.0));
+
+        render_test(&mut vger, &device, &queue, "text_box.png", true);
+    }
 }
