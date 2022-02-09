@@ -13,6 +13,10 @@
 - ✅ Path Fills.
 - ❌ Images
 
+## Why?
+
+I was previously using nanovg for Audulus, which was consuming too much CPU for the immediate-mode UI. nanovg is certainly more full featured, but for Audulus, vger maintains 120fps while nanovg falls to 30fps on my 120Hz iPad because of CPU-side path tessellation, and other overhead. vger renders analytically without tessellation, leaning heavily on the fragment shader.
+
 ## How it works
 
 vger draws a quad for each primitive and computes the actual primitive shape in the fragment function with an [SDF](https://en.wikipedia.org/wiki/Signed_distance_function). For path fills, vger splits paths into horizontal slabs (see [path.rs](https://github.com/audulus/vger-rs/blob/main/src/path.rs)) to reduce the number of tests in the fragment function.
