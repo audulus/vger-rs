@@ -1,6 +1,17 @@
 # vger-rs
 2D GPU renderer for dynamic UIs. Port of [VGER](https://github.com/audulus/vger) to Rust. Early days!
 
+## Status
+
+- ✅ Quadratic bezier strokes 
+- ✅ Round Rectangles
+- ✅ Circles
+- ✅ Line segments (need square ends for Audulus)
+- ❌ Arcs
+- ✅ Text (Audulus only uses one font, but could add support for more if anyone is interested)
+- ✅ Multi-line text
+- ✅ Path Fills.
+
 ## How it works
 
 vger draws a quad for each primitive and computes the actual primitive shape in the fragment function. For path fills, vger splits paths into horizontal slabs (see [path.rs](https://github.com/audulus/vger-rs/blob/main/src/path.rs)) to reduce the number of tests in the fragment function.
