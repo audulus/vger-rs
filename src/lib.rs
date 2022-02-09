@@ -1027,8 +1027,8 @@ mod tests {
             0.0,
         );
 
-        vger.translate([256.0, 256.0].into());
-        vger.text("This is a test", 18);
+        vger.translate([32.0, 256.0].into());
+        vger.text("This is a test", 32);
 
         render_test(&mut vger, &device, &queue, "text.png", true);
     }
