@@ -505,9 +505,9 @@ impl VGER {
                 println!("quad_bounds: {:?}", prim.quad_bounds);
                 prim.tex_bounds = [
                     rect.x as f32,
-                    rect.y as f32,
-                    (rect.x + rect.width) as f32,
                     (rect.y + rect.height) as f32,
+                    (rect.x + rect.width) as f32,
+                    rect.y as f32,
                 ];
                 println!("tex_bounds: {:?}", prim.tex_bounds);
 
