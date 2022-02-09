@@ -473,8 +473,9 @@ impl VGER {
         }
     }
 
-    pub fn text(&mut self, text: &str, size: u32) {
+    pub fn text(&mut self, text: &str, size: u32, max_width: Option<f32>) {
         self.layout.reset(&LayoutSettings {
+            max_width,
             ..LayoutSettings::default()
         });
 
@@ -1028,7 +1029,7 @@ mod tests {
         );
 
         vger.translate([32.0, 256.0].into());
-        vger.text("This is a test", 32);
+        vger.text("This is a test", 32, None);
 
         render_test(&mut vger, &device, &queue, "text.png", true);
     }
