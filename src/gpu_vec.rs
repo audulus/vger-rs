@@ -72,6 +72,13 @@ impl<T: Copy> GPUVec<T> {
         }
     }
 
+    pub async fn map(&self, device: &wgpu::Device) -> Result<(), wgpu::BufferAsyncError> {
+        let buffer_future = self.buffer.slice(..).map_async(wgpu::MapMode::Read);
+        device.poll(wgpu::Maintain::Wait);
+
+        buffer_future.await
+    }
+
     pub fn unmap(&self) {
         self.buffer.unmap();
     }
