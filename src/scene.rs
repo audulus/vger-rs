@@ -85,6 +85,15 @@ impl Scene {
         })
     }
 
+    pub async fn map(&self, device: &wgpu::Device) {
+        for i in 0..4 {
+            self.prims[i].map(device).await.unwrap();
+        }
+        self.cvs.map(device).await.unwrap();
+        self.xforms.map(device).await.unwrap();
+        self.paints.map(device).await.unwrap();
+    }
+
     pub fn unmap(&self) {
         for i in 0..4 {
             self.prims[i].unmap();
