@@ -59,7 +59,7 @@ pub struct VGER {
 }
 
 impl VGER {
-    pub fn new(device: &wgpu::Device) -> Self {
+    pub fn new(device: &wgpu::Device, texture_format: wgpu::TextureFormat) -> Self {
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!(
@@ -162,7 +162,7 @@ impl VGER {
                 module: &shader,
                 entry_point: "fs_main",
                 targets: &[wgpu::ColorTargetState {
-                    format: wgpu::TextureFormat::Rgba8UnormSrgb,
+                    format: texture_format,
                     blend: Some(wgpu::BlendState {
                         color: blend_comp,
                         alpha: blend_comp,
