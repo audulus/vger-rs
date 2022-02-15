@@ -210,7 +210,7 @@ fn fill_circle() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
     let cyan = vger.color_paint(Color::CYAN);
     vger.fill_circle([100.0, 100.0].into(), 20.0, cyan);
 
@@ -223,7 +223,7 @@ fn fill_circle_array() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
     let cyan = vger.color_paint(Color::CYAN);
 
     for i in 0..5 {
@@ -239,7 +239,7 @@ fn fill_circle_translate() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
     let cyan = vger.color_paint(Color::CYAN);
     vger.translate([256.0, 256.0].into());
     vger.fill_circle([0.0, 0.0].into(), 20.0, cyan);
@@ -253,7 +253,7 @@ fn fill_rect() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
     let cyan = vger.color_paint(Color::CYAN);
     vger.fill_rect([100.0, 100.0].into(), [200.0, 200.0].into(), 10.0, cyan);
 
@@ -266,7 +266,7 @@ fn fill_rect_gradient() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
 
     let paint = vger.linear_gradient(
         [100.0, 100.0].into(),
@@ -287,7 +287,7 @@ fn stroke_rect_gradient() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
 
     let paint = vger.linear_gradient(
         [100.0, 100.0].into(),
@@ -320,7 +320,7 @@ fn stroke_arc_gradient() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
 
     let paint = vger.linear_gradient(
         [100.0, 100.0].into(),
@@ -348,7 +348,7 @@ fn segment_stroke_gradient() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
 
     let paint = vger.linear_gradient(
         [100.0, 100.0].into(),
@@ -375,7 +375,7 @@ fn bezier_stroke_gradient() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
 
     let paint = vger.linear_gradient(
         [100.0, 100.0].into(),
@@ -412,7 +412,7 @@ fn path_fill() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
 
     let paint = vger.linear_gradient(
         [0.0, 0.0].into(),
@@ -444,7 +444,7 @@ fn text() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
 
     let paint = vger.linear_gradient(
         [0.0, 0.0].into(),
@@ -466,7 +466,7 @@ fn text_box() {
 
     let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 1.0);
+    vger.begin(512.0, 512.0, 1.0, &device);
 
     let paint = vger.linear_gradient(
         [0.0, 0.0].into(),

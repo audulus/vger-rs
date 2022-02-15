@@ -27,6 +27,8 @@ mod atlas;
 mod glyphs;
 use glyphs::GlyphCache;
 
+use futures::executor::block_on;
+
 #[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 struct Uniforms {
@@ -203,7 +205,7 @@ impl VGER {
         }
     }
 
-    pub fn begin(&mut self, window_width: f32, window_height: f32, device_px_ratio: f32) {
+    pub fn begin(&mut self, window_width: f32, window_height: f32, device_px_ratio: f32, device: &wgpu::Device) {
         self.device_px_ratio = device_px_ratio;
         self.cur_prim = [0, 0, 0, 0];
         self.cur_layer = 0;
@@ -217,6 +219,9 @@ impl VGER {
         self.paint_count = 0;
         self.xform_count = 0;
         self.pen = LocalPoint::zero();
+
+        block_on(self.scenes[self.cur_scene].map(device));
+        block_on(self.uniforms.map(device)).unwrap();
     }
 
     pub fn save(&mut self) {

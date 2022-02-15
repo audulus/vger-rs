@@ -15,7 +15,7 @@ impl<T: Copy> GPUVec<T> {
             label: Some(label),
             size: (size_of::<T>() * capacity) as u64,
             usage: BufferUsages::STORAGE,
-            mapped_at_creation: true,
+            mapped_at_creation: false,
         });
 
         Self {
@@ -30,7 +30,7 @@ impl<T: Copy> GPUVec<T> {
             label: Some(label),
             size: size_of::<T>() as _,
             usage: BufferUsages::UNIFORM,
-            mapped_at_creation: true,
+            mapped_at_creation: false,
         });
 
         Self {
