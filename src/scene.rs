@@ -93,4 +93,13 @@ impl Scene {
         self.xforms.update(queue);
         self.paints.update(queue);
     }
+
+    pub fn clear(&mut self) {
+        for i in 0..4 {
+            self.prims[i].data.clear();
+        }
+        self.cvs.data.clear();
+        self.xforms.data.clear();
+        self.paints.data.clear();
+    }
 }
