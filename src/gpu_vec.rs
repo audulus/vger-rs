@@ -41,6 +41,7 @@ impl<T: Copy> GPUVec<T> {
     }
 
     pub fn update(&self, queue: &wgpu::Queue) {
+        assert!(self.data.len() <= self.capacity);
         let sz = self.data.len() * size_of::<T>();
         queue.write_buffer(&self.buffer, 0, unsafe { std::slice::from_raw_parts_mut(self.data[..].as_ptr() as *mut u8, sz) })
     }
