@@ -254,7 +254,7 @@ impl VGER {
             rpass.set_bind_group(1, &self.uniform_bind_group, &[]);
 
             let n = self.scenes[self.cur_scene].prims[self.cur_layer].data.len();
-            println!("encoding {:?} prims", n);
+            // println!("encoding {:?} prims", n);
 
             rpass.draw(/*vertices*/ 0..4, /*instances*/ 0..(n as u32))
         }
