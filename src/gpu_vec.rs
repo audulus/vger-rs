@@ -44,14 +44,6 @@ impl<T: Copy> GPUVec<T> {
         queue.write_buffer(&self.buffer, 0, unsafe { std::slice::from_raw_parts_mut(self.data[..].as_ptr() as *mut u8, sz) })
     }
 
-    pub fn capacity(&self) -> usize {
-        self.capacity
-    }
-
-    pub fn buffer(&self) -> &wgpu::Buffer {
-        &self.buffer
-    }
-
     pub fn bind_group_layout_entry(binding: u32) -> wgpu::BindGroupLayoutEntry {
         wgpu::BindGroupLayoutEntry {
             binding: binding,
