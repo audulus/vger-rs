@@ -208,6 +208,7 @@ impl VGER {
             size: [window_width, window_height],
         });
         self.cur_scene = (self.cur_scene + 1) % 3;
+        self.scenes[self.cur_scene].clear();
         self.tx_stack.clear();
         self.tx_stack.push(LocalToWorld::identity());
         self.paint_count = 0;
