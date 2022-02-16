@@ -481,7 +481,7 @@ impl VGER {
         let mut prims = vec![];
         for glyph in self.layout.glyphs() {
             let c = text.chars().nth(i).unwrap();
-            println!("glyph {:?}", c);
+            // println!("glyph {:?}", c);
             let info = self.glyph_cache.get_glyph(c, size);
 
             if let Some(rect) = info.rect {
@@ -494,14 +494,14 @@ impl VGER {
                     glyph.x + glyph.width as f32,
                     glyph.y + glyph.height as f32,
                 ];
-                println!("quad_bounds: {:?}", prim.quad_bounds);
+                // println!("quad_bounds: {:?}", prim.quad_bounds);
                 prim.tex_bounds = [
                     rect.x as f32,
                     (rect.y + rect.height) as f32,
                     (rect.x + rect.width) as f32,
                     rect.y as f32,
                 ];
-                println!("tex_bounds: {:?}", prim.tex_bounds);
+                // println!("tex_bounds: {:?}", prim.tex_bounds);
 
                 prims.push(prim);
             }
