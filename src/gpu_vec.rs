@@ -1,10 +1,8 @@
-use mem_align::MemAlign;
 use std::mem::size_of;
 use wgpu::*;
 
 pub struct GPUVec<T: Copy> {
     buffer: wgpu::Buffer,
-    // mem_align: MemAlign<T>,
     capacity: usize,
     pub data: Vec<T>,
 }
