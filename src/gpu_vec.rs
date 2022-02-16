@@ -6,7 +6,7 @@ pub struct GPUVec<T: Copy> {
     buffer: wgpu::Buffer,
     // mem_align: MemAlign<T>,
     capacity: usize,
-    phantom: std::marker::PhantomData<T>,
+    pub data: Vec<T>,
 }
 
 impl<T: Copy> GPUVec<T> {
@@ -21,7 +21,7 @@ impl<T: Copy> GPUVec<T> {
         Self {
             buffer,
             capacity,
-            phantom: Default::default(),
+            data: vec![],
         }
     }
 
@@ -36,8 +36,13 @@ impl<T: Copy> GPUVec<T> {
         Self {
             buffer,
             capacity: 1,
-            phantom: Default::default(),
+            data: vec![],
         }
+    }
+
+    pub fn update(&self, queue: &wgpu::Queue) {
+        let sz = self.data.len() * size_of::<T>();
+        queue.write_buffer(&self.buffer, 0, unsafe { std::slice::from_raw_parts_mut(self.data[..].as_ptr() as *mut u8, sz) })
     }
 
     pub fn capacity(&self) -> usize {
