@@ -14,8 +14,8 @@ impl<T: Copy> GPUVec<T> {
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
             size: (size_of::<T>() * capacity) as u64,
-            usage: BufferUsages::STORAGE,
-            mapped_at_creation: true,
+            usage: BufferUsages::STORAGE | BufferUsages::COPY_DST,
+            mapped_at_creation: false,
         });
 
         Self {
@@ -29,8 +29,8 @@ impl<T: Copy> GPUVec<T> {
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(label),
             size: size_of::<T>() as _,
-            usage: BufferUsages::UNIFORM,
-            mapped_at_creation: true,
+            usage: BufferUsages::UNIFORM | BufferUsages::COPY_DST,
+            mapped_at_creation: false,
         });
 
         Self {
@@ -77,40 +77,4 @@ impl<T: Copy> GPUVec<T> {
         }
     }
 
-    pub async fn map(&self, device: &wgpu::Device) -> Result<(), wgpu::BufferAsyncError> {
-        let buffer_future = self.buffer.slice(..).map_async(wgpu::MapMode::Write);
-        device.poll(wgpu::Maintain::Wait);
-
-        buffer_future.await
-    }
-
-    pub fn unmap(&self) {
-        self.buffer.unmap();
-    }
-
-    pub fn set(&mut self, index: usize, value: T) {
-        let mut view = self.buffer.slice(..).get_mapped_range_mut();
-        let slice = &mut *view;
-        let slice2 =
-            unsafe { std::slice::from_raw_parts_mut(slice.as_ptr() as *mut T, self.capacity) };
-        slice2[index] = value;
-    }
-}
-
-impl<T: Copy> std::ops::Index<usize> for GPUVec<T> {
-    type Output = T;
-    fn index(&self, index: usize) -> &Self::Output {
-        let view = self.buffer.slice(..).get_mapped_range();
-        let slice = unsafe { std::slice::from_raw_parts(view.as_ptr() as *const T, self.capacity) };
-        &slice[index]
-    }
-}
-
-impl<T: Copy> std::ops::IndexMut<usize> for GPUVec<T> {
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        let mut view = self.buffer.slice(..).get_mapped_range_mut();
-        let slice =
-            unsafe { std::slice::from_raw_parts_mut(view.as_mut_ptr() as *mut T, self.capacity) };
-        &mut slice[index]
-    }
 }

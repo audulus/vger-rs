@@ -40,7 +40,6 @@ pub struct PaintIndex {
 
 pub struct VGER {
     scenes: [Scene; 3],
-    cur_prim: [usize; MAX_LAYERS],
     cur_scene: usize,
     cur_layer: usize,
     tx_stack: Vec<LocalToWorld>,
@@ -53,7 +52,6 @@ pub struct VGER {
     xform_count: usize,
     path_scanner: PathScanner,
     pen: LocalPoint,
-    cv_count: usize,
     glyph_cache: GlyphCache,
     layout: Layout,
 }
@@ -184,7 +182,6 @@ impl VGER {
 
         Self {
             scenes,
-            cur_prim: [0, 0, 0, 0],
             cur_scene: 0,
             cur_layer: 0,
             tx_stack: vec![],
@@ -197,7 +194,6 @@ impl VGER {
             xform_count: 0,
             path_scanner: PathScanner::new(),
             pen: LocalPoint::zero(),
-            cv_count: 0,
             glyph_cache,
             layout,
         }
@@ -205,12 +201,12 @@ impl VGER {
 
     pub fn begin(&mut self, window_width: f32, window_height: f32, device_px_ratio: f32) {
         self.device_px_ratio = device_px_ratio;
-        self.cur_prim = [0, 0, 0, 0];
         self.cur_layer = 0;
         self.screen_size = ScreenSize::new(window_width, window_height);
-        self.uniforms[0] = Uniforms {
+        self.uniforms.data.clear();
+        self.uniforms.data.push(Uniforms {
             size: [window_width, window_height],
-        };
+        });
         self.cur_scene = (self.cur_scene + 1) % 3;
         self.tx_stack.clear();
         self.tx_stack.push(LocalToWorld::identity());
@@ -232,9 +228,10 @@ impl VGER {
         &mut self,
         device: &wgpu::Device,
         render_pass: &wgpu::RenderPassDescriptor,
-    ) -> wgpu::CommandBuffer {
-        self.scenes[self.cur_scene].unmap();
-        self.uniforms.unmap();
+        queue: &wgpu::Queue,
+    ) {
+        self.scenes[self.cur_scene].update(queue);
+        self.uniforms.update(queue);
 
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("vger encoder"),
@@ -255,20 +252,16 @@ impl VGER {
 
             rpass.set_bind_group(1, &self.uniform_bind_group, &[]);
 
-            let n = self.cur_prim[self.cur_layer];
+            let n = self.scenes[self.cur_scene].prims[self.cur_layer].data.len();
             println!("encoding {:?} prims", n);
 
             rpass.draw(/*vertices*/ 0..4, /*instances*/ 0..(n as u32))
         }
-        encoder.finish()
+        queue.submit(Some(encoder.finish()));
     }
 
     fn render(&mut self, prim: Prim) {
-        let prim_ix = self.cur_prim[self.cur_layer];
-        if prim_ix < MAX_PRIMS {
-            self.scenes[self.cur_scene].prims[self.cur_layer][prim_ix] = prim;
-            self.cur_prim[self.cur_layer] += 1;
-        }
+        self.scenes[self.cur_scene].prims[self.cur_layer].data.push(prim);
     }
 
     pub fn fill_circle(&mut self, center: LocalPoint, radius: f32, paint_index: PaintIndex) {
@@ -427,10 +420,7 @@ impl VGER {
     }
 
     fn add_cv(&mut self, p: LocalPoint) {
-        if self.cv_count < MAX_PRIMS {
-            self.scenes[self.cur_scene].cvs[self.cv_count] = p;
-            self.cv_count += 1;
-        }
+        self.scenes[self.cur_scene].cvs.data.push(p)
     }
 
     pub fn fill(&mut self, paint_index: PaintIndex) {
@@ -443,7 +433,7 @@ impl VGER {
             prim.prim_type = PrimType::PathFill as u32;
             prim.paint = paint_index.index as u32;
             prim.xform = xform as u32;
-            prim.start = self.cv_count as u32;
+            prim.start = self.scenes[self.cur_scene].cvs.data.len() as u32;
 
             let mut x_interval = Interval {
                 a: std::f32::MAX,
@@ -525,7 +515,7 @@ impl VGER {
 
     fn add_xform(&mut self) -> usize {
         if self.xform_count < MAX_PRIMS {
-            self.scenes[self.cur_scene].xforms[self.xform_count] = *self.tx_stack.last().unwrap();
+            self.scenes[self.cur_scene].xforms.data.push(*self.tx_stack.last().unwrap());
             let n = self.xform_count;
             self.xform_count += 1;
             return n;
@@ -541,7 +531,7 @@ impl VGER {
 
     fn add_paint(&mut self, paint: Paint) -> PaintIndex {
         if self.paint_count < MAX_PRIMS {
-            self.scenes[self.cur_scene].paints[self.paint_count] = paint;
+            self.scenes[self.cur_scene].paints.data.push(paint);
             self.paint_count += 1;
             return PaintIndex {
                 index: self.paint_count - 1,

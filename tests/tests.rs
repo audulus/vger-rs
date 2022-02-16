@@ -157,7 +157,7 @@ fn render_test(
         depth_stencil_attachment: None,
     };
 
-    queue.submit(Some(vger.encode(device, &desc)));
+    vger.encode(device, &desc, &queue);
 
     let buffer_dimensions = BufferDimensions::new(512, 512);
 
