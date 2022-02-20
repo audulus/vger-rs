@@ -464,7 +464,7 @@ impl VGER {
         }
     }
 
-    pub fn text(&mut self, text: &str, size: u32, max_width: Option<f32>) {
+    pub fn text(&mut self, text: &str, size: u32, color: Color, max_width: Option<f32>) {
         self.layout.reset(&LayoutSettings {
             max_width,
             ..LayoutSettings::default()
@@ -475,6 +475,7 @@ impl VGER {
             &TextStyle::new(text, size as f32, 0),
         );
 
+        let paint = self.color_paint(color);
         let xform = self.add_xform() as u32;
 
         let mut i = 0;
@@ -501,6 +502,7 @@ impl VGER {
                     (rect.x + rect.width) as f32,
                     rect.y as f32,
                 ];
+                prim.paint = paint.index as u32;
                 // println!("tex_bounds: {:?}", prim.tex_bounds);
 
                 prims.push(prim);
