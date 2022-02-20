@@ -513,6 +513,29 @@ impl VGER {
             self.render(prim);
         }
     }
+    
+    pub fn text_bounds(&mut self, text: &str, size: u32, max_width: Option<f32>) -> LocalRect {
+
+        self.layout.reset(&LayoutSettings {
+            max_width,
+            ..LayoutSettings::default()
+        });
+
+        self.layout.append(
+            &[&self.glyph_cache.font],
+            &TextStyle::new(text, size as f32, 0),
+        );
+
+        let mut min = LocalPoint::new(f32::MAX, f32::MAX);
+        let mut max = LocalPoint::new(f32::MIN, f32::MIN);
+
+        for glyph in self.layout.glyphs() {
+            min = min.min([glyph.x, glyph.y].into());
+            max = max.max([glyph.x+glyph.width as f32, glyph.y+glyph.height as f32].into());
+        }
+
+        LocalRect::new(min, (max-min).into())
+    }
 
     fn add_xform(&mut self) -> usize {
         if self.xform_count < MAX_PRIMS {
