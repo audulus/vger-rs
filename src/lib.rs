@@ -483,7 +483,7 @@ impl VGER {
         for glyph in self.layout.glyphs() {
             let c = text.chars().nth(i).unwrap();
             // println!("glyph {:?}", c);
-            let info = self.glyph_cache.get_glyph(c, size);
+            let info = self.glyph_cache.get_glyph(c, size * self.device_px_ratio as u32);
 
             if let Some(rect) = info.rect {
                 let mut prim = Prim::default();
