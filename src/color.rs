@@ -29,6 +29,10 @@ impl Color {
         }
     }
 
+    pub fn alpha(&self, a: f32) -> Self {
+        Self { r: self.r, g: self.g, b: self.b, a }
+    }
+
     pub const CYAN: Color = Color {
         r: 0.0,
         g: 1.0,
