@@ -10,7 +10,7 @@
 - ✅ Round Rectangles
 - ✅ Circles
 - ✅ Line segments (need square ends for Audulus)
-- ❌ Arcs
+- ✅ Arcs
 - ✅ Text (Audulus only uses one font, but could add support for more if anyone is interested)
 - ✅ Multi-line text
 - ✅ Path Fills.
