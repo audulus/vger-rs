@@ -335,7 +335,7 @@ fn stroke_arc_gradient() {
         100.0,
         4.0,
         0.0,
-        std::f32::consts::PI / 4.0,
+        std::f32::consts::PI / 2.0,
         paint,
     );
 
