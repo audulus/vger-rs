@@ -20,7 +20,7 @@ mod gpu_vec;
 use gpu_vec::*;
 
 pub mod color;
-use color::Color;
+pub use color::Color;
 
 mod atlas;
 
