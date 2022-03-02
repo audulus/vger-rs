@@ -548,7 +548,8 @@ impl VGER {
 
     fn add_xform(&mut self) -> usize {
         if self.xform_count < MAX_PRIMS {
-            self.scenes[self.cur_scene].xforms.data.push(*self.tx_stack.last().unwrap());
+            let m = *self.tx_stack.last().unwrap();
+            self.scenes[self.cur_scene].xforms.data.push(m.to_3d().to_array());
             let n = self.xform_count;
             self.xform_count += 1;
             return n;

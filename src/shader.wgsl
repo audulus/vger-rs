@@ -467,7 +467,7 @@ fn sdPrim(prim: Prim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
 }
 
 struct XForms {
-    xforms: array<mat3x2<f32>>;
+    xforms: array<mat4x4<f32>>;
 };
 
 [[group(0), binding(2)]]
@@ -496,32 +496,32 @@ fn vs_main(
 
     let prim = prims.prims[instance];
 
-    var q: vec3<f32>;
+    var q: vec2<f32>;
     switch(vid) {
         case 0u: {
-            q = vec3<f32>(prim.quad_bounds_min, 1.0);
+            q = prim.quad_bounds_min;
             //q = vec3<f32>(80.0, 80.0, 1.0); 
             out.t = prim.tex_bounds_min;
         }
         case 1u: {
-            q = vec3<f32>(prim.quad_bounds_min.x, prim.quad_bounds_max.y, 1.0);
+            q = vec2<f32>(prim.quad_bounds_min.x, prim.quad_bounds_max.y);
             //q = vec3<f32>(80.0,120.0, 1.0); 
             out.t = vec2<f32>(prim.tex_bounds_min.x, prim.tex_bounds_max.y);
         }
         case 2u: {
-            q = vec3<f32>(prim.quad_bounds_max.x, prim.quad_bounds_min.y, 1.0);
+            q = vec2<f32>(prim.quad_bounds_max.x, prim.quad_bounds_min.y);
             //q = vec3<f32>(120.0,80.0, 1.0); 
             out.t = vec2<f32>(prim.tex_bounds_max.x, prim.tex_bounds_min.y);
         }
         case 3u: {
-            q = vec3<f32>(prim.quad_bounds_max, 1.0);
+            q = prim.quad_bounds_max;
             //q = vec3<f32>(120.0,120.0, 1.0); 
             out.t = prim.tex_bounds_max;
         }
         default: { }
     }
 
-    let p = xforms.xforms[prim.xform] * q;
+    var p = (xforms.xforms[prim.xform] * vec4<f32>(q, 0.0, 1.0)).xy;
     out.position = vec4<f32>(2.0 * p / uniforms.size - 1.0, 0.0, 1.0);
 
     return out;

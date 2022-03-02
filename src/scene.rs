@@ -9,10 +9,12 @@ use wgpu::*;
 
 pub const MAX_LAYERS: usize = 4;
 
+type Mat4x4 = [f32; 16];
+
 pub struct Scene {
     pub prims: [GPUVec<Prim>; MAX_LAYERS],
     pub cvs: GPUVec<LocalPoint>,
-    pub xforms: GPUVec<LocalToWorld>,
+    pub xforms: GPUVec<Mat4x4>,
     pub paints: GPUVec<Paint>,
     pub bind_group_layout: wgpu::BindGroupLayout,
     pub bind_groups: [wgpu::BindGroup; MAX_LAYERS],
@@ -57,7 +59,7 @@ impl Scene {
             entries: &[
                 GPUVec::<Prim>::bind_group_layout_entry(0),
                 GPUVec::<LocalPoint>::bind_group_layout_entry(1),
-                GPUVec::<LocalToWorld>::bind_group_layout_entry(2),
+                GPUVec::<Mat4x4>::bind_group_layout_entry(2),
                 GPUVec::<Paint>::bind_group_layout_entry(3),
             ],
             label: Some("bind_group_layout"),
@@ -68,7 +70,7 @@ impl Scene {
         device: &wgpu::Device,
         prims: &GPUVec<Prim>,
         cvs: &GPUVec<LocalPoint>,
-        xforms: &GPUVec<LocalToWorld>,
+        xforms: &GPUVec<Mat4x4>,
         paints: &GPUVec<Paint>,
     ) -> wgpu::BindGroup {
         let bind_group_layout = Self::bind_group_layout(device);
