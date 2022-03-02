@@ -67,3 +67,13 @@ pub struct Prim {
     /// Min and max coordinates in texture space.
     pub tex_bounds: [f32; 4],
 }
+
+mod tests {
+    use super::*;
+    use std::mem::size_of;
+
+    #[test]
+    fn test_size() {
+        assert_eq!(size_of::<Prim>(), 88);
+    }
+}
