@@ -269,8 +269,8 @@ fn fill_rect_gradient() {
     vger.begin(512.0, 512.0, 1.0);
 
     let paint = vger.linear_gradient(
-        [100.0, 100.0].into(),
-        [200.0, 200.0].into(),
+        [100.0, 100.0],
+        [200.0, 200.0],
         Color::CYAN,
         Color::MAGENTA,
         0.0,
@@ -290,8 +290,8 @@ fn stroke_rect_gradient() {
     vger.begin(512.0, 512.0, 1.0);
 
     let paint = vger.linear_gradient(
-        [100.0, 100.0].into(),
-        [200.0, 200.0].into(),
+        [100.0, 100.0],
+        [200.0, 200.0],
         Color::CYAN,
         Color::MAGENTA,
         0.0,
@@ -323,8 +323,8 @@ fn stroke_arc_gradient() {
     vger.begin(512.0, 512.0, 1.0);
 
     let paint = vger.linear_gradient(
-        [100.0, 100.0].into(),
-        [300.0, 300.0].into(),
+        [100.0, 100.0],
+        [300.0, 300.0],
         Color::CYAN,
         Color::MAGENTA,
         0.0,
@@ -351,8 +351,8 @@ fn segment_stroke_gradient() {
     vger.begin(512.0, 512.0, 1.0);
 
     let paint = vger.linear_gradient(
-        [100.0, 100.0].into(),
-        [200.0, 200.0].into(),
+        [100.0, 100.0],
+        [200.0, 200.0],
         Color::CYAN,
         Color::MAGENTA,
         0.0,
@@ -378,8 +378,8 @@ fn bezier_stroke_gradient() {
     vger.begin(512.0, 512.0, 1.0);
 
     let paint = vger.linear_gradient(
-        [100.0, 100.0].into(),
-        [200.0, 200.0].into(),
+        [100.0, 100.0],
+        [200.0, 200.0],
         Color::CYAN,
         Color::MAGENTA,
         0.0,
@@ -415,8 +415,8 @@ fn path_fill() {
     vger.begin(512.0, 512.0, 1.0);
 
     let paint = vger.linear_gradient(
-        [0.0, 0.0].into(),
-        [512.0, 512.0].into(),
+        [0.0, 0.0],
+        [512.0, 512.0],
         Color::CYAN,
         Color::MAGENTA,
         0.0,
@@ -447,8 +447,8 @@ fn text() {
     vger.begin(512.0, 512.0, 1.0);
 
     let paint = vger.linear_gradient(
-        [0.0, 0.0].into(),
-        [512.0, 512.0].into(),
+        [0.0, 0.0],
+        [512.0, 512.0],
         Color::CYAN,
         Color::MAGENTA,
         0.0,
@@ -469,8 +469,8 @@ fn text_box() {
     vger.begin(512.0, 512.0, 1.0);
 
     let paint = vger.linear_gradient(
-        [0.0, 0.0].into(),
-        [512.0, 512.0].into(),
+        [0.0, 0.0],
+        [512.0, 512.0],
         Color::CYAN,
         Color::MAGENTA,
         0.0,

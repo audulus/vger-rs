@@ -578,17 +578,17 @@ impl VGER {
         self.add_paint(Paint::solid_color(color))
     }
 
-    pub fn linear_gradient(
+    pub fn linear_gradient<Pt: Into<LocalPoint>>(
         &mut self,
-        start: LocalPoint,
-        end: LocalPoint,
+        start: Pt,
+        end: Pt,
         inner_color: Color,
         outer_color: Color,
         glow: f32,
     ) -> PaintIndex {
         self.add_paint(Paint::linear_gradient(
-            start,
-            end,
+            start.into(),
+            end.into(),
             inner_color,
             outer_color,
             glow,
