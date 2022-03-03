@@ -377,7 +377,7 @@ fn bezierTest(p: vec2<f32>, A: vec2<f32>, B: vec2<f32>, C: vec2<f32>) -> bool {
 
 }
 
-fn sdPrim(prim: Prim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
+fn sdPrim(prim: Prim, p: vec2<f32>, filterWidth: f32) -> f32 {
     var d = 1e10;
     var s = 1.0;
     switch(prim.prim_type) {
@@ -425,25 +425,19 @@ fn sdPrim(prim: Prim, p: vec2<f32>, exact: bool, filterWidth: f32) -> f32 {
                 let c = cvs.cvs[j+2];
 
                 var skip = false;
+                let xmax = p.x + filterWidth;
+                let xmin = p.x - filterWidth;
 
-                if(exact) {
+                // If the hull is far enough away, don't bother with
+                // a sdf.
+                if(a.x > xmax && b.x > xmax && c.x > xmax) {
+                    skip = true;
+                } else if(a.x < xmin && b.x < xmin && c.x < xmin) {
+                    skip = true;
+                }
+
+                if(!skip) {
                     d = min(d, sdBezier(p, a, b, c));
-                } else {
-                    let xmax = p.x + filterWidth;
-                    let xmin = p.x - filterWidth;
-
-                    // If the hull is far enough away, don't bother with
-                    // a sdf.
-                    if(a.x > xmax && b.x > xmax && c.x > xmax) {
-                        skip = true;
-                    } else if(a.x < xmin && b.x < xmin && c.x < xmin) {
-                        skip = true;
-                    }
-
-                    if(!skip) {
-                        d = min(d, sdBezierApprox2(p, a, b, c));
-                    }
-
                 }
 
                 if(lineTest(p, a, c)) {
@@ -595,7 +589,7 @@ fn fs_main(
         return color;
     }
 
-    let d = sdPrim(prim, in.t, false, fw);
+    let d = sdPrim(prim, in.t, fw);
     let color = apply(paint, in.t);
 
     return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothStep(-fw/2.0,fw/2.0,d) );
