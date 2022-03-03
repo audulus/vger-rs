@@ -527,8 +527,21 @@ fn vs_main(
     return out;
 }
 
+struct PackedMat3x2 {
+    m11: f32;
+    m12: f32;
+    m21: f32;
+    m22: f32;
+    m31: f32;
+    m32: f32;
+};
+
+fn unpack_mat3x2(m: PackedMat3x2) -> mat3x2<f32> {
+    return mat3x2<f32>(m.m11, m.m12, m.m21, m.m22, m.m31, m.m32);
+}
+
 struct Paint {              // align  size
-    xform: mat3x2<f32>;     // 8      24
+    xform: PackedMat3x2;    // 8      24
     glow: f32;              // 4      4
     image: i32;             // 4      4
     inner_color: vec4<f32>; // 16     16
@@ -543,7 +556,7 @@ struct Paints {
 var<storage> paints: Paints;
 
 fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
-    let local_point = paint.xform * vec3<f32>(p, 1.0);
+    let local_point = unpack_mat3x2(paint.xform) * vec3<f32>(p, 1.0);
     let d = clamp(local_point, vec2<f32>(0.0), vec2<f32>(1.0)).x;
 
     return mix(paint.inner_color, paint.outer_color, d);
