@@ -212,7 +212,7 @@ fn fill_circle() {
 
     vger.begin(512.0, 512.0, 1.0);
     let cyan = vger.color_paint(Color::CYAN);
-    vger.fill_circle([100.0, 100.0].into(), 20.0, cyan);
+    vger.fill_circle([100.0, 100.0], 20.0, cyan);
 
     render_test(&mut vger, &device, &queue, "circle.png", false);
 }
@@ -227,7 +227,7 @@ fn fill_circle_array() {
     let cyan = vger.color_paint(Color::CYAN);
 
     for i in 0..5 {
-        vger.fill_circle([100.0 * (i as f32), 100.0].into(), 20.0, cyan);
+        vger.fill_circle([100.0 * (i as f32), 100.0], 20.0, cyan);
     }
 
     render_test(&mut vger, &device, &queue, "circle_array.png", false);
@@ -241,8 +241,8 @@ fn fill_circle_translate() {
 
     vger.begin(512.0, 512.0, 1.0);
     let cyan = vger.color_paint(Color::CYAN);
-    vger.translate([256.0, 256.0].into());
-    vger.fill_circle([0.0, 0.0].into(), 20.0, cyan);
+    vger.translate([256.0, 256.0]);
+    vger.fill_circle([0.0, 0.0], 20.0, cyan);
 
     render_test(&mut vger, &device, &queue, "circle_translate.png", false);
 }
@@ -331,7 +331,7 @@ fn stroke_arc_gradient() {
     );
 
     vger.stroke_arc(
-        [200.0, 200.0].into(),
+        [200.0, 200.0],
         100.0,
         4.0,
         0.0,
@@ -358,7 +358,7 @@ fn segment_stroke_gradient() {
         0.0,
     );
 
-    vger.stroke_segment([100.0, 100.0].into(), [200.0, 200.0].into(), 4.0, paint);
+    vger.stroke_segment([100.0, 100.0], [200.0, 200.0], 4.0, paint);
 
     render_test(
         &mut vger,
@@ -386,9 +386,9 @@ fn bezier_stroke_gradient() {
     );
 
     vger.stroke_bezier(
-        [100.0, 100.0].into(),
-        [150.0, 200.0].into(),
-        [200.0, 200.0].into(),
+        [100.0, 100.0],
+        [150.0, 200.0],
+        [200.0, 200.0],
         4.0,
         paint,
     );
@@ -454,7 +454,7 @@ fn text() {
         0.0,
     );
 
-    vger.translate([32.0, 256.0].into());
+    vger.translate([32.0, 256.0]);
     vger.text("This is a test", 32, Color::CYAN, None);
 
     render_test(&mut vger, &device, &queue, "text.png", true);
@@ -478,7 +478,7 @@ fn text_box() {
 
     let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-    vger.translate([32.0, 256.0].into());
+    vger.translate([32.0, 256.0]);
 
     let bounds = vger.text_bounds(lorem, 18, Some(448.0));
 

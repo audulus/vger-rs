@@ -265,18 +265,19 @@ impl VGER {
         self.scenes[self.cur_scene].prims[self.cur_layer].data.push(prim);
     }
 
-    pub fn fill_circle(&mut self, center: LocalPoint, radius: f32, paint_index: PaintIndex) {
+    pub fn fill_circle<Pt: Into<LocalPoint>>(&mut self, center: Pt, radius: f32, paint_index: PaintIndex) {
         let mut prim = Prim::default();
         prim.prim_type = PrimType::Circle as u32;
-        prim.cvs[0] = center.x;
-        prim.cvs[1] = center.y;
+        let c: LocalPoint = center.into();
+        prim.cvs[0] = c.x;
+        prim.cvs[1] = c.y;
         prim.radius = radius;
         prim.paint = paint_index.index as u32;
         prim.quad_bounds = [
-            center.x - radius,
-            center.y - radius,
-            center.x + radius,
-            center.y + radius,
+            c.x - radius,
+            c.y - radius,
+            c.x + radius,
+            c.y + radius,
         ];
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
@@ -284,9 +285,9 @@ impl VGER {
         self.render(prim);
     }
 
-    pub fn stroke_arc(
+    pub fn stroke_arc<Pt: Into<LocalPoint>>(
         &mut self,
-        center: LocalPoint,
+        center: Pt,
         radius: f32,
         width: f32,
         rotation: f32,
@@ -296,9 +297,10 @@ impl VGER {
         let mut prim = Prim::default();
         prim.prim_type = PrimType::Arc as u32;
         prim.radius = radius;
+        let c: LocalPoint = center.into();
         prim.cvs = [
-            center.x,
-            center.y,
+            c.x,
+            c.y,
             rotation.sin(),
             rotation.cos(),
             aperture.sin(),
@@ -307,10 +309,10 @@ impl VGER {
         prim.width = width;
         prim.paint = paint_index.index as u32;
         prim.quad_bounds = [
-            center.x - radius - width,
-            center.y - radius - width,
-            center.x + radius + width,
-            center.y + radius + width,
+            c.x - radius - width,
+            c.y - radius - width,
+            c.x + radius + width,
+            c.y + radius + width,
         ];
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
@@ -364,51 +366,56 @@ impl VGER {
         self.render(prim);
     }
 
-    pub fn stroke_segment(
+    pub fn stroke_segment<Pt: Into<LocalPoint>>(
         &mut self,
-        a: LocalPoint,
-        b: LocalPoint,
+        a: Pt,
+        b: Pt,
         width: f32,
         paint_index: PaintIndex,
     ) {
         let mut prim = Prim::default();
         prim.prim_type = PrimType::Segment as u32;
-        prim.cvs[0] = a.x;
-        prim.cvs[1] = a.y;
-        prim.cvs[2] = b.x;
-        prim.cvs[3] = b.y;
+        let ap: LocalPoint = a.into();
+        let bp: LocalPoint = b.into();
+        prim.cvs[0] = ap.x;
+        prim.cvs[1] = ap.y;
+        prim.cvs[2] = bp.x;
+        prim.cvs[3] = bp.y;
         prim.width = width;
         prim.paint = paint_index.index as u32;
-        prim.quad_bounds = [a.x.min(b.x), a.y.min(b.y), a.x.max(b.x), a.y.max(b.y)];
+        prim.quad_bounds = [ap.x.min(bp.x), ap.y.min(bp.y), ap.x.max(bp.x), ap.y.max(bp.y)];
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
 
         self.render(prim);
     }
 
-    pub fn stroke_bezier(
+    pub fn stroke_bezier<Pt: Into<LocalPoint>>(
         &mut self,
-        a: LocalPoint,
-        b: LocalPoint,
-        c: LocalPoint,
+        a: Pt,
+        b: Pt,
+        c: Pt,
         width: f32,
         paint_index: PaintIndex,
     ) {
         let mut prim = Prim::default();
         prim.prim_type = PrimType::Bezier as u32;
-        prim.cvs[0] = a.x;
-        prim.cvs[1] = a.y;
-        prim.cvs[2] = b.x;
-        prim.cvs[3] = b.y;
-        prim.cvs[4] = c.x;
-        prim.cvs[5] = c.y;
+        let ap: LocalPoint = a.into();
+        let bp: LocalPoint = b.into();
+        let cp: LocalPoint = c.into();
+        prim.cvs[0] = ap.x;
+        prim.cvs[1] = ap.y;
+        prim.cvs[2] = bp.x;
+        prim.cvs[3] = bp.y;
+        prim.cvs[4] = cp.x;
+        prim.cvs[5] = cp.y;
         prim.width = width;
         prim.paint = paint_index.index as u32;
         prim.quad_bounds = [
-            a.x.min(b.x).min(c.x) - width,
-            a.y.min(b.y).min(c.y) - width,
-            a.x.max(b.x).max(c.x) + width,
-            a.y.max(b.y).max(c.y) + width,
+            ap.x.min(bp.x).min(cp.x) - width,
+            ap.y.min(bp.y).min(cp.y) - width,
+            ap.x.max(bp.x).max(cp.x) + width,
+            ap.y.max(bp.y).max(cp.y) + width,
         ];
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
@@ -416,19 +423,20 @@ impl VGER {
         self.render(prim);
     }
 
-    pub fn move_to(&mut self, p: LocalPoint) {
-        self.pen = p;
+    pub fn move_to<Pt: Into<LocalPoint>>(&mut self, p: Pt) {
+        self.pen = p.into();
     }
 
-    pub fn quad_to(&mut self, b: LocalPoint, c: LocalPoint) {
+    pub fn quad_to<Pt: Into<LocalPoint>>(&mut self, b: Pt, c: Pt) {
+        let cp: LocalPoint = c.into();
         self.path_scanner
             .segments
-            .push(PathSegment::new(self.pen, b, c));
-        self.pen = c;
+            .push(PathSegment::new(self.pen, b.into(), cp));
+        self.pen = cp;
     }
 
-    fn add_cv(&mut self, p: LocalPoint) {
-        self.scenes[self.cur_scene].cvs.data.push(p)
+    fn add_cv<Pt: Into<LocalPoint>>(&mut self, p: Pt) {
+        self.scenes[self.cur_scene].cvs.data.push(p.into())
     }
 
     pub fn fill(&mut self, paint_index: PaintIndex) {
@@ -557,9 +565,9 @@ impl VGER {
         0
     }
 
-    pub fn translate(&mut self, offset: Vector2D<f32, LocalSpace>) {
+    pub fn translate<Vec: Into<LocalVector>>(&mut self, offset: Vec) {
         if let Some(m) = self.tx_stack.last_mut() {
-            *m = (*m).pre_translate(offset);
+            *m = (*m).pre_translate(offset.into());
         }
     }
 
