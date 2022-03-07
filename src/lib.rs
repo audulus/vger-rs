@@ -57,6 +57,8 @@ pub struct VGER {
 }
 
 impl VGER {
+
+    /// Create a new renderer given a device and output pixel format.
     pub fn new(device: &wgpu::Device, texture_format: wgpu::TextureFormat) -> Self {
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
             label: None,
@@ -199,6 +201,7 @@ impl VGER {
         }
     }
 
+    /// Begin rendering.
     pub fn begin(&mut self, window_width: f32, window_height: f32, device_px_ratio: f32) {
         self.device_px_ratio = device_px_ratio;
         self.cur_layer = 0;
@@ -216,10 +219,12 @@ impl VGER {
         self.pen = LocalPoint::zero();
     }
 
+    /// Saves rendering state (just the current transform).
     pub fn save(&mut self) {
         self.tx_stack.push(*self.tx_stack.last().unwrap())
     }
 
+    /// Restores rendering state (just the current transform).
     pub fn restore(&mut self) {
         self.tx_stack.pop();
     }
@@ -265,6 +270,7 @@ impl VGER {
         self.scenes[self.cur_scene].prims[self.cur_layer].data.push(prim);
     }
 
+    /// Fills a circle.
     pub fn fill_circle<Pt: Into<LocalPoint>>(&mut self, center: Pt, radius: f32, paint_index: PaintIndex) {
         let mut prim = Prim::default();
         prim.prim_type = PrimType::Circle as u32;
@@ -285,6 +291,7 @@ impl VGER {
         self.render(prim);
     }
 
+    /// Strokes an arc.
     pub fn stroke_arc<Pt: Into<LocalPoint>>(
         &mut self,
         center: Pt,
@@ -320,6 +327,7 @@ impl VGER {
         self.render(prim);
     }
 
+    /// Fills a rectangle.
     pub fn fill_rect(
         &mut self,
         min: LocalPoint,
@@ -342,6 +350,7 @@ impl VGER {
         self.render(prim);
     }
 
+    /// Strokes a rectangle.
     pub fn stroke_rect(
         &mut self,
         min: LocalPoint,
@@ -366,6 +375,7 @@ impl VGER {
         self.render(prim);
     }
 
+    /// Strokes a line segment.
     pub fn stroke_segment<Pt: Into<LocalPoint>>(
         &mut self,
         a: Pt,
@@ -390,6 +400,7 @@ impl VGER {
         self.render(prim);
     }
 
+    /// Strokes a quadratic bezier segment.
     pub fn stroke_bezier<Pt: Into<LocalPoint>>(
         &mut self,
         a: Pt,
@@ -423,10 +434,12 @@ impl VGER {
         self.render(prim);
     }
 
+    /// Move the pen to a point (path fills only)
     pub fn move_to<Pt: Into<LocalPoint>>(&mut self, p: Pt) {
         self.pen = p.into();
     }
 
+    /// Makes a quadratic curve to a point (path fills only)
     pub fn quad_to<Pt: Into<LocalPoint>>(&mut self, b: Pt, c: Pt) {
         let cp: LocalPoint = c.into();
         self.path_scanner
@@ -439,6 +452,7 @@ impl VGER {
         self.scenes[self.cur_scene].cvs.data.push(p.into())
     }
 
+    /// Fills a path.
     pub fn fill(&mut self, paint_index: PaintIndex) {
         let xform = self.add_xform();
 
@@ -479,6 +493,7 @@ impl VGER {
         }
     }
 
+    /// Renders text.
     pub fn text(&mut self, text: &str, size: u32, color: Color, max_width: Option<f32>) {
         self.layout.reset(&LayoutSettings {
             max_width,
@@ -531,6 +546,7 @@ impl VGER {
         }
     }
     
+    /// Calculates the bounds for text.
     pub fn text_bounds(&mut self, text: &str, size: u32, max_width: Option<f32>) -> LocalRect {
 
         self.layout.reset(&LayoutSettings {
@@ -565,6 +581,7 @@ impl VGER {
         0
     }
 
+    /// Translates the coordinate system.
     pub fn translate<Vec: Into<LocalVector>>(&mut self, offset: Vec) {
         if let Some(m) = self.tx_stack.last_mut() {
             *m = (*m).pre_translate(offset.into());
