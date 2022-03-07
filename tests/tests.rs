@@ -255,7 +255,7 @@ fn fill_rect() {
 
     vger.begin(512.0, 512.0, 1.0);
     let cyan = vger.color_paint(Color::CYAN);
-    vger.fill_rect([100.0, 100.0].into(), [200.0, 200.0].into(), 10.0, cyan);
+    vger.fill_rect(euclid::rect(100.0, 100.0, 100.0, 100.0), 10.0, cyan);
 
     render_test(&mut vger, &device, &queue, "rect.png", false);
 }
@@ -276,7 +276,7 @@ fn fill_rect_gradient() {
         0.0,
     );
 
-    vger.fill_rect([100.0, 100.0].into(), [200.0, 200.0].into(), 10.0, paint);
+    vger.fill_rect(euclid::rect(100.0, 100.0, 100.0, 100.0), 10.0, paint);
 
     render_test(&mut vger, &device, &queue, "rect_gradient.png", false);
 }

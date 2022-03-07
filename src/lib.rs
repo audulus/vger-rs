@@ -328,15 +328,17 @@ impl VGER {
     }
 
     /// Fills a rectangle.
-    pub fn fill_rect(
+    pub fn fill_rect<Rect: Into<LocalRect>>(
         &mut self,
-        min: LocalPoint,
-        max: LocalPoint,
+        rect: Rect,
         radius: f32,
         paint_index: PaintIndex,
     ) {
         let mut prim = Prim::default();
         prim.prim_type = PrimType::Rect as u32;
+        let r: LocalRect = rect.into();
+        let min = r.min();
+        let max = r.max();
         prim.cvs[0] = min.x;
         prim.cvs[1] = min.y;
         prim.cvs[2] = max.x;
