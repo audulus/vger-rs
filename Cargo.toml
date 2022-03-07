@@ -4,7 +4,12 @@ resolver = "2" # What does this do?
 [package]
 name = "vger"
 version = "0.1.0"
+license = "MIT"
+readme = "README.md"
 authors = ["Taylor Holliday <taylor@audulus.com>"]
+keywords = ["graphics", "canvas", "vector", "drawing", "gpu"]
+categories = ["graphics"]
+repository = "https://github.com/audulus/vger-rs"
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
