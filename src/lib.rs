@@ -546,6 +546,28 @@ impl VGER {
         LocalRect::new(min, (max-min).into())
     }
 
+    /// Returns local coordinates of glyphs.
+    pub fn glyph_positions(&mut self, text: &str, size: u32, max_width: Option<f32>) -> Vec<LocalRect> {
+        let mut rects = vec![];
+        rects.reserve(text.len());
+
+        self.layout.reset(&LayoutSettings {
+            max_width,
+            ..LayoutSettings::default()
+        });
+
+        self.layout.append(
+            &[&self.glyph_cache.font],
+            &TextStyle::new(text, size as f32, 0),
+        );
+
+        for glyph in self.layout.glyphs() {
+            rects.push(LocalRect::new([glyph.x, glyph.y].into(), [glyph.width as f32, glyph.height as f32].into()))
+        }
+
+        rects
+    }
+
     fn add_xform(&mut self) -> usize {
         if self.xform_count < MAX_PRIMS {
             let m = *self.tx_stack.last().unwrap();
