@@ -38,6 +38,13 @@ pub struct PaintIndex {
     index: usize,
 }
 
+#[derive(Copy, Clone, Debug)]
+pub struct LineMetrics {
+    glyph_start: usize,
+    glyph_end: usize,
+    bounds: LocalRect
+}
+
 pub struct VGER {
     scenes: [Scene; 3],
     cur_scene: usize,
@@ -594,7 +601,7 @@ impl VGER {
         rects
     }
 
-    pub fn line_metrics(&mut self, text: &str, size: u32, max_width: Option<f32>) -> Vec<LocalRect> {
+    pub fn line_metrics(&mut self, text: &str, size: u32, max_width: Option<f32>) -> Vec<LineMetrics> {
 
         self.layout.reset(&LayoutSettings {
             max_width,
@@ -619,7 +626,7 @@ impl VGER {
                     let glyph = glyphs[i]; 
                     rect = rect.union(&LocalRect::new([glyph.x, glyph.y].into(), [glyph.width as f32, glyph.height as f32].into()));
                 }
-                rects.push(rect);
+                rects.push(LineMetrics { glyph_start: line.glyph_start, glyph_end: line.glyph_end, bounds: rect });
             }
         }
 
