@@ -40,9 +40,9 @@ pub struct PaintIndex {
 
 #[derive(Copy, Clone, Debug)]
 pub struct LineMetrics {
-    glyph_start: usize,
-    glyph_end: usize,
-    bounds: LocalRect
+    pub glyph_start: usize,
+    pub glyph_end: usize,
+    pub bounds: LocalRect,
 }
 
 pub struct VGER {
