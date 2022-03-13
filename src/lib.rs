@@ -64,7 +64,6 @@ pub struct VGER {
 }
 
 impl VGER {
-
     /// Create a new renderer given a device and output pixel format.
     pub fn new(device: &wgpu::Device, texture_format: wgpu::TextureFormat) -> Self {
         let shader = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
@@ -274,11 +273,18 @@ impl VGER {
     }
 
     fn render(&mut self, prim: Prim) {
-        self.scenes[self.cur_scene].prims[self.cur_layer].data.push(prim);
+        self.scenes[self.cur_scene].prims[self.cur_layer]
+            .data
+            .push(prim);
     }
 
     /// Fills a circle.
-    pub fn fill_circle<Pt: Into<LocalPoint>>(&mut self, center: Pt, radius: f32, paint_index: PaintIndex) {
+    pub fn fill_circle<Pt: Into<LocalPoint>>(
+        &mut self,
+        center: Pt,
+        radius: f32,
+        paint_index: PaintIndex,
+    ) {
         let mut prim = Prim::default();
         prim.prim_type = PrimType::Circle as u32;
         let c: LocalPoint = center.into();
@@ -286,12 +292,7 @@ impl VGER {
         prim.cvs[1] = c.y;
         prim.radius = radius;
         prim.paint = paint_index.index as u32;
-        prim.quad_bounds = [
-            c.x - radius,
-            c.y - radius,
-            c.x + radius,
-            c.y + radius,
-        ];
+        prim.quad_bounds = [c.x - radius, c.y - radius, c.x + radius, c.y + radius];
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
 
@@ -402,7 +403,12 @@ impl VGER {
         prim.cvs[3] = bp.y;
         prim.width = width;
         prim.paint = paint_index.index as u32;
-        prim.quad_bounds = [ap.x.min(bp.x), ap.y.min(bp.y), ap.x.max(bp.x), ap.y.max(bp.y)];
+        prim.quad_bounds = [
+            ap.x.min(bp.x),
+            ap.y.min(bp.y),
+            ap.x.max(bp.x),
+            ap.y.max(bp.y),
+        ];
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
 
@@ -522,7 +528,9 @@ impl VGER {
         for glyph in self.layout.glyphs() {
             let c = text.chars().nth(i).unwrap();
             // println!("glyph {:?}", c);
-            let info = self.glyph_cache.get_glyph(c, size * self.device_px_ratio as u32);
+            let info = self
+                .glyph_cache
+                .get_glyph(c, size * self.device_px_ratio as u32);
 
             if let Some(rect) = info.rect {
                 let mut prim = Prim::default();
@@ -554,10 +562,9 @@ impl VGER {
             self.render(prim);
         }
     }
-    
+
     /// Calculates the bounds for text.
     pub fn text_bounds(&mut self, text: &str, size: u32, max_width: Option<f32>) -> LocalRect {
-
         self.layout.reset(&LayoutSettings {
             max_width,
             ..LayoutSettings::default()
@@ -573,14 +580,19 @@ impl VGER {
 
         for glyph in self.layout.glyphs() {
             min = min.min([glyph.x, glyph.y].into());
-            max = max.max([glyph.x+glyph.width as f32, glyph.y+glyph.height as f32].into());
+            max = max.max([glyph.x + glyph.width as f32, glyph.y + glyph.height as f32].into());
         }
 
-        LocalRect::new(min, (max-min).into())
+        LocalRect::new(min, (max - min).into())
     }
 
     /// Returns local coordinates of glyphs.
-    pub fn glyph_positions(&mut self, text: &str, size: u32, max_width: Option<f32>) -> Vec<LocalRect> {
+    pub fn glyph_positions(
+        &mut self,
+        text: &str,
+        size: u32,
+        max_width: Option<f32>,
+    ) -> Vec<LocalRect> {
         let mut rects = vec![];
         rects.reserve(text.len());
 
@@ -595,14 +607,21 @@ impl VGER {
         );
 
         for glyph in self.layout.glyphs() {
-            rects.push(LocalRect::new([glyph.x, glyph.y].into(), [glyph.width as f32, glyph.height as f32].into()))
+            rects.push(LocalRect::new(
+                [glyph.x, glyph.y].into(),
+                [glyph.width as f32, glyph.height as f32].into(),
+            ))
         }
 
         rects
     }
 
-    pub fn line_metrics(&mut self, text: &str, size: u32, max_width: Option<f32>) -> Vec<LineMetrics> {
-
+    pub fn line_metrics(
+        &mut self,
+        text: &str,
+        size: u32,
+        max_width: Option<f32>,
+    ) -> Vec<LineMetrics> {
         self.layout.reset(&LayoutSettings {
             max_width,
             ..LayoutSettings::default()
@@ -621,12 +640,19 @@ impl VGER {
         if let Some(lines) = self.layout.lines() {
             for line in lines {
                 let mut rect = LocalRect::zero();
-    
+
                 for i in line.glyph_start..line.glyph_end {
-                    let glyph = glyphs[i]; 
-                    rect = rect.union(&LocalRect::new([glyph.x, glyph.y].into(), [glyph.width as f32, glyph.height as f32].into()));
+                    let glyph = glyphs[i];
+                    rect = rect.union(&LocalRect::new(
+                        [glyph.x, glyph.y].into(),
+                        [glyph.width as f32, glyph.height as f32].into(),
+                    ));
                 }
-                rects.push(LineMetrics { glyph_start: line.glyph_start, glyph_end: line.glyph_end, bounds: rect });
+                rects.push(LineMetrics {
+                    glyph_start: line.glyph_start,
+                    glyph_end: line.glyph_end,
+                    bounds: rect,
+                });
             }
         }
 
@@ -636,7 +662,10 @@ impl VGER {
     fn add_xform(&mut self) -> usize {
         if self.xform_count < MAX_PRIMS {
             let m = *self.tx_stack.last().unwrap();
-            self.scenes[self.cur_scene].xforms.data.push(m.to_3d().to_array());
+            self.scenes[self.cur_scene]
+                .xforms
+                .data
+                .push(m.to_3d().to_array());
             let n = self.xform_count;
             self.xform_count += 1;
             return n;

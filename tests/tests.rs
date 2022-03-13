@@ -1,11 +1,10 @@
-
-use vger::*;
-use vger::color::Color;
-use vger::defs::*;
 use futures::executor::block_on;
 use std::fs::File;
 use std::io::prelude::*;
 use std::mem::size_of;
+use vger::color::Color;
+use vger::defs::*;
+use vger::*;
 extern crate rand;
 
 async fn setup() -> (wgpu::Device, wgpu::Queue) {
@@ -179,10 +178,8 @@ fn render_test(
                 layout: wgpu::ImageDataLayout {
                     offset: 0,
                     bytes_per_row: Some(
-                        std::num::NonZeroU32::new(
-                            buffer_dimensions.padded_bytes_per_row as u32,
-                        )
-                        .unwrap(),
+                        std::num::NonZeroU32::new(buffer_dimensions.padded_bytes_per_row as u32)
+                            .unwrap(),
                     ),
                     rows_per_image: None,
                 },
@@ -385,13 +382,7 @@ fn bezier_stroke_gradient() {
         0.0,
     );
 
-    vger.stroke_bezier(
-        [100.0, 100.0],
-        [150.0, 200.0],
-        [200.0, 200.0],
-        4.0,
-        paint,
-    );
+    vger.stroke_bezier([100.0, 100.0], [150.0, 200.0], [200.0, 200.0], 4.0, paint);
 
     render_test(
         &mut vger,
@@ -414,13 +405,7 @@ fn path_fill() {
 
     vger.begin(512.0, 512.0, 1.0);
 
-    let paint = vger.linear_gradient(
-        [0.0, 0.0],
-        [512.0, 512.0],
-        Color::CYAN,
-        Color::MAGENTA,
-        0.0,
-    );
+    let paint = vger.linear_gradient([0.0, 0.0], [512.0, 512.0], Color::CYAN, Color::MAGENTA, 0.0);
 
     let mut rng = rand::thread_rng();
 
@@ -446,13 +431,7 @@ fn text() {
 
     vger.begin(512.0, 512.0, 1.0);
 
-    let paint = vger.linear_gradient(
-        [0.0, 0.0],
-        [512.0, 512.0],
-        Color::CYAN,
-        Color::MAGENTA,
-        0.0,
-    );
+    let paint = vger.linear_gradient([0.0, 0.0], [512.0, 512.0], Color::CYAN, Color::MAGENTA, 0.0);
 
     vger.translate([32.0, 256.0]);
     vger.text("This is a test", 32, Color::CYAN, None);
@@ -468,13 +447,7 @@ fn text_box() {
 
     vger.begin(512.0, 512.0, 1.0);
 
-    let paint = vger.linear_gradient(
-        [0.0, 0.0],
-        [512.0, 512.0],
-        Color::CYAN,
-        Color::MAGENTA,
-        0.0,
-    );
+    let paint = vger.linear_gradient([0.0, 0.0], [512.0, 512.0], Color::CYAN, Color::MAGENTA, 0.0);
 
     let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
@@ -482,13 +455,7 @@ fn text_box() {
 
     let bounds = vger.text_bounds(lorem, 18, Some(448.0));
 
-    vger.stroke_rect(
-        bounds.origin,
-        bounds.max(),
-        10.0,
-        4.0,
-        paint,
-    );
+    vger.stroke_rect(bounds.origin, bounds.max(), 10.0, 4.0, paint);
 
     vger.text(lorem, 18, Color::CYAN, Some(448.0));
 

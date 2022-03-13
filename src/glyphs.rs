@@ -44,7 +44,7 @@ impl GlyphCache {
                     print!("\n");
                 }
                 */
-                
+
                 let rect =
                     self.atlas
                         .add_region(&data, metrics.width as u32, metrics.height as u32);

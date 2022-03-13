@@ -15,7 +15,6 @@ pub struct Atlas {
 }
 
 impl Atlas {
-
     pub const ATLAS_SIZE: u32 = 1024;
 
     pub fn new(device: &wgpu::Device) -> Self {
