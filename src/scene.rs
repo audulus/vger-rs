@@ -2,7 +2,6 @@ use crate::defs::*;
 use crate::gpu_vec::*;
 use crate::paint::*;
 use crate::prim::*;
-use euclid::*;
 
 pub const MAX_LAYERS: usize = 4;
 
