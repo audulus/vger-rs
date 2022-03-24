@@ -1,4 +1,3 @@
-use euclid::*;
 use fontdue::layout::{CoordinateSystem, Layout, LayoutSettings, TextStyle};
 
 mod path;
