@@ -1,7 +1,6 @@
 use crate::defs::*;
 use crate::gpu_vec::*;
 use crate::paint::*;
-use crate::path::*;
 use crate::prim::*;
 use euclid::*;
 use std::mem::size_of;
