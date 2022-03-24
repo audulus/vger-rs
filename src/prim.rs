@@ -69,10 +69,9 @@ pub struct Prim {
 }
 
 mod tests {
-    use std::mem::size_of;
 
     #[test]
     fn test_size() {
-        assert_eq!(size_of::<super::Prim>(), 88);
+        assert_eq!(std::mem::size_of::<super::Prim>(), 88);
     }
 }
