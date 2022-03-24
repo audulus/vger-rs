@@ -69,7 +69,6 @@ pub struct Prim {
 }
 
 mod tests {
-    use super::*;
     use std::mem::size_of;
 
     #[test]
