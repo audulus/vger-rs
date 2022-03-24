@@ -1,5 +1,4 @@
 use crate::atlas::Atlas;
-use crate::defs::*;
 use rect_packer::Rect;
 use std::collections::HashMap;
 
