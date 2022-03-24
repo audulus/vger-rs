@@ -1,4 +1,5 @@
 #[derive(Copy, Clone)]
+#[allow(dead_code)]
 pub enum PrimType {
     /// Filled circle.
     Circle,
