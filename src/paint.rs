@@ -14,6 +14,7 @@ pub struct Paint {
 }
 
 impl Paint {
+    #[allow(dead_code)]
     pub fn apply(&self, p: WorldPoint) -> Color {
         let local_point = self.xform.transform_point(p);
         let d = local_point
