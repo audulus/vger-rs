@@ -431,8 +431,6 @@ fn text() {
 
     vger.begin(512.0, 512.0, 1.0);
 
-    let paint = vger.linear_gradient([0.0, 0.0], [512.0, 512.0], Color::CYAN, Color::MAGENTA, 0.0);
-
     vger.translate([32.0, 256.0]);
     vger.text("This is a test", 32, Color::CYAN, None);
 
