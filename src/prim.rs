@@ -73,6 +73,6 @@ mod tests {
 
     #[test]
     fn test_size() {
-        assert_eq!(size_of::<Prim>(), 88);
+        assert_eq!(size_of::<super::Prim>(), 88);
     }
 }
