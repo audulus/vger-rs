@@ -3,8 +3,6 @@ use crate::gpu_vec::*;
 use crate::paint::*;
 use crate::prim::*;
 use euclid::*;
-use std::mem::size_of;
-use wgpu::*;
 
 pub const MAX_LAYERS: usize = 4;
 
