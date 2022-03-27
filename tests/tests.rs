@@ -202,6 +202,15 @@ fn render_test(
 }
 
 #[test]
+fn test_color_hex() {
+    let c = Color::hex("#00D4FF").unwrap();
+    assert_eq!(c.r, 0.0);
+    assert_eq!(c.g, 212.0 / 255.0);
+    assert_eq!(c.b, 1.0);
+    assert_eq!(c.a, 1.0);
+}
+
+#[test]
 fn fill_circle() {
     let (device, queue) = block_on(setup());
 
