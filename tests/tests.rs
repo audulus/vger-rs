@@ -201,11 +201,19 @@ fn render_test(
     block_on(create_png(name, device, output_buffer, &buffer_dimensions));
 }
 
+use color::hex_const;
+
 #[test]
 fn test_color_hex() {
     let c = Color::hex("#00D4FF").unwrap();
     assert_eq!(c.r, 0.0);
     assert_eq!(c.g, 212.0 / 255.0);
+    assert_eq!(c.b, 1.0);
+    assert_eq!(c.a, 1.0);
+
+    let c = hex_const("#00D4FF");
+    assert_eq!(c.r, 0.0);
+    assert_eq!(c.g, 0.831373);
     assert_eq!(c.b, 1.0);
     assert_eq!(c.a, 1.0);
 }
