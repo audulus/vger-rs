@@ -56,28 +56,22 @@ impl Color {
     };
 
     pub fn hex(hex: &str) -> Result<Color, String> {
-        let mut r = 0;
-        let mut g = 0;
-        let mut b = 0;
-        let mut a = 255;
         if hex.len() == 9 && hex.starts_with("#") { // #FFFFFFFF (Red Green Blue Alpha)
-            r = map_err(u8::from_str_radix(&hex[1..3], 16))?;
-            g = map_err(u8::from_str_radix(&hex[3..5], 16))?;
-            b = map_err(u8::from_str_radix(&hex[5..7], 16))?;
-            a = map_err(u8::from_str_radix(&hex[7..9], 16))?;
+            Ok(Color {
+                r: map_err(u8::from_str_radix(&hex[1..3], 16))? as f32 / 255.0,
+                g: map_err(u8::from_str_radix(&hex[3..5], 16))? as f32 / 255.0,
+                b: map_err(u8::from_str_radix(&hex[5..7], 16))? as f32 / 255.0,
+                a: map_err(u8::from_str_radix(&hex[7..9], 16))? as f32 / 255.0,
+            })
         } else if hex.len() == 7 && hex.starts_with("#") { // #FFFFFF (Red Green Blue)
-            r = map_err(u8::from_str_radix(&hex[1..3], 16))?;
-            g = map_err(u8::from_str_radix(&hex[3..5], 16))?;
-            b = map_err(u8::from_str_radix(&hex[5..7], 16))?;
+            Ok(Color {
+                r: map_err(u8::from_str_radix(&hex[1..3], 16))? as f32 / 255.0,
+                g: map_err(u8::from_str_radix(&hex[3..5], 16))? as f32 / 255.0,
+                b: map_err(u8::from_str_radix(&hex[5..7], 16))? as f32 / 255.0,
+                a: 1.0,
+            })
         } else {
-            return Err("Error parsing hex. Example of valid formats: #FFFFFF or #ffffffff".to_string());
+            Err("Error parsing hex. Example of valid formats: #FFFFFF or #ffffffff".to_string())
         }
-
-        Ok(Color {
-            r: (r as f32) / 255.0,
-            g: (g as f32) / 255.0,
-            b: (b as f32) / 255.0,
-            a: (a as f32) / 255.0,
-        })
     }
 }
