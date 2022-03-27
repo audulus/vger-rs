@@ -124,12 +124,12 @@ impl Color {
 }
 
 const fn hex_digit(x: u8) -> usize {
-    (if x >= 48 && x <= 56 {
-        x - 48
-    } else if x >= 97 && x <= 102 {
-        x - 97 + 10
-    } else if x >= 65 && x <= 70 {
-        x - 65 + 10
+    (if x >= b'0' && x <= b'9' {
+        x - b'0'
+    } else if x >= b'a' && x <= b'f' {
+        x - b'a' + 10
+    } else if x >= b'A' && x <= b'F' {
+        x - b'A' + 10
     } else {
         panic!("bad hex digit")
     }) as usize
