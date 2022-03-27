@@ -6,6 +6,10 @@ pub struct Color {
     pub a: f32,
 }
 
+fn map_err(r: Result<u8, std::num::ParseIntError>) -> Result<u8, String> {
+    r.map_err(|e| format!("Error parsing hex: {}", e))
+}
+
 impl Color {
     pub fn gray(lightness: f32) -> Color {
         Self {
@@ -57,63 +61,14 @@ impl Color {
         let mut b = 0;
         let mut a = 255;
         if hex.len() == 9 && hex.starts_with("#") { // #FFFFFFFF (Red Green Blue Alpha)
-            match u8::from_str_radix(&hex[1..3], 16) {
-                Ok(o) => {
-                    r = o;
-                },
-                Err(e) => {
-                    return Err(format!("Error parsing hex: {}", e).to_string());
-                }
-            }
-            match u8::from_str_radix(&hex[3..5], 16) {
-                Ok(o) => {
-                    g = o;
-                },
-                Err(e) => {
-                    return Err(format!("Error parsing hex: {}", e).to_string());
-                }
-            }
-            match u8::from_str_radix(&hex[5..7], 16) {
-                Ok(o) => {
-                    b = o;
-                },
-                Err(e) => {
-                    return Err(format!("Error parsing hex: {}", e).to_string());
-                }
-            }
-            match u8::from_str_radix(&hex[7..9], 16) {
-                Ok(o) => {
-                    a = o;
-                },
-                Err(e) => {
-                    return Err(format!("Error parsing hex: {}", e).to_string());
-                }
-            }
+            r = map_err(u8::from_str_radix(&hex[1..3], 16))?;
+            g = map_err(u8::from_str_radix(&hex[3..5], 16))?;
+            b = map_err(u8::from_str_radix(&hex[5..7], 16))?;
+            a = map_err(u8::from_str_radix(&hex[7..9], 16))?;
         } else if hex.len() == 7 && hex.starts_with("#") { // #FFFFFF (Red Green Blue)
-            match u8::from_str_radix(&hex[1..3], 16) {
-                Ok(o) => {
-                    r = o;
-                },
-                Err(e) => {
-                    return Err(format!("Error parsing hex: {}", e).to_string());
-                }
-            }
-            match u8::from_str_radix(&hex[3..5], 16) {
-                Ok(o) => {
-                    g = o;
-                },
-                Err(e) => {
-                    return Err(format!("Error parsing hex: {}", e).to_string());
-                }
-            }
-            match u8::from_str_radix(&hex[5..7], 16) {
-                Ok(o) => {
-                    b = o;
-                },
-                Err(e) => {
-                    return Err(format!("Error parsing hex: {}", e).to_string());
-                }
-            }
+            r = map_err(u8::from_str_radix(&hex[1..3], 16))?;
+            g = map_err(u8::from_str_radix(&hex[3..5], 16))?;
+            b = map_err(u8::from_str_radix(&hex[5..7], 16))?;
         } else {
             return Err("Error parsing hex. Example of valid formats: #FFFFFF or #ffffffff".to_string());
         }
