@@ -214,6 +214,9 @@ fn test_color_hex() {
     assert_eq!(c.g, 0.831373);
     assert_eq!(c.b, 1.0);
     assert_eq!(c.a, 1.0);
+
+    let c = Color::hex_const("#009BBA");
+    assert_eq!(c.r, 0.0);
 }
 
 #[test]
