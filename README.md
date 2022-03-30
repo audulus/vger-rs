@@ -2,7 +2,7 @@
 
 ![build status](https://github.com/audulus/vger-rs/actions/workflows/rust.yml/badge.svg)
 
-2D GPU renderer for dynamic UIs. Port of [VGER](https://github.com/audulus/vger) to Rust.
+2D GPU renderer for dynamic UIs. Port of [VGER](https://github.com/audulus/vger) to Rust. Used in [rui](https://github.com/audulus/rui).
 
 ## Status
 
