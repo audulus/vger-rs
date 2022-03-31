@@ -509,12 +509,14 @@ impl VGER {
 
     /// Renders text.
     pub fn text(&mut self, text: &str, size: u32, color: Color, max_width: Option<f32>) {
+
+        let scale = self.device_px_ratio;
+
         self.layout.reset(&LayoutSettings {
-            max_width,
+            max_width: max_width.map(|w| w*scale),
             ..LayoutSettings::default()
         });
 
-        let scale = self.device_px_ratio;
         let scaled_size = size as f32 * scale; 
 
         self.layout.append(
