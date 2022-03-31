@@ -514,9 +514,11 @@ impl VGER {
             ..LayoutSettings::default()
         });
 
+        let scaled_size = size as f32 * self.device_px_ratio; 
+
         self.layout.append(
             &[&self.glyph_cache.font],
-            &TextStyle::new(text, size as f32, 0),
+            &TextStyle::new(text, scaled_size, 0),
         );
 
         let paint = self.color_paint(color);
@@ -529,7 +531,7 @@ impl VGER {
             // println!("glyph {:?}", c);
             let info = self
                 .glyph_cache
-                .get_glyph(c, size * self.device_px_ratio as u32);
+                .get_glyph(c, scaled_size as u32);
 
             let padding = 4.0;
 
