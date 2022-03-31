@@ -456,6 +456,20 @@ fn text() {
 }
 
 #[test]
+fn text_scale() {
+    let (device, queue) = block_on(setup());
+
+    let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
+
+    vger.begin(512.0, 512.0, 2.0);
+
+    vger.translate([32.0, 256.0]);
+    vger.text("This is a test", 18, Color::CYAN, None);
+
+    render_test(&mut vger, &device, &queue, "text_scale.png", true);
+}
+
+#[test]
 fn text_box() {
     let (device, queue) = block_on(setup());
 
