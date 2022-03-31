@@ -507,8 +507,7 @@ impl VGER {
         }
     }
 
-    /// Renders text.
-    pub fn text(&mut self, text: &str, size: u32, color: Color, max_width: Option<f32>) {
+    fn setup_layout(&mut self, text: &str, size: u32, max_width: Option<f32>) {
 
         let scale = self.device_px_ratio;
 
@@ -523,6 +522,16 @@ impl VGER {
             &[&self.glyph_cache.font],
             &TextStyle::new(text, scaled_size, 0),
         );
+
+    }
+
+    /// Renders text.
+    pub fn text(&mut self, text: &str, size: u32, color: Color, max_width: Option<f32>) {
+
+        self.setup_layout(text, size, max_width);
+
+        let scale = self.device_px_ratio;
+        let scaled_size = size as f32 * scale;
 
         let paint = self.color_paint(color);
         let xform = self.add_xform() as u32;
@@ -569,22 +578,17 @@ impl VGER {
 
     /// Calculates the bounds for text.
     pub fn text_bounds(&mut self, text: &str, size: u32, max_width: Option<f32>) -> LocalRect {
-        self.layout.reset(&LayoutSettings {
-            max_width,
-            ..LayoutSettings::default()
-        });
 
-        self.layout.append(
-            &[&self.glyph_cache.font],
-            &TextStyle::new(text, size as f32, 0),
-        );
+        self.setup_layout(text, size, max_width);
 
         let mut min = LocalPoint::new(f32::MAX, f32::MAX);
         let mut max = LocalPoint::new(f32::MIN, f32::MIN);
 
+        let scale = self.device_px_ratio;
+
         for glyph in self.layout.glyphs() {
-            min = min.min([glyph.x, glyph.y].into());
-            max = max.max([glyph.x + glyph.width as f32, glyph.y + glyph.height as f32].into());
+            min = min.min([glyph.x / scale, glyph.y / scale].into());
+            max = max.max([(glyph.x + glyph.width as f32) / scale, (glyph.y + glyph.height as f32) / scale ].into());
         }
 
         LocalRect::new(min, (max - min).into())
@@ -600,21 +604,15 @@ impl VGER {
         let mut rects = vec![];
         rects.reserve(text.len());
 
-        self.layout.reset(&LayoutSettings {
-            max_width,
-            ..LayoutSettings::default()
-        });
+        self.setup_layout(text, size, max_width);
 
-        self.layout.append(
-            &[&self.glyph_cache.font],
-            &TextStyle::new(text, size as f32, 0),
-        );
+        let s = 1.0/self.device_px_ratio;
 
         for glyph in self.layout.glyphs() {
             rects.push(LocalRect::new(
                 [glyph.x, glyph.y].into(),
                 [glyph.width as f32, glyph.height as f32].into(),
-            ))
+            ).scale(s, s))
         }
 
         rects
@@ -626,15 +624,9 @@ impl VGER {
         size: u32,
         max_width: Option<f32>,
     ) -> Vec<LineMetrics> {
-        self.layout.reset(&LayoutSettings {
-            max_width,
-            ..LayoutSettings::default()
-        });
 
-        self.layout.append(
-            &[&self.glyph_cache.font],
-            &TextStyle::new(text, size as f32, 0),
-        );
+        self.setup_layout(text, size, max_width);
+        let s = 1.0/self.device_px_ratio;
 
         let mut rects = vec![];
         rects.reserve(text.len());
@@ -655,7 +647,7 @@ impl VGER {
                 rects.push(LineMetrics {
                     glyph_start: line.glyph_start,
                     glyph_end: line.glyph_end,
-                    bounds: rect,
+                    bounds: rect.scale(s, s),
                 });
             }
         }
