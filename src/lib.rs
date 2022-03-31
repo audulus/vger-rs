@@ -531,22 +531,24 @@ impl VGER {
                 .glyph_cache
                 .get_glyph(c, size * self.device_px_ratio as u32);
 
+            let padding = 4.0;
+
             if let Some(rect) = info.rect {
                 let mut prim = Prim::default();
                 prim.prim_type = PrimType::Glyph as u32;
                 prim.xform = xform;
                 prim.quad_bounds = [
-                    glyph.x,
-                    glyph.y,
-                    glyph.x + glyph.width as f32,
-                    glyph.y + glyph.height as f32,
+                    glyph.x - padding,
+                    glyph.y - padding,
+                    glyph.x + glyph.width as f32 + padding,
+                    glyph.y + glyph.height as f32 + padding,
                 ];
                 // println!("quad_bounds: {:?}", prim.quad_bounds);
                 prim.tex_bounds = [
-                    rect.x as f32,
-                    (rect.y + rect.height) as f32,
-                    (rect.x + rect.width) as f32,
-                    rect.y as f32,
+                    rect.x as f32 - padding,
+                    (rect.y + rect.height) as f32 + padding,
+                    (rect.x + rect.width) as f32 + padding,
+                    rect.y as f32 - padding,
                 ];
                 prim.paint = paint.index as u32;
                 // println!("tex_bounds: {:?}", prim.tex_bounds);
