@@ -464,7 +464,7 @@ fn text_scale() {
     vger.begin(512.0, 512.0, 2.0);
 
     vger.translate([32.0, 256.0]);
-    vger.text("This is a test", 18, Color::CYAN, None);
+    vger.text("This is a test", 32, Color::CYAN, None);
 
     render_test(&mut vger, &device, &queue, "text_scale.png", true);
 }

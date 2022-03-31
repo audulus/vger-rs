@@ -518,7 +518,7 @@ impl VGER {
 
         self.layout.append(
             &[&self.glyph_cache.font],
-            &TextStyle::new(text, scaled_size, 0),
+            &TextStyle::new(text, size as f32, 0),
         );
 
         let paint = self.color_paint(color);
@@ -531,7 +531,7 @@ impl VGER {
             // println!("glyph {:?}", c);
             let info = self
                 .glyph_cache
-                .get_glyph(c, scaled_size as u32);
+                .get_glyph(c, scaled_size);
 
             let padding = 4.0;
 
@@ -540,17 +540,17 @@ impl VGER {
                 prim.prim_type = PrimType::Glyph as u32;
                 prim.xform = xform;
                 prim.quad_bounds = [
-                    glyph.x - padding,
-                    glyph.y - padding,
-                    glyph.x + glyph.width as f32 + padding,
-                    glyph.y + glyph.height as f32 + padding,
+                    glyph.x,
+                    glyph.y,
+                    glyph.x + glyph.width as f32,
+                    glyph.y + glyph.height as f32,
                 ];
                 // println!("quad_bounds: {:?}", prim.quad_bounds);
                 prim.tex_bounds = [
-                    rect.x as f32 - padding,
-                    (rect.y + rect.height) as f32 + padding,
-                    (rect.x + rect.width) as f32 + padding,
-                    rect.y as f32 - padding,
+                    rect.x as f32,
+                    (rect.y + rect.height) as f32,
+                    (rect.x + rect.width) as f32,
+                    rect.y as f32,
                 ];
                 prim.paint = paint.index as u32;
                 // println!("tex_bounds: {:?}", prim.tex_bounds);
