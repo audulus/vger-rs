@@ -456,6 +456,20 @@ fn text() {
 }
 
 #[test]
+fn text_small() {
+    let (device, queue) = block_on(setup());
+
+    let mut vger = VGER::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
+
+    vger.begin(512.0, 512.0, 1.0);
+
+    vger.translate([32.0, 256.0]);
+    vger.text("53", 18, Color::CYAN, None);
+
+    render_test(&mut vger, &device, &queue, "text_small.png", true);
+}
+
+#[test]
 fn text_scale() {
     let (device, queue) = block_on(setup());
 
