@@ -69,4 +69,8 @@ impl GlyphCache {
     pub fn create_view(&self) -> wgpu::TextureView {
         self.atlas.create_view()
     }
+
+    pub fn usage(&self) -> f32 {
+        self.atlas.usage()
+    }
 }
