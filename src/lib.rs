@@ -530,6 +530,8 @@ impl VGER {
 
         self.setup_layout(text, size, max_width);
 
+        let padding = 2.0 as f32;
+
         let scale = self.device_px_ratio;
         let scaled_size = size as f32 * scale;
 
@@ -550,17 +552,17 @@ impl VGER {
                 prim.prim_type = PrimType::Glyph as u32;
                 prim.xform = xform;
                 prim.quad_bounds = [
-                    glyph.x / scale,
-                    glyph.y / scale,
-                    (glyph.x + glyph.width as f32) / scale,
-                    (glyph.y + glyph.height as f32) / scale,
+                    (glyph.x-padding) / scale,
+                    (glyph.y-padding) / scale,
+                    (glyph.x + padding + glyph.width as f32) / scale,
+                    (glyph.y + padding + glyph.height as f32) / scale,
                 ];
                 // println!("quad_bounds: {:?}", prim.quad_bounds);
                 prim.tex_bounds = [
-                    rect.x as f32,
-                    (rect.y + rect.height) as f32,
-                    (rect.x + rect.width) as f32,
-                    rect.y as f32,
+                    rect.x as f32 - padding,
+                    (rect.y + rect.height) as f32 + padding,
+                    (rect.x + rect.width) as f32 + padding,
+                    rect.y as f32 - padding,
                 ];
                 prim.paint = paint.index as u32;
                 // println!("tex_bounds: {:?}", prim.tex_bounds);
