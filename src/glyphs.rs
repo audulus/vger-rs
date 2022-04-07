@@ -16,11 +16,12 @@ pub struct GlyphCache {
 
 impl GlyphCache {
     pub fn new(device: &wgpu::Device) -> Self {
+        let settings = fontdue::FontSettings { collection_index: 0, scale: 100.0 };
         let font = include_bytes!("fonts/Anodina-Regular.ttf") as &[u8];
 
         Self {
             atlas: Atlas::new(device),
-            font: fontdue::Font::from_bytes(font, fontdue::FontSettings::default()).unwrap(),
+            font: fontdue::Font::from_bytes(font, settings).unwrap(),
             info: HashMap::new(),
         }
     }
