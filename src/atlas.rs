@@ -12,21 +12,25 @@ pub struct Atlas {
     packer: Packer,
     new_data: Vec<ImageData>,
     atlas_texture: wgpu::Texture,
-    area_used: i32
+    area_used: i32,
+    did_clear: bool,
 }
 
 impl Atlas {
     pub const ATLAS_SIZE: u32 = 1024;
+    pub const RECT_PADDING: i32 = 6;
 
-    pub fn new(device: &wgpu::Device) -> Self {
-        let config = rect_packer::Config {
+    fn get_packer_config() -> rect_packer::Config {
+        rect_packer::Config {
             width: Atlas::ATLAS_SIZE as i32,
             height: Atlas::ATLAS_SIZE as i32,
 
-            border_padding: 5,
-            rectangle_padding: 10,
-        };
+            border_padding: Atlas::RECT_PADDING,
+            rectangle_padding: Atlas::RECT_PADDING,
+        }
+    }
 
+    pub fn new(device: &wgpu::Device) -> Self {
         let texture_size = wgpu::Extent3d {
             width: Atlas::ATLAS_SIZE,
             height: Atlas::ATLAS_SIZE,
@@ -44,10 +48,11 @@ impl Atlas {
         });
 
         Self {
-            packer: Packer::new(config),
+            packer: Packer::new(Atlas::get_packer_config()),
             new_data: vec![],
             atlas_texture,
             area_used: 0,
+            did_clear: false,
         }
     }
 
@@ -57,7 +62,7 @@ impl Atlas {
                 rect,
                 data: data.into(),
             });
-            self.area_used += rect.width * rect.height;
+            self.area_used += (rect.width + Atlas::RECT_PADDING) * (rect.height + Atlas::RECT_PADDING);
 
             Some(rect)
         } else {
@@ -66,6 +71,57 @@ impl Atlas {
     }
 
     pub fn update(&mut self, device: &wgpu::Device, encoder: &mut wgpu::CommandEncoder) {
+
+        if self.did_clear {
+            // encoder.clear_texture(&self.atlas_texture, &wgpu::ImageSubresourceRange::default());
+
+            let sz = Atlas::ATLAS_SIZE as usize;
+
+            let mut data = vec![];
+            data.reserve(sz*sz);
+            for _ in 0..sz {
+                for _ in 0..sz {
+                    data.push(0 as u8);
+                }
+            }
+
+            let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("atlas temp buffer"),
+                contents: &data,
+                usage: wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::MAP_WRITE,
+            });
+
+            let image_size = wgpu::Extent3d {
+                width: sz as u32,
+                height: sz as u32,
+                depth_or_array_layers: 1,
+            };
+
+            encoder.copy_buffer_to_texture(
+                wgpu::ImageCopyBuffer {
+                    buffer: &buffer,
+                    layout: wgpu::ImageDataLayout {
+                        offset: 0,
+                        bytes_per_row: std::num::NonZeroU32::new(sz as u32),
+                        rows_per_image: None,
+                    },
+                },
+                wgpu::ImageCopyTexture {
+                    texture: &self.atlas_texture,
+                    mip_level: 0,
+                    aspect: wgpu::TextureAspect::All,
+                    origin: wgpu::Origin3d {
+                        x: 0,
+                        y: 0,
+                        z: 0,
+                    },
+                },
+                image_size,
+            );
+
+            self.did_clear = false;
+        }
+
         for data in &self.new_data {
             // Pad data to wgpu::COPY_BYTES_PER_ROW_ALIGNMENT
             let align = wgpu::COPY_BYTES_PER_ROW_ALIGNMENT as i32;
@@ -132,5 +188,12 @@ impl Atlas {
 
     pub fn usage(&self) -> f32 {
         (self.area_used as f32) / ((Atlas::ATLAS_SIZE * Atlas::ATLAS_SIZE) as f32)
+    }
+
+    pub fn clear(&mut self) {
+        self.packer = Packer::new(Atlas::get_packer_config());
+        self.area_used = 0;
+        self.new_data.clear();
+        self.did_clear = true;
     }
 }

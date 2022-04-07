@@ -73,4 +73,9 @@ impl GlyphCache {
     pub fn usage(&self) -> f32 {
         self.atlas.usage()
     }
+
+    pub fn clear(&mut self) {
+        self.info.clear();
+        self.atlas.clear();
+    }
 }

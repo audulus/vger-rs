@@ -269,6 +269,14 @@ impl VGER {
             rpass.draw(/*vertices*/ 0..4, /*instances*/ 0..(n as u32))
         }
         queue.submit(Some(encoder.finish()));
+
+        // If we're getting close to full, reset the glyph cache.
+        let usage = self.glyph_cache.usage();
+        // println!("glyph cache usage {}", usage);
+        if usage > 0.7 {
+            // println!("clearing glyph cache");
+            self.glyph_cache.clear();
+        }
     }
 
     fn render(&mut self, prim: Prim) {
