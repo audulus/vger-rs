@@ -12,6 +12,7 @@ pub struct Atlas {
     packer: Packer,
     new_data: Vec<ImageData>,
     atlas_texture: wgpu::Texture,
+    area_used: i32
 }
 
 impl Atlas {
@@ -46,6 +47,7 @@ impl Atlas {
             packer: Packer::new(config),
             new_data: vec![],
             atlas_texture,
+            area_used: 0,
         }
     }
 
@@ -55,6 +57,7 @@ impl Atlas {
                 rect,
                 data: data.into(),
             });
+            self.area_used += rect.width * rect.height;
 
             Some(rect)
         } else {
@@ -125,5 +128,9 @@ impl Atlas {
     pub fn create_view(&self) -> wgpu::TextureView {
         self.atlas_texture
             .create_view(&wgpu::TextureViewDescriptor::default())
+    }
+
+    pub fn usage(&self) -> f32 {
+        (self.area_used as f32) / ((Atlas::ATLAS_SIZE * Atlas::ATLAS_SIZE) as f32)
     }
 }
