@@ -27,14 +27,16 @@ impl GlyphCache {
 
     pub fn get_glyph(&mut self, c: char, size: f32) -> GlyphInfo {
 
+        let factor = 65536.0;
+
         // Convert size to fixed point so we can hash it.
-        let size_fixed_point = (size * 1000.0) as u32;
+        let size_fixed_point = (size * factor) as u32;
 
         // Do we already have a glyph?
         match self.info.get(&(c, size_fixed_point)) {
             Some(info) => *info,
             None => {
-                let (metrics, data) = self.font.rasterize(c, size_fixed_point as f32 / 1000.0);
+                let (metrics, data) = self.font.rasterize(c, size_fixed_point as f32 / factor);
 
                 /*
                 let mut i = 0;
