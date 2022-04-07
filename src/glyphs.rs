@@ -4,7 +4,6 @@ use std::collections::HashMap;
 
 #[derive(Copy, Clone, Debug)]
 pub struct GlyphInfo {
-    pub size: u32,
     pub rect: Option<Rect>,
     pub metrics: fontdue::Metrics,
 }
@@ -53,7 +52,6 @@ impl GlyphCache {
                         .add_region(&data, metrics.width as u32, metrics.height as u32);
 
                 let info = GlyphInfo {
-                    size: size_fixed_point,
                     rect,
                     metrics,
                 };
