@@ -573,6 +573,7 @@ fn fs_main(
 
     // Look up glyph alpha (if not a glyph, still have to because of wgsl).
     let a = textureSample(glyph_atlas, samp, in.t/1024.0).r;
+    // let a = textureLoad(glyph_atlas, vec2<i32>(in.t), 0).r;
 
     if(prim.prim_type == 8u) { // vgerGlyph
 
