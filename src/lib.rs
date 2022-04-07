@@ -559,6 +559,9 @@ impl VGER {
                 let mut prim = Prim::default();
                 prim.prim_type = PrimType::Glyph as u32;
                 prim.xform = xform;
+                assert!(glyph.width == rect.width as usize);
+                assert!(glyph.height == rect.height as usize);
+                
                 prim.quad_bounds = [
                     (glyph.x-padding) / scale,
                     (glyph.y-padding) / scale,
