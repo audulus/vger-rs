@@ -10,6 +10,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    # Note that we can't run the tests because GitHub CI doesn't have GPUs.
     steps:
     - uses: actions/checkout@v2
     - name: Build
