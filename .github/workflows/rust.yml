@@ -8,7 +8,11 @@ env:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
 
     # Note that we can't run the tests because GitHub CI doesn't have GPUs.
     steps:
