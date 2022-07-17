@@ -15,12 +15,10 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[patch.crates-io]
-naga = { git = "https://github.com/audulus/naga", branch = "MSL-address-space-backport-v0.8" }
-
 [dependencies]
-wgpu = "0.12.0"
+wgpu = "0.13.1"
 futures = "0.3"
+futures-intrusive = "0.4"
 euclid = "0.22.6"
 png = "0.16"
 fontdue = "0.7.2"
