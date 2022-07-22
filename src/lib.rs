@@ -721,10 +721,12 @@ impl Vger {
         PaintIndex { index: 0 }
     }
 
+    /// Solid color paint.
     pub fn color_paint(&mut self, color: Color) -> PaintIndex {
         self.add_paint(Paint::solid_color(color))
     }
 
+    /// Linear gradient paint.
     pub fn linear_gradient<Pt: Into<LocalPoint>>(
         &mut self,
         start: Pt,
