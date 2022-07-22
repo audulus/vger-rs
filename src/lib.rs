@@ -695,6 +695,21 @@ impl Vger {
         }
     }
 
+    /// Scales the coordinate system.
+    pub fn scale<Vec: Into<LocalVector>>(&mut self, scale: Vec) {
+        if let Some(m) = self.tx_stack.last_mut() {
+            let s: LocalVector = scale.into();
+            *m = (*m).pre_scale(s.x, s.y);
+        }
+    }
+
+    /// Rotates the coordinate system.
+    pub fn rotate(&mut self, theta: f32) {
+        if let Some(m) = self.tx_stack.last_mut() {
+            *m = m.pre_rotate(euclid::Angle::<f32>::radians(theta));
+        }
+    }
+
     fn add_paint(&mut self, paint: Paint) -> PaintIndex {
         if self.paint_count < MAX_PRIMS {
             self.scenes[self.cur_scene].paints.data.push(paint);
