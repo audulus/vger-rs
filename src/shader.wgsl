@@ -575,6 +575,20 @@ var glyph_atlas: texture_2d<f32>;
 @binding(2)
 var samp : sampler;
 
+struct Scissor {
+    xform: PackedMat3x2,
+    extent: vec2<f32>,
+    scale: vec2<f32>,
+};
+
+fn scissor_mask(scissor: Scissor, p: vec2<f32>) -> f32 {
+    let M = unpack_mat3x2(scissor.xform);
+    var sc = (abs((M * vec3<f32>(p, 1.0)).xy) - scissor.extent)
+              * scissor.scale;
+    sc = clamp(vec2<f32>(0.5, 0.5) - sc, vec2<f32>(0.0), vec2<f32>(1.0));
+    return sc.x * sc.y;
+}
+
 @fragment
 fn fs_main(
     in: VertexOutput,
