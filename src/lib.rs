@@ -45,9 +45,10 @@ pub struct LineMetrics {
     pub bounds: LocalRect,
 }
 
+#[derive(Copy, Clone, Debug)]
 struct Scissor {
     xform: LocalToWorld,
-    extent: Size2D<f32, LocalSpace>    
+    extent: Size2D<f32, LocalSpace>,
 }
 
 pub struct Vger {
@@ -232,14 +233,16 @@ impl Vger {
         self.pen = LocalPoint::zero();
     }
 
-    /// Saves rendering state (just the current transform).
+    /// Saves rendering state (transform and scissor rect).
     pub fn save(&mut self) {
-        self.tx_stack.push(*self.tx_stack.last().unwrap())
+        self.tx_stack.push(*self.tx_stack.last().unwrap());
+        self.scissor_stack.push(*self.scissor_stack.last().unwrap());
     }
 
-    /// Restores rendering state (just the current transform).
+    /// Restores rendering state (transform and scissor rect).
     pub fn restore(&mut self) {
         self.tx_stack.pop();
+        self.scissor_stack.pop();
     }
 
     /// Encode all rendering to a command buffer.
@@ -720,9 +723,10 @@ impl Vger {
 
     /// Sets the current scissor rect.
     pub fn scissor(&mut self, rect: LocalRect) {
-
         if let Some(m) = self.scissor_stack.last_mut() {
-            m.xform = LocalToWorld::identity().pre_translate( rect.center().to_vector() );
+            m.xform = euclid::Transform2D::<f32, LocalSpace, LocalSpace>::identity()
+                .pre_translate(rect.center().to_vector())
+                .then(self.tx_stack.last().unwrap());
             m.extent = rect.size * 0.5;
         }
     }
