@@ -1,3 +1,4 @@
+use euclid::Size2D;
 use fontdue::layout::{CoordinateSystem, Layout, LayoutSettings, TextStyle};
 
 mod path;
@@ -44,11 +45,17 @@ pub struct LineMetrics {
     pub bounds: LocalRect,
 }
 
+struct Scissor {
+    xform: LocalToWorld,
+    extent: Size2D<f32, LocalSpace>    
+}
+
 pub struct Vger {
     scenes: [Scene; 3],
     cur_scene: usize,
     cur_layer: usize,
     tx_stack: Vec<LocalToWorld>,
+    scissor_stack: Vec<Scissor>,
     device_px_ratio: f32,
     screen_size: ScreenSize,
     paint_count: usize,
@@ -192,6 +199,7 @@ impl Vger {
             cur_scene: 0,
             cur_layer: 0,
             tx_stack: vec![],
+            scissor_stack: vec![],
             device_px_ratio: 1.0,
             screen_size: ScreenSize::new(512.0, 512.0),
             paint_count: 0,
@@ -707,6 +715,15 @@ impl Vger {
     pub fn rotate(&mut self, theta: f32) {
         if let Some(m) = self.tx_stack.last_mut() {
             *m = m.pre_rotate(euclid::Angle::<f32>::radians(theta));
+        }
+    }
+
+    /// Sets the current scissor rect.
+    pub fn scissor(&mut self, rect: LocalRect) {
+
+        if let Some(m) = self.scissor_stack.last_mut() {
+            m.xform = LocalToWorld::identity().pre_translate( rect.center().to_vector() );
+            m.extent = rect.size * 0.5;
         }
     }
 
