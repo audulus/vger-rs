@@ -69,6 +69,12 @@ struct Prim {
     tex_bounds_min: vec2<f32>,
     tex_bounds_max: vec2<f32>,
 
+    /// Index of scissor rectangle.
+    scissor: u32,
+
+    /// Alignment padding.
+    pad: u32,
+
 };
 
 fn proj(a: vec2<f32>, b: vec2<f32>) -> vec2<f32> {

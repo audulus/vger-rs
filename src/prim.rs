@@ -67,12 +67,17 @@ pub struct Prim {
 
     /// Min and max coordinates in texture space.
     pub tex_bounds: [f32; 4],
+
+    /// Index of scissor.
+    pub scissor: u32,
+
+    pad: u32,
 }
 
 mod tests {
 
     #[test]
     fn test_size() {
-        assert_eq!(std::mem::size_of::<super::Prim>(), 88);
+        assert_eq!(std::mem::size_of::<super::Prim>(), 96);
     }
 }
