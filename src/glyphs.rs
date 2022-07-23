@@ -16,7 +16,10 @@ pub struct GlyphCache {
 
 impl GlyphCache {
     pub fn new(device: &wgpu::Device) -> Self {
-        let settings = fontdue::FontSettings { collection_index: 0, scale: 100.0 };
+        let settings = fontdue::FontSettings {
+            collection_index: 0,
+            scale: 100.0,
+        };
         let font = include_bytes!("fonts/Anodina-Regular.ttf") as &[u8];
 
         Self {
@@ -27,7 +30,6 @@ impl GlyphCache {
     }
 
     pub fn get_glyph(&mut self, c: char, size: f32) -> GlyphInfo {
-
         let factor = 65536.0;
 
         // Convert size to fixed point so we can hash it.
@@ -54,10 +56,7 @@ impl GlyphCache {
                     self.atlas
                         .add_region(&data, metrics.width as u32, metrics.height as u32);
 
-                let info = GlyphInfo {
-                    rect,
-                    metrics,
-                };
+                let info = GlyphInfo { rect, metrics };
 
                 self.info.insert((c, size_fixed_point), info);
                 info

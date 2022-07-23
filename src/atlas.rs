@@ -62,7 +62,8 @@ impl Atlas {
                 rect,
                 data: data.into(),
             });
-            self.area_used += (rect.width + Atlas::RECT_PADDING) * (rect.height + Atlas::RECT_PADDING);
+            self.area_used +=
+                (rect.width + Atlas::RECT_PADDING) * (rect.height + Atlas::RECT_PADDING);
 
             Some(rect)
         } else {
@@ -71,14 +72,13 @@ impl Atlas {
     }
 
     pub fn update(&mut self, device: &wgpu::Device, encoder: &mut wgpu::CommandEncoder) {
-
         if self.did_clear {
             // encoder.clear_texture(&self.atlas_texture, &wgpu::ImageSubresourceRange::default());
 
             let sz = Atlas::ATLAS_SIZE as usize;
 
             let mut data = vec![];
-            data.reserve(sz*sz);
+            data.reserve(sz * sz);
             for _ in 0..sz {
                 for _ in 0..sz {
                     data.push(0 as u8);
@@ -110,11 +110,7 @@ impl Atlas {
                     texture: &self.atlas_texture,
                     mip_level: 0,
                     aspect: wgpu::TextureAspect::All,
-                    origin: wgpu::Origin3d {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                    },
+                    origin: wgpu::Origin3d { x: 0, y: 0, z: 0 },
                 },
                 image_size,
             );
