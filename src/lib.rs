@@ -48,7 +48,16 @@ pub struct LineMetrics {
 #[derive(Copy, Clone, Debug)]
 pub(crate) struct Scissor {
     pub xform: LocalToWorld,
-    pub extent: Size2D<f32, LocalSpace>,
+    pub extent: LocalSize,
+}
+
+impl Scissor {
+    fn new() -> Self {
+        Self {
+            xform: LocalToWorld::new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+            extent: LocalSize::new(-1.0, -1.0),
+        }
+    }
 }
 
 pub struct Vger {
@@ -228,6 +237,8 @@ impl Vger {
         self.scenes[self.cur_scene].clear();
         self.tx_stack.clear();
         self.tx_stack.push(LocalToWorld::identity());
+        self.scissor_stack.clear();
+        self.scissor_stack.push(Scissor::new());
         self.paint_count = 0;
         self.xform_count = 0;
         self.pen = LocalPoint::zero();
