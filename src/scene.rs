@@ -1,17 +1,15 @@
-use crate::defs::*;
-use crate::gpu_vec::*;
-use crate::paint::*;
-use crate::prim::*;
+use crate::*;
 
 pub const MAX_LAYERS: usize = 4;
 
 type Mat4x4 = [f32; 16];
 
-pub struct Scene {
+pub(crate) struct Scene {
     pub prims: [GPUVec<Prim>; MAX_LAYERS],
     pub cvs: GPUVec<LocalPoint>,
     pub xforms: GPUVec<Mat4x4>,
     pub paints: GPUVec<Paint>,
+    pub scissors: GPUVec<Scissor>,
     pub bind_group_layout: wgpu::BindGroupLayout,
     pub bind_groups: [wgpu::BindGroup; MAX_LAYERS],
 }
@@ -30,6 +28,7 @@ impl Scene {
         let cvs = GPUVec::new(device, MAX_PRIMS, "cv Buffer");
         let xforms = GPUVec::new(device, MAX_PRIMS, "Xform Buffer");
         let paints = GPUVec::new(device, MAX_PRIMS, "Paint Buffer");
+        let scissors = GPUVec::new(device, MAX_PRIMS, "scissor Buffer");
 
         let bind_group_layout = Self::bind_group_layout(device);
 
@@ -45,6 +44,7 @@ impl Scene {
             cvs,
             xforms,
             paints,
+            scissors,
             bind_group_layout,
             bind_groups,
         }

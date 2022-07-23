@@ -46,9 +46,9 @@ pub struct LineMetrics {
 }
 
 #[derive(Copy, Clone, Debug)]
-struct Scissor {
-    xform: LocalToWorld,
-    extent: Size2D<f32, LocalSpace>,
+pub(crate) struct Scissor {
+    pub xform: LocalToWorld,
+    pub extent: Size2D<f32, LocalSpace>,
 }
 
 pub struct Vger {
