@@ -582,11 +582,12 @@ struct Scissors {
 var<storage> scissors: Scissors;
 
 fn scissor_mask(scissor: Scissor, p: vec2<f32>) -> f32 {
-    let M = unpack_mat3x2(scissor.xform);
-    var sc = (abs((M * vec3<f32>(p, 1.0)).xy) - scissor.extent)
-              * scissor.scale;
-    sc = clamp(vec2<f32>(0.5, 0.5) - sc, vec2<f32>(0.0), vec2<f32>(1.0));
-    return sc.x * sc.y;
+    // let M = unpack_mat3x2(scissor.xform);
+    // var sc = (abs((M * vec3<f32>(p, 1.0)).xy) - scissor.extent)
+    //           * scissor.scale;
+    // sc = clamp(vec2<f32>(0.5, 0.5) - sc, vec2<f32>(0.0), vec2<f32>(1.0));
+    // return sc.x * sc.y;
+    return 1.0;
 }
 
 @group(1)
@@ -605,6 +606,7 @@ fn fs_main(
     let fw = length(fwidth(in.t));
     let prim = prims.prims[in.prim_index];
     let paint = paints.paints[prim.paint];
+    let scissor = scissors.scissors[prim.scissor];
 
     // Look up glyph alpha (if not a glyph, still have to because of wgsl).
     let a = textureSample(glyph_atlas, samp, in.t/1024.0).r;
@@ -627,6 +629,7 @@ fn fs_main(
 
     let d = sdPrim(prim, in.t, fw);
     let color = apply(paint, in.t);
+    let s = scissor_mask(scissor, in.t);
 
-    return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
+    return s * mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
 }
