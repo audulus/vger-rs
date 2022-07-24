@@ -33,10 +33,10 @@ impl Scene {
         let bind_group_layout = Self::bind_group_layout(device);
 
         let bind_groups = [
-            Scene::bind_group(device, &prims[0], &cvs, &xforms, &paints),
-            Scene::bind_group(device, &prims[1], &cvs, &xforms, &paints),
-            Scene::bind_group(device, &prims[2], &cvs, &xforms, &paints),
-            Scene::bind_group(device, &prims[3], &cvs, &xforms, &paints),
+            Scene::bind_group(device, &prims[0], &cvs, &xforms, &paints, &scissors),
+            Scene::bind_group(device, &prims[1], &cvs, &xforms, &paints, &scissors),
+            Scene::bind_group(device, &prims[2], &cvs, &xforms, &paints, &scissors),
+            Scene::bind_group(device, &prims[3], &cvs, &xforms, &paints, &scissors),
         ];
 
         Self {
@@ -57,6 +57,7 @@ impl Scene {
                 GPUVec::<LocalPoint>::bind_group_layout_entry(1),
                 GPUVec::<Mat4x4>::bind_group_layout_entry(2),
                 GPUVec::<Paint>::bind_group_layout_entry(3),
+                GPUVec::<Scissor>::bind_group_layout_entry(4),
             ],
             label: Some("bind_group_layout"),
         })
@@ -68,6 +69,7 @@ impl Scene {
         cvs: &GPUVec<LocalPoint>,
         xforms: &GPUVec<Mat4x4>,
         paints: &GPUVec<Paint>,
+        scissors: &GPUVec<Scissor>,
     ) -> wgpu::BindGroup {
         let bind_group_layout = Self::bind_group_layout(device);
 
@@ -78,6 +80,7 @@ impl Scene {
                 cvs.bind_group_entry(1),
                 xforms.bind_group_entry(2),
                 paints.bind_group_entry(3),
+                scissors.bind_group_entry(4),
             ],
             label: Some("vger bind group"),
         })
@@ -99,5 +102,6 @@ impl Scene {
         self.cvs.data.clear();
         self.xforms.data.clear();
         self.paints.data.clear();
+        self.scissors.data.clear();
     }
 }

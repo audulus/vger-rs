@@ -567,19 +567,19 @@ fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
     return mix(paint.inner_color, paint.outer_color, d);
 }
 
-@group(1)
-@binding(1)
-var glyph_atlas: texture_2d<f32>;
-
-@group(1)
-@binding(2)
-var samp : sampler;
-
 struct Scissor {
     xform: PackedMat3x2,
     extent: vec2<f32>,
     scale: vec2<f32>,
 };
+
+struct Scissors {
+    scissors: array<Scissor>,
+};
+
+@group(0)
+@binding(4)
+var<storage> scissors: Scissors;
 
 fn scissor_mask(scissor: Scissor, p: vec2<f32>) -> f32 {
     let M = unpack_mat3x2(scissor.xform);
@@ -588,6 +588,14 @@ fn scissor_mask(scissor: Scissor, p: vec2<f32>) -> f32 {
     sc = clamp(vec2<f32>(0.5, 0.5) - sc, vec2<f32>(0.0), vec2<f32>(1.0));
     return sc.x * sc.y;
 }
+
+@group(1)
+@binding(1)
+var glyph_atlas: texture_2d<f32>;
+
+@group(1)
+@binding(2)
+var samp : sampler;
 
 @fragment
 fn fs_main(
