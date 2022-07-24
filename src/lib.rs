@@ -48,6 +48,7 @@ pub struct LineMetrics {
 pub(crate) struct Scissor {
     pub xform: LocalToWorld,
     pub extent: LocalSize,
+    pub scale: [f32; 2],
 }
 
 impl Scissor {
@@ -55,6 +56,7 @@ impl Scissor {
         Self {
             xform: LocalToWorld::new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
             extent: LocalSize::new(-1.0, -1.0),
+            scale: [1.0, 1.0],
         }
     }
 }
