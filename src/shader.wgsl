@@ -480,6 +480,9 @@ struct VertexOutput {
     @builtin(position) position: vec4<f32>,
     @location(0) prim_index: u32,
     @location(1) t: vec2<f32>,
+
+    /// Untransformed point.
+    @location(2) p: vec2<f32>,
 };
 
 struct Uniforms {
@@ -525,6 +528,7 @@ fn vs_main(
         default: { }
     }
 
+    out.p = q;
     var p = (xforms.xforms[prim.xform] * vec4<f32>(q, 0.0, 1.0)).xy;
     out.position = vec4<f32>(2.0 * p / uniforms.size - 1.0, 0.0, 1.0);
 
@@ -626,7 +630,7 @@ fn fs_main(
         return color;
     }
 
-    let d = max(sdPrim(prim, in.t, fw), scissor_mask(scissor, in.t));
+    let d = max(sdPrim(prim, in.t, fw), scissor_mask(scissor, in.p));
     let color = apply(paint, in.t);
 
     return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
