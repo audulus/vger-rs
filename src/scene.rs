@@ -10,7 +10,7 @@ pub(crate) struct Scene {
     pub xforms: GPUVec<Mat4x4>,
     pub paints: GPUVec<Paint>,
     pub scissors: GPUVec<Scissor>,
-    pub bind_group_layout: wgpu::BindGroupLayout,
+    //pub bind_group_layout: wgpu::BindGroupLayout,
     pub bind_groups: [wgpu::BindGroup; MAX_LAYERS],
 }
 
@@ -30,7 +30,7 @@ impl Scene {
         let paints = GPUVec::new(device, MAX_PRIMS, "Paint Buffer");
         let scissors = GPUVec::new(device, MAX_PRIMS, "scissor Buffer");
 
-        let bind_group_layout = Self::bind_group_layout(device);
+        //let bind_group_layout = Self::bind_group_layout(device);
 
         let bind_groups = [
             Scene::bind_group(device, &prims[0], &cvs, &xforms, &paints, &scissors),
@@ -45,7 +45,7 @@ impl Scene {
             xforms,
             paints,
             scissors,
-            bind_group_layout,
+            //bind_group_layout,
             bind_groups,
         }
     }
