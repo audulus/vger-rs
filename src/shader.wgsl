@@ -590,7 +590,11 @@ fn scissor_mask(scissor: Scissor, p: vec2<f32>) -> f32 {
     let pp = (M * vec3<f32>(p, 1.0)).xy;
     let center = scissor.origin + 0.5 * scissor.size;
     let size = scissor.size;
-    return sdBox(pp - center, 0.5 * size, 0.0);
+    if sdBox(pp - center, 0.5 * size, 0.0) < 0.0 {
+        return 1.0;
+    } else {
+        return 0.0;
+    }
 }
 
 @group(1)
@@ -632,8 +636,8 @@ fn fs_main(
         return color;
     }
 
-    let d = max(sdPrim(prim, in.t, fw), s);
+    let d = sdPrim(prim, in.t, fw);
     let color = apply(paint, in.t);
 
-    return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
+    return s * mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
 }
