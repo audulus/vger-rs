@@ -508,3 +508,19 @@ fn text_box() {
 
     render_test(&mut vger, &device, &queue, "text_box.png", true);
 }
+
+#[test]
+fn test_scissor() {
+
+    let (device, queue) = block_on(setup());
+
+    let mut vger = Vger::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
+
+    vger.begin(512.0, 512.0, 2.0);
+
+    vger.scissor(euclid::rect(200.0, 200.0, 100.0, 100.0));
+    let cyan = vger.color_paint(Color::CYAN);
+    vger.fill_rect(euclid::rect(100.0, 100.0, 300.0, 300.0), 10.0, cyan);
+
+    render_test(&mut vger, &device, &queue, "scissor.png", false);
+}
