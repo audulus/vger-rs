@@ -93,6 +93,7 @@ impl Scene {
         self.cvs.update(queue);
         self.xforms.update(queue);
         self.paints.update(queue);
+        self.scissors.update(queue);
     }
 
     pub fn clear(&mut self) {
