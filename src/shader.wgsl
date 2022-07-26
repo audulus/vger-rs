@@ -582,9 +582,8 @@ struct Scissors {
 var<storage> scissors: Scissors;
 
 fn scissor_mask(scissor: Scissor, p: vec2<f32>) -> f32 {
-    //let M = unpack_mat3x2(scissor.xform);
-    //let pp = (M * vec3<f32>(p, 1.0)).xy;
-    let pp = p;
+    let M = unpack_mat3x2(scissor.xform);
+    let pp = (M * vec3<f32>(p, 1.0)).xy;
     let center = scissor.origin + 0.5 * scissor.size;
     let size = scissor.size;
     return sdBox(pp - center, 0.5 * size, 0.0);
