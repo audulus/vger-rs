@@ -524,3 +524,27 @@ fn test_scissor() {
 
     render_test(&mut vger, &device, &queue, "scissor.png", false);
 }
+
+#[test]
+fn test_scissor_text() {
+    let (device, queue) = block_on(setup());
+
+    let mut vger = Vger::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
+
+    vger.begin(512.0, 512.0, 1.0);
+
+    let paint = vger.linear_gradient([0.0, 0.0], [512.0, 512.0], Color::CYAN, Color::MAGENTA, 0.0);
+
+    let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+    vger.translate([32.0, 256.0]);
+    vger.scissor(euclid::rect(0.0, 0.0, 100.0, 100.0));
+
+    let bounds = vger.text_bounds(lorem, 18, Some(448.0));
+
+    vger.stroke_rect(bounds.origin, bounds.max(), 10.0, 4.0, paint);
+
+    vger.text(lorem, 18, Color::CYAN, Some(448.0));
+
+    render_test(&mut vger, &device, &queue, "text_box_scissor.png", true);
+}
