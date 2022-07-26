@@ -47,7 +47,7 @@ pub struct LineMetrics {
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub(crate) struct Scissor {
-    // pub xform: LocalTransform,
+    pub xform: LocalTransform,
     pub origin: [f32; 2],
     pub size: [f32; 2],
 }
@@ -55,7 +55,7 @@ pub(crate) struct Scissor {
 impl Scissor {
     fn new() -> Self {
         Self {
-            // xform: LocalTransform::identity(),
+            xform: LocalTransform::identity(),
             origin: [-10000.0, -10000.0],
             size: [20000.0,20000.0],
         }
