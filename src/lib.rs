@@ -46,17 +46,15 @@ pub struct LineMetrics {
 
 #[derive(Copy, Clone, Debug)]
 pub(crate) struct Scissor {
-    pub xform: LocalToWorld,
-    pub extent: LocalSize,
-    pub scale: [f32; 2],
+    pub xform: LocalTransform,
+    pub rect: LocalRect,
 }
 
 impl Scissor {
     fn new() -> Self {
         Self {
-            xform: LocalToWorld::new(0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
-            extent: LocalSize::new(-1.0, -1.0),
-            scale: [1.0, 1.0],
+            xform: LocalTransform::identity(),
+            rect: LocalRect::new([f32::MIN,f32::MIN].into(),[f32::MAX,f32::MAX].into()),
         }
     }
 }
@@ -761,10 +759,15 @@ impl Vger {
     /// Sets the current scissor rect.
     pub fn scissor(&mut self, rect: LocalRect) {
         if let Some(m) = self.scissor_stack.last_mut() {
-            m.xform = euclid::Transform2D::<f32, LocalSpace, LocalSpace>::identity()
-                .pre_translate(rect.center().to_vector())
-                .then(self.tx_stack.last().unwrap());
-            m.extent = rect.size * 0.5;
+            *m = Scissor::new();
+            m.rect = rect;
+        }
+    }
+
+    /// Resets the current scissor rect.
+    pub fn reset_scissor(&mut self) {
+        if let Some(m) = self.scissor_stack.last_mut() {
+            *m = Scissor::new();
         }
     }
 

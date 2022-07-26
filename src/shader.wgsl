@@ -569,8 +569,8 @@ fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
 
 struct Scissor {
     xform: PackedMat3x2,
-    extent: vec2<f32>,
-    scale: vec2<f32>,
+    origin: vec2<f32>,
+    size: vec2<f32>,
 };
 
 struct Scissors {
