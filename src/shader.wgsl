@@ -614,7 +614,7 @@ fn fs_main(
     if(prim.prim_type == 8u) { // vgerGlyph
 
         let c = paint.inner_color;
-        var color = vec4<f32>(c.rgb, a);                                
+        var color = vec4<f32>(c.rgb, a);
 
         //auto c = paint.innerColor;
         //auto color = float4(c.rgb, c.a * glyphs.sample(glyphSampler, in.t).a);
