@@ -615,6 +615,8 @@ fn fs_main(
     let a = textureSample(glyph_atlas, samp, in.t/1024.0).r;
     // let a = textureLoad(glyph_atlas, vec2<i32>(in.t), 0).r;
 
+    let s = scissor_mask(scissor, in.p);
+
     if(prim.prim_type == 8u) { // vgerGlyph
 
         let c = paint.inner_color;
@@ -630,7 +632,7 @@ fn fs_main(
         return color;
     }
 
-    let d = max(sdPrim(prim, in.t, fw), scissor_mask(scissor, in.p));
+    let d = max(sdPrim(prim, in.t, fw), s);
     let color = apply(paint, in.t);
 
     return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
