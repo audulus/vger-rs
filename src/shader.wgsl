@@ -568,7 +568,7 @@ fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
 }
 
 struct Scissor {
-    xform: PackedMat3x2,
+    // xform: PackedMat3x2,
     origin: vec2<f32>,
     size: vec2<f32>,
 };
@@ -582,12 +582,12 @@ struct Scissors {
 var<storage> scissors: Scissors;
 
 fn scissor_mask(scissor: Scissor, p: vec2<f32>) -> f32 {
-    // let M = unpack_mat3x2(scissor.xform);
-    // var sc = (abs((M * vec3<f32>(p, 1.0)).xy) - scissor.extent)
-    //           * scissor.scale;
-    // sc = clamp(vec2<f32>(0.5, 0.5) - sc, vec2<f32>(0.0), vec2<f32>(1.0));
-    // return sc.x * sc.y;
-    return 1.0;
+    //let M = unpack_mat3x2(scissor.xform);
+    //let pp = (M * vec3<f32>(p, 1.0)).xy;
+    let pp = p;
+    let center = scissor.origin + 0.5 * scissor.size;
+    let size = scissor.size;
+    return sdBox(pp - center, 0.5 * size, 0.0);
 }
 
 @group(1)
@@ -627,9 +627,8 @@ fn fs_main(
         return color;
     }
 
-    let d = sdPrim(prim, in.t, fw);
+    let d = max(sdPrim(prim, in.t, fw), scissor_mask(scissor, in.t));
     let color = apply(paint, in.t);
-    let s = scissor_mask(scissor, in.t);
 
-    return s * mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
+    return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
 }

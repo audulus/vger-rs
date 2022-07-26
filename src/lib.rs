@@ -45,16 +45,19 @@ pub struct LineMetrics {
 }
 
 #[derive(Copy, Clone, Debug)]
+#[repr(C)]
 pub(crate) struct Scissor {
-    pub xform: LocalTransform,
-    pub rect: LocalRect,
+    // pub xform: LocalTransform,
+    pub origin: [f32; 2],
+    pub size: [f32; 2],
 }
 
 impl Scissor {
     fn new() -> Self {
         Self {
-            xform: LocalTransform::identity(),
-            rect: LocalRect::new([f32::MIN,f32::MIN].into(),[f32::MAX,f32::MAX].into()),
+            // xform: LocalTransform::identity(),
+            origin: [-10000.0, -10000.0],
+            size: [20000.0,20000.0],
         }
     }
 }
@@ -760,7 +763,8 @@ impl Vger {
     pub fn scissor(&mut self, rect: LocalRect) {
         if let Some(m) = self.scissor_stack.last_mut() {
             *m = Scissor::new();
-            m.rect = rect;
+            m.origin = rect.origin.to_array();
+            m.size = rect.size.to_array();
         }
     }
 
