@@ -479,9 +479,11 @@ var<storage> xforms: XForms;
 struct VertexOutput {
     @builtin(position) position: vec4<f32>,
     @location(0) prim_index: u32,
+
+    /// Texture space point.
     @location(1) t: vec2<f32>,
 
-    /// Untransformed point.
+    /// Point transformed by current transform.
     @location(2) p: vec2<f32>,
 };
 
@@ -528,9 +530,8 @@ fn vs_main(
         default: { }
     }
 
-    out.p = q;
-    var p = (xforms.xforms[prim.xform] * vec4<f32>(q, 0.0, 1.0)).xy;
-    out.position = vec4<f32>(2.0 * p / uniforms.size - 1.0, 0.0, 1.0);
+    out.p = (xforms.xforms[prim.xform] * vec4<f32>(q, 0.0, 1.0)).xy;
+    out.position = vec4<f32>(2.0 * out.p / uniforms.size - 1.0, 0.0, 1.0);
 
     return out;
 }
@@ -633,7 +634,7 @@ fn fs_main(
         //    color.a *= paint.glow;
         //}
 
-        return color;
+        return s * color;
     }
 
     let d = sdPrim(prim, in.t, fw);
