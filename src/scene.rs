@@ -86,14 +86,14 @@ impl Scene {
         })
     }
 
-    pub fn update(&self, queue: &wgpu::Queue) {
+    pub fn update(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
         for i in 0..4 {
-            self.prims[i].update(queue);
+            self.prims[i].update(device, queue);
         }
-        self.cvs.update(queue);
-        self.xforms.update(queue);
-        self.paints.update(queue);
-        self.scissors.update(queue);
+        self.cvs.update(device, queue);
+        self.xforms.update(device, queue);
+        self.paints.update(device, queue);
+        self.scissors.update(device, queue);
     }
 
     pub fn clear(&mut self) {

@@ -268,8 +268,8 @@ impl Vger {
         render_pass: &wgpu::RenderPassDescriptor,
         queue: &wgpu::Queue,
     ) {
-        self.scenes[self.cur_scene].update(queue);
-        self.uniforms.update(queue);
+        self.scenes[self.cur_scene].update(device, queue);
+        self.uniforms.update(device, queue);
 
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("vger encoder"),

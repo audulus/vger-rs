@@ -5,6 +5,7 @@ pub struct GPUVec<T: Copy> {
     buffer: wgpu::Buffer,
     capacity: usize,
     pub data: Vec<T>,
+    label: String,
 }
 
 impl<T: Copy> GPUVec<T> {
@@ -20,6 +21,7 @@ impl<T: Copy> GPUVec<T> {
             buffer,
             capacity,
             data: vec![],
+            label: label.into(),
         }
     }
 
@@ -35,11 +37,31 @@ impl<T: Copy> GPUVec<T> {
             buffer,
             capacity: 1,
             data: vec![],
+            label: label.into(),
         }
     }
 
-    pub fn update(&self, queue: &wgpu::Queue) {
-        assert!(self.data.len() <= self.capacity);
+    /// Updates the underlying gpu buffer with self.data.
+    /// 
+    /// We'd like to write directly to the mapped buffer, but that seemed
+    /// tricky with wgpu.
+    pub fn update(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
+        
+        let mut realloc = false;
+        while self.data.len() > self.capacity {
+            self.capacity *= 2;
+            realloc = true;
+        }
+
+        if realloc {
+            self.buffer = device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some(self.label.as_str()),
+                size: (size_of::<T>() * self.capacity) as u64,
+                usage: BufferUsages::STORAGE | BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            });
+        }
+
         let sz = self.data.len() * size_of::<T>();
         queue.write_buffer(&self.buffer, 0, unsafe {
             std::slice::from_raw_parts_mut(self.data[..].as_ptr() as *mut u8, sz)
