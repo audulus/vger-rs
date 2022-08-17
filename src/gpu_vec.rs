@@ -91,4 +91,8 @@ impl<T: Copy> GPUVec<T> {
             }),
         }
     }
+
+    pub fn clear(&mut self) {
+        self.data.clear();
+    }
 }

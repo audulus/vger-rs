@@ -98,11 +98,11 @@ impl Scene {
 
     pub fn clear(&mut self) {
         for i in 0..4 {
-            self.prims[i].data.clear();
+            self.prims[i].clear();
         }
-        self.cvs.data.clear();
-        self.xforms.data.clear();
-        self.paints.data.clear();
-        self.scissors.data.clear();
+        self.cvs.clear();
+        self.xforms.clear();
+        self.paints.clear();
+        self.scissors.clear();
     }
 }
