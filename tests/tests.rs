@@ -477,7 +477,9 @@ fn path_fill() {
     vger.quad_to(rand2(&mut rng), start);
     vger.fill(paint);
 
-    render_test(&mut vger, &device, &queue, "path_fill.png", true);
+    let png_name = "path_fill.png";
+    render_test(&mut vger, &device, &queue, png_name, true);
+    assert!(png_not_black(png_name));
 }
 
 #[test]
@@ -491,7 +493,9 @@ fn text() {
     vger.translate([32.0, 256.0]);
     vger.text("This is a test", 32, Color::CYAN, None);
 
-    render_test(&mut vger, &device, &queue, "text.png", true);
+    let png_name = "text.png";
+    render_test(&mut vger, &device, &queue, png_name, true);
+    assert!(png_not_black(png_name));
 }
 
 #[test]
@@ -505,7 +509,9 @@ fn text_small() {
     vger.translate([32.0, 256.0]);
     vger.text("53", 18, Color::CYAN, None);
 
-    render_test(&mut vger, &device, &queue, "text_small.png", true);
+    let png_name = "text_small.png";
+    render_test(&mut vger, &device, &queue, png_name, true);
+    assert!(png_not_black(png_name));
 }
 
 #[test]
@@ -519,9 +525,9 @@ fn text_scale() {
     vger.translate([32.0, 256.0]);
     vger.text("This is a test", 32, Color::CYAN, None);
 
-    render_test(&mut vger, &device, &queue, "text_scale.png", true);
-
-    assert!(png_not_black("text_scale.png"));
+    let png_name = "text_scale.png";
+    render_test(&mut vger, &device, &queue, png_name, true);
+    assert!(png_not_black(png_name));
 }
 
 #[test]
@@ -544,7 +550,9 @@ fn text_box() {
 
     vger.text(lorem, 18, Color::CYAN, Some(448.0));
 
-    render_test(&mut vger, &device, &queue, "text_box.png", true);
+    let png_name = "text_box.png";
+    render_test(&mut vger, &device, &queue, png_name, true);
+    assert!(png_not_black(png_name));
 }
 
 #[test]
@@ -560,7 +568,9 @@ fn test_scissor() {
     let cyan = vger.color_paint(Color::CYAN);
     vger.fill_rect(euclid::rect(100.0, 100.0, 300.0, 300.0), 10.0, cyan);
 
-    render_test(&mut vger, &device, &queue, "scissor.png", false);
+    let png_name = "scissor.png";
+    render_test(&mut vger, &device, &queue, png_name, true);
+    assert!(png_not_black(png_name));
 }
 
 #[test]
@@ -584,5 +594,7 @@ fn test_scissor_text() {
 
     vger.text(lorem, 18, Color::CYAN, Some(448.0));
 
-    render_test(&mut vger, &device, &queue, "text_box_scissor.png", true);
+    let png_name = "text_box_scissor.png";
+    render_test(&mut vger, &device, &queue, png_name, true);
+    assert!(png_not_black(png_name));
 }
