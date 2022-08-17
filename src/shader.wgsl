@@ -634,7 +634,7 @@ fn fs_main(
         //    color.a *= paint.glow;
         //}
 
-        return s * color;
+        return color;
     }
 
     let d = sdPrim(prim, in.t, fw);
