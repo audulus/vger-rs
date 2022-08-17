@@ -99,4 +99,8 @@ impl<T: Copy> GPUVec<T> {
     pub fn push(&mut self, value: T) {
         self.data.push(value);
     }
+
+    pub fn len(&self) -> usize {
+        self.data.len()
+    }
 }

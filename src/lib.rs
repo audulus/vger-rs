@@ -290,7 +290,7 @@ impl Vger {
 
             rpass.set_bind_group(1, &self.uniform_bind_group, &[]);
 
-            let n = self.scenes[self.cur_scene].prims[self.cur_layer].data.len();
+            let n = self.scenes[self.cur_scene].prims[self.cur_layer].len();
             // println!("encoding {:?} prims", n);
 
             rpass.draw(/*vertices*/ 0..4, /*instances*/ 0..(n as u32))
@@ -519,7 +519,7 @@ impl Vger {
             prim.paint = paint_index.index as u32;
             prim.xform = xform as u32;
             prim.scissor = scissor as u32;
-            prim.start = self.scenes[self.cur_scene].cvs.data.len() as u32;
+            prim.start = self.scenes[self.cur_scene].cvs.len() as u32;
 
             let mut x_interval = Interval {
                 a: std::f32::MAX,
