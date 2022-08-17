@@ -233,8 +233,8 @@ impl Vger {
         self.device_px_ratio = device_px_ratio;
         self.cur_layer = 0;
         self.screen_size = ScreenSize::new(window_width, window_height);
-        self.uniforms.data.clear();
-        self.uniforms.data.push(Uniforms {
+        self.uniforms.clear();
+        self.uniforms.push(Uniforms {
             size: [window_width, window_height],
         });
         self.cur_scene = (self.cur_scene + 1) % 3;
@@ -308,7 +308,6 @@ impl Vger {
 
     fn render(&mut self, prim: Prim) {
         self.scenes[self.cur_scene].prims[self.cur_layer]
-            .data
             .push(prim);
     }
 
@@ -504,7 +503,7 @@ impl Vger {
     }
 
     fn add_cv<Pt: Into<LocalPoint>>(&mut self, p: Pt) {
-        self.scenes[self.cur_scene].cvs.data.push(p.into())
+        self.scenes[self.cur_scene].cvs.push(p.into())
     }
 
     /// Fills a path.
@@ -714,7 +713,6 @@ impl Vger {
             let m = *self.tx_stack.last().unwrap();
             self.scenes[self.cur_scene]
                 .xforms
-                .data
                 .push(m.to_3d().to_array());
             let n = self.xform_count;
             self.xform_count += 1;
@@ -728,7 +726,6 @@ impl Vger {
             let scissor = *self.scissor_stack.last().unwrap();
             self.scenes[self.cur_scene]
                 .scissors
-                .data
                 .push(scissor);
             let n = self.scissor_count;
             self.scissor_count += 1;
@@ -780,7 +777,7 @@ impl Vger {
 
     fn add_paint(&mut self, paint: Paint) -> PaintIndex {
         if self.paint_count < MAX_PRIMS {
-            self.scenes[self.cur_scene].paints.data.push(paint);
+            self.scenes[self.cur_scene].paints.push(paint);
             self.paint_count += 1;
             return PaintIndex {
                 index: self.paint_count - 1,

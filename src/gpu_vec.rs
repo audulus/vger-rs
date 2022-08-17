@@ -95,4 +95,8 @@ impl<T: Copy> GPUVec<T> {
     pub fn clear(&mut self) {
         self.data.clear();
     }
+
+    pub fn push(&mut self, value: T) {
+        self.data.push(value);
+    }
 }
