@@ -4,7 +4,7 @@ use wgpu::*;
 pub struct GPUVec<T: Copy> {
     buffer: wgpu::Buffer,
     capacity: usize,
-    pub data: Vec<T>,
+    data: Vec<T>,
     label: String,
 }
 
