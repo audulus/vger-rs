@@ -576,6 +576,7 @@ impl Vger {
 
         let paint = self.color_paint(color);
         let xform = self.add_xform() as u32;
+        let scissor = self.add_scissor() as u32;
 
         let mut i = 0;
         let mut prims = vec![];
@@ -588,6 +589,7 @@ impl Vger {
                 let mut prim = Prim::default();
                 prim.prim_type = PrimType::Glyph as u32;
                 prim.xform = xform;
+                prim.scissor = scissor;
                 assert!(glyph.width == rect.width as usize);
                 assert!(glyph.height == rect.height as usize);
 
