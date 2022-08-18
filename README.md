@@ -14,7 +14,7 @@
 - ✅ Text (Audulus only uses one font, but could add support for more if anyone is interested)
 - ✅ Multi-line text
 - ✅ Path Fills.
-- ❌ Scissoring
+- ✅ Scissoring
 - ❌ Images
 
 ## Why?
