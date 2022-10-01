@@ -137,13 +137,6 @@ fn render_test(
         label: Some("render_texture"),
     });
 
-    let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
-        label: None,
-        size: 512 * 512 * 4,
-        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-        mapped_at_creation: false,
-    });
-
     let view = render_texture.create_view(&wgpu::TextureViewDescriptor::default());
 
     let desc = wgpu::RenderPassDescriptor {
@@ -168,6 +161,13 @@ fn render_test(
         height: buffer_dimensions.height as u32,
         depth_or_array_layers: 1,
     };
+
+    let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 512 * 512 * 4,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
 
     let command_buffer = {
         let mut encoder =
