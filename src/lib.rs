@@ -92,11 +92,7 @@ impl Vger {
             ))),
         });
 
-        let scenes = [
-            Scene::new(device),
-            Scene::new(device),
-            Scene::new(device),
-        ];
+        let scenes = [Scene::new(device), Scene::new(device), Scene::new(device)];
 
         let uniform_bind_group_layout =
             device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
