@@ -568,7 +568,7 @@ impl Vger {
     pub fn text(&mut self, text: &str, size: u32, color: Color, max_width: Option<f32>) {
         self.setup_layout(text, size, max_width);
 
-        let padding = 2.0 as f32;
+        let padding = 2.0_f32;
 
         let scale = self.device_px_ratio;
         let scaled_size = size as f32 * scale;
