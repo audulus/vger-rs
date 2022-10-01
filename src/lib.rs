@@ -577,9 +577,8 @@ impl Vger {
         let xform = self.add_xform() as u32;
         let scissor = self.add_scissor() as u32;
 
-        let mut i = 0;
         let mut prims = vec![];
-        for glyph in self.layout.glyphs() {
+        for (i, glyph) in self.layout.glyphs().iter().enumerate() {
             let c = text.chars().nth(i).unwrap();
             // println!("glyph {:?}", c);
             let info = self.glyph_cache.get_glyph(c, scaled_size);
@@ -614,8 +613,6 @@ impl Vger {
 
                 prims.push(prim);
             }
-
-            i += 1;
         }
 
         for prim in prims {
