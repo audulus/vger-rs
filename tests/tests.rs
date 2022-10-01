@@ -4,7 +4,7 @@ use vger::defs::*;
 use vger::*;
 extern crate rand;
 mod common;
-pub use common::*;
+use common::*;
 
 #[test]
 fn test_color_hex() {
