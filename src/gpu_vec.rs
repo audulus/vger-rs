@@ -69,7 +69,7 @@ impl<T: Copy> GPUVec<T> {
 
     pub fn bind_group_layout_entry(binding: u32) -> wgpu::BindGroupLayoutEntry {
         wgpu::BindGroupLayoutEntry {
-            binding: binding,
+            binding,
             visibility: wgpu::ShaderStages::FRAGMENT | wgpu::ShaderStages::VERTEX,
             ty: wgpu::BindingType::Buffer {
                 ty: wgpu::BufferBindingType::Storage { read_only: true },
@@ -82,7 +82,7 @@ impl<T: Copy> GPUVec<T> {
 
     pub fn bind_group_entry(&self, binding: u32) -> wgpu::BindGroupEntry {
         wgpu::BindGroupEntry {
-            binding: binding,
+            binding,
             resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
                 buffer: &self.buffer,
                 offset: 0,

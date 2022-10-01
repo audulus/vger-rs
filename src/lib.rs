@@ -93,9 +93,9 @@ impl Vger {
         });
 
         let scenes = [
-            Scene::new(&device),
-            Scene::new(&device),
-            Scene::new(&device),
+            Scene::new(device),
+            Scene::new(device),
+            Scene::new(device),
         ];
 
         let uniform_bind_group_layout =
@@ -163,7 +163,7 @@ impl Vger {
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
             bind_group_layouts: &[
-                &Scene::bind_group_layout(&device),
+                &Scene::bind_group_layout(device),
                 &uniform_bind_group_layout,
             ],
             push_constant_ranges: &[],
