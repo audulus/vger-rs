@@ -233,13 +233,11 @@ fn png_not_black(path: &str) -> bool {
     // Grab the bytes of the image.
     let bytes = &buf[..info.buffer_size()];
 
-    let mut i = 0;
-    for b in bytes {
+    for (i, b) in bytes.iter().enumerate() {
         // Skip alpha values.
         if (i % 4 != 3) && (*b != 0) {
             return true;
         }
-        i += 1;
     }
 
     false
