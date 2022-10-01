@@ -187,7 +187,7 @@ mod tests {
                 index = scan.segments[i].next;
             }
 
-            print!("\n");
+            println!();
         }
     }
 }
