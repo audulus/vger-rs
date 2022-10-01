@@ -199,7 +199,7 @@ pub fn render_test(
         depth_stencil_attachment: None,
     };
 
-    vger.encode(device, &desc, &queue);
+    vger.encode(device, &desc, queue);
 
     let buffer_dimensions = BufferDimensions::new(512, 512);
 
