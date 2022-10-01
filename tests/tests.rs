@@ -110,6 +110,56 @@ async fn create_png(
     }
 }
 
+fn get_texture_data(
+    buffer_dimensions: &BufferDimensions,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    texture: &wgpu::Texture,
+) -> wgpu::Buffer {
+    let texture_extent = wgpu::Extent3d {
+        width: buffer_dimensions.width as u32,
+        height: buffer_dimensions.height as u32,
+        depth_or_array_layers: 1,
+    };
+
+    let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: 512 * 512 * 4,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+
+    let command_buffer = {
+        let mut encoder =
+            device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+
+        // Copy the data from the texture to the buffer
+        encoder.copy_texture_to_buffer(
+            texture.as_image_copy(),
+            wgpu::ImageCopyBuffer {
+                buffer: &output_buffer,
+                layout: wgpu::ImageDataLayout {
+                    offset: 0,
+                    bytes_per_row: Some(
+                        std::num::NonZeroU32::new(buffer_dimensions.padded_bytes_per_row as u32)
+                            .unwrap(),
+                    ),
+                    rows_per_image: None,
+                },
+            },
+            texture_extent,
+        );
+
+        encoder.finish()
+    };
+
+    queue.submit(Some(command_buffer));
+
+    device.poll(wgpu::Maintain::Wait);
+
+    output_buffer
+}
+
 fn render_test(
     vger: &mut Vger,
     device: &wgpu::Device,
@@ -156,46 +206,7 @@ fn render_test(
 
     let buffer_dimensions = BufferDimensions::new(512, 512);
 
-    let texture_extent = wgpu::Extent3d {
-        width: buffer_dimensions.width as u32,
-        height: buffer_dimensions.height as u32,
-        depth_or_array_layers: 1,
-    };
-
-    let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
-        label: None,
-        size: 512 * 512 * 4,
-        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-        mapped_at_creation: false,
-    });
-
-    let command_buffer = {
-        let mut encoder =
-            device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
-
-        // Copy the data from the texture to the buffer
-        encoder.copy_texture_to_buffer(
-            render_texture.as_image_copy(),
-            wgpu::ImageCopyBuffer {
-                buffer: &output_buffer,
-                layout: wgpu::ImageDataLayout {
-                    offset: 0,
-                    bytes_per_row: Some(
-                        std::num::NonZeroU32::new(buffer_dimensions.padded_bytes_per_row as u32)
-                            .unwrap(),
-                    ),
-                    rows_per_image: None,
-                },
-            },
-            texture_extent,
-        );
-
-        encoder.finish()
-    };
-
-    queue.submit(Some(command_buffer));
-
-    device.poll(wgpu::Maintain::Wait);
+    let output_buffer = get_texture_data(&buffer_dimensions, device, queue, &render_texture);
 
     if capture {
         device.stop_capture();
@@ -205,10 +216,7 @@ fn render_test(
 }
 
 fn png_not_black(path: &str) -> bool {
-
-    let decoder = png::Decoder::new(
-        File::open(path).unwrap()
-    );
+    let decoder = png::Decoder::new(File::open(path).unwrap());
 
     let (info, mut reader) = match decoder.read_info() {
         Ok(result) => result,
@@ -235,7 +243,6 @@ fn png_not_black(path: &str) -> bool {
     }
 
     false
-    
 }
 
 #[test]
@@ -557,7 +564,6 @@ fn text_box() {
 
 #[test]
 fn test_scissor() {
-
     let (device, queue) = block_on(setup());
 
     let mut vger = Vger::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
