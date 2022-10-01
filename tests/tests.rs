@@ -88,11 +88,11 @@ async fn create_png(
             buffer_dimensions.height as u32,
         );
         png_encoder.set_depth(png::BitDepth::Eight);
-        png_encoder.set_color(png::ColorType::RGBA);
+        png_encoder.set_color(png::ColorType::Rgba);
         let mut png_writer = png_encoder
             .write_header()
             .unwrap()
-            .into_stream_writer_with_size(buffer_dimensions.unpadded_bytes_per_row);
+            .into_stream_writer_with_size(buffer_dimensions.unpadded_bytes_per_row).unwrap();
 
         // from the padded_buffer we write just the unpadded bytes into the image
         for chunk in padded_buffer.chunks(buffer_dimensions.padded_bytes_per_row) {
@@ -218,7 +218,7 @@ fn render_test(
 fn png_not_black(path: &str) -> bool {
     let decoder = png::Decoder::new(File::open(path).unwrap());
 
-    let (info, mut reader) = match decoder.read_info() {
+    let mut reader = match decoder.read_info() {
         Ok(result) => result,
         Err(decoding_error) => {
             println!("error: {:?}", decoding_error);
@@ -231,7 +231,7 @@ fn png_not_black(path: &str) -> bool {
     // Read the next frame. An APNG might contain multiple frames.
     reader.next_frame(&mut buf).unwrap();
     // Grab the bytes of the image.
-    let bytes = &buf[..info.buffer_size()];
+    let bytes = &buf[..reader.output_buffer_size()];
 
     for (i, b) in bytes.iter().enumerate() {
         // Skip alpha values.

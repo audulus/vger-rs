@@ -20,7 +20,9 @@ wgpu = "0.13.1"
 futures = "0.3"
 futures-intrusive = "0.4"
 euclid = "0.22.6"
-png = "0.16"
 fontdue = "0.7.2"
 rect_packer = "0.2.1"
 rand = "0.7.3"
+
+[dev-dependencies]
+png = "0.17.6"
