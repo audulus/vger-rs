@@ -42,11 +42,10 @@ impl<T: Copy> GPUVec<T> {
     }
 
     /// Updates the underlying gpu buffer with self.data.
-    /// 
+    ///
     /// We'd like to write directly to the mapped buffer, but that seemed
     /// tricky with wgpu.
     pub fn update(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
-        
         let mut realloc = false;
         while self.data.len() > self.capacity {
             self.capacity *= 2;

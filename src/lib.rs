@@ -57,7 +57,7 @@ impl Scissor {
         Self {
             xform: WorldToLocal::identity(),
             origin: [-10000.0, -10000.0],
-            size: [20000.0,20000.0],
+            size: [20000.0, 20000.0],
         }
     }
 }
@@ -307,8 +307,7 @@ impl Vger {
     }
 
     fn render(&mut self, prim: Prim) {
-        self.scenes[self.cur_scene].prims[self.cur_layer]
-            .push(prim);
+        self.scenes[self.cur_scene].prims[self.cur_layer].push(prim);
     }
 
     /// Fills a circle.
@@ -726,9 +725,7 @@ impl Vger {
     fn add_scissor(&mut self) -> usize {
         if self.scissor_count < MAX_PRIMS {
             let scissor = *self.scissor_stack.last().unwrap();
-            self.scenes[self.cur_scene]
-                .scissors
-                .push(scissor);
+            self.scenes[self.cur_scene].scissors.push(scissor);
             let n = self.scissor_count;
             self.scissor_count += 1;
             return n;
