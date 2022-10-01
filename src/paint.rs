@@ -52,7 +52,7 @@ impl Paint {
             .unwrap();
 
         Self {
-            xform: xform,
+            xform,
             inner_color,
             outer_color,
             image: -1,
