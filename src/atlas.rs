@@ -1,5 +1,4 @@
 use rect_packer::{Packer, Rect};
-use wgpu;
 use wgpu::util::DeviceExt;
 
 #[derive(Debug)]
@@ -49,7 +48,6 @@ impl Atlas {
     }
 
     pub fn new(device: &wgpu::Device) -> Self {
-
         let atlas_texture = device.create_texture(&Self::get_texture_desc());
 
         Self {
