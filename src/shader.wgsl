@@ -617,7 +617,7 @@ fn fs_main(
     let scissor = scissors.scissors[prim.scissor];
 
     // Look up glyph alpha (if not a glyph, still have to because of wgsl).
-    let a = textureSample(glyph_atlas, samp, in.t/1024.0).r;
+    let a = textureSample(glyph_atlas, samp, (in.t+0.5)/1024.0).r;
     // let a = textureLoad(glyph_atlas, vec2<i32>(in.t), 0).r;
 
     let s = scissor_mask(scissor, in.p);
