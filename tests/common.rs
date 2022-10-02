@@ -108,16 +108,12 @@ pub async fn create_png(
 }
 
 fn get_texture_data(
-    buffer_dimensions: &BufferDimensions,
+    descriptor: &wgpu::TextureDescriptor,
     device: &wgpu::Device,
     queue: &wgpu::Queue,
     texture: &wgpu::Texture,
 ) -> wgpu::Buffer {
-    let texture_extent = wgpu::Extent3d {
-        width: buffer_dimensions.width as u32,
-        height: buffer_dimensions.height as u32,
-        depth_or_array_layers: 1,
-    };
+    let texture_extent = descriptor.size;
 
     let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
@@ -125,6 +121,8 @@ fn get_texture_data(
         usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
+
+    assert!(texture_extent.width * 4 % wgpu::COPY_BYTES_PER_ROW_ALIGNMENT == 0);
 
     let command_buffer = {
         let mut encoder =
@@ -138,7 +136,7 @@ fn get_texture_data(
                 layout: wgpu::ImageDataLayout {
                     offset: 0,
                     bytes_per_row: Some(
-                        std::num::NonZeroU32::new(buffer_dimensions.padded_bytes_per_row as u32)
+                        std::num::NonZeroU32::new(texture_extent.width * 4)
                             .unwrap(),
                     ),
                     rows_per_image: None,
@@ -174,7 +172,7 @@ pub fn render_test(
         depth_or_array_layers: 1,
     };
 
-    let render_texture = device.create_texture(&wgpu::TextureDescriptor {
+    let texture_desc = wgpu::TextureDescriptor {
         size: texture_size,
         mip_level_count: 1,
         sample_count: 1,
@@ -182,7 +180,9 @@ pub fn render_test(
         format: wgpu::TextureFormat::Rgba8UnormSrgb,
         usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
         label: Some("render_texture"),
-    });
+    };
+
+    let render_texture = device.create_texture(&texture_desc);
 
     let view = render_texture.create_view(&wgpu::TextureViewDescriptor::default());
 
@@ -201,14 +201,13 @@ pub fn render_test(
 
     vger.encode(device, &desc, queue);
 
-    let buffer_dimensions = BufferDimensions::new(512, 512);
-
-    let output_buffer = get_texture_data(&buffer_dimensions, device, queue, &render_texture);
+    let output_buffer = get_texture_data(&texture_desc, device, queue, &render_texture);
 
     if capture {
         device.stop_capture();
     }
 
+    let buffer_dimensions = BufferDimensions::new(512, 512);
     block_on(create_png(name, device, output_buffer, &buffer_dimensions));
 }
 
