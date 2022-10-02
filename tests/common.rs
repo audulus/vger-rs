@@ -84,7 +84,11 @@ fn get_texture_data(
 ) -> wgpu::Buffer {
     let texture_extent = descriptor.size;
 
-    assert!(descriptor.format == wgpu::TextureFormat::Rgba8UnormSrgb);
+    let bytes_per_pixel = match descriptor.format {
+        wgpu::TextureFormat::Rgba8UnormSrgb => 4,
+        wgpu::TextureFormat::R8Unorm => 1,
+        _ => panic!("unsupported pixel format")
+    };
 
     let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
@@ -93,7 +97,7 @@ fn get_texture_data(
         mapped_at_creation: false,
     });
 
-    assert!(texture_extent.width * 4 % wgpu::COPY_BYTES_PER_ROW_ALIGNMENT == 0);
+    assert!((texture_extent.width * bytes_per_pixel) % wgpu::COPY_BYTES_PER_ROW_ALIGNMENT == 0);
 
     let command_buffer = {
         let mut encoder =
@@ -107,7 +111,7 @@ fn get_texture_data(
                 layout: wgpu::ImageDataLayout {
                     offset: 0,
                     bytes_per_row: Some(
-                        std::num::NonZeroU32::new(texture_extent.width * 4).unwrap(),
+                        std::num::NonZeroU32::new(texture_extent.width * bytes_per_pixel).unwrap(),
                     ),
                     rows_per_image: None,
                 },
