@@ -30,14 +30,14 @@ impl Atlas {
         }
     }
 
-    pub fn new(device: &wgpu::Device) -> Self {
+    pub fn get_texture_desc() -> wgpu::TextureDescriptor<'static> {
         let texture_size = wgpu::Extent3d {
             width: Atlas::ATLAS_SIZE,
             height: Atlas::ATLAS_SIZE,
             depth_or_array_layers: 1,
         };
 
-        let atlas_texture = device.create_texture(&wgpu::TextureDescriptor {
+        wgpu::TextureDescriptor {
             size: texture_size,
             mip_level_count: 1,
             sample_count: 1,
@@ -45,7 +45,12 @@ impl Atlas {
             format: wgpu::TextureFormat::R8Unorm,
             usage: wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::TEXTURE_BINDING,
             label: Some("atlas_texture"),
-        });
+        }
+    }
+
+    pub fn new(device: &wgpu::Device) -> Self {
+
+        let atlas_texture = device.create_texture(&Self::get_texture_desc());
 
         Self {
             packer: Packer::new(Atlas::get_packer_config()),
