@@ -63,7 +63,11 @@ pub async fn create_png(
             texture_extent.height as u32,
         );
         png_encoder.set_depth(png::BitDepth::Eight);
-        png_encoder.set_color(png::ColorType::Rgba);
+        png_encoder.set_color(match texture_descriptor.format {
+            wgpu::TextureFormat::Rgba8UnormSrgb => png::ColorType::Rgba,
+            wgpu::TextureFormat::R8Unorm => png::ColorType::Grayscale,
+             _ => panic!("unsupported pixel format")
+        });
         let mut png_writer = png_encoder.write_header().unwrap();
 
         png_writer.write_image_data(&buffer_view).unwrap();
