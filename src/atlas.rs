@@ -11,7 +11,7 @@ struct ImageData {
 pub struct Atlas {
     packer: Packer,
     new_data: Vec<ImageData>,
-    atlas_texture: wgpu::Texture,
+    pub atlas_texture: wgpu::Texture,
     area_used: i32,
     did_clear: bool,
 }

@@ -78,7 +78,7 @@ pub struct Vger {
     scissor_count: usize,
     path_scanner: PathScanner,
     pen: LocalPoint,
-    glyph_cache: GlyphCache,
+    pub glyph_cache: GlyphCache,
     layout: Layout,
 }
 

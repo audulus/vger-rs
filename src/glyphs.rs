@@ -9,7 +9,7 @@ pub struct GlyphInfo {
 }
 
 pub struct GlyphCache {
-    atlas: Atlas,
+    pub atlas: Atlas,
     pub font: fontdue::Font,
     info: HashMap<(char, u32), GlyphInfo>,
 }
