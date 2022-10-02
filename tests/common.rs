@@ -84,6 +84,8 @@ fn get_texture_data(
 ) -> wgpu::Buffer {
     let texture_extent = descriptor.size;
 
+    assert!(descriptor.format == wgpu::TextureFormat::Rgba8UnormSrgb);
+
     let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
         size: 512 * 512 * 4,
