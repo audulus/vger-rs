@@ -280,6 +280,15 @@ fn text_small() {
     let png_name = "text_small.png";
     render_test(&mut vger, &device, &queue, png_name, true);
     assert!(png_not_black(png_name));
+
+    let atlas_png_name = "text_small_atlas.png";
+    save_png(
+        &vger.glyph_cache.atlas.atlas_texture,
+        &vger::atlas::Atlas::get_texture_desc(),
+        &device,
+        &queue,
+        atlas_png_name,
+    );
 }
 
 #[test]
