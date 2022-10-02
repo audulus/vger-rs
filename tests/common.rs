@@ -1,6 +1,4 @@
 use std::fs::File;
-use std::io::prelude::*;
-use std::mem::size_of;
 use vger::*;
 use futures::executor::block_on;
 
@@ -30,35 +28,15 @@ pub async fn setup() -> (wgpu::Device, wgpu::Queue) {
 }
 
 // See https://github.com/gfx-rs/wgpu/blob/master/wgpu/examples/capture/main.rs
-pub struct BufferDimensions {
-    width: usize,
-    height: usize,
-    unpadded_bytes_per_row: usize,
-    padded_bytes_per_row: usize,
-}
-
-impl BufferDimensions {
-    pub fn new(width: usize, height: usize) -> Self {
-        let bytes_per_pixel = size_of::<u32>();
-        let unpadded_bytes_per_row = width * bytes_per_pixel;
-        let align = wgpu::COPY_BYTES_PER_ROW_ALIGNMENT as usize;
-        let padded_bytes_per_row_padding = (align - unpadded_bytes_per_row % align) % align;
-        let padded_bytes_per_row = unpadded_bytes_per_row + padded_bytes_per_row_padding;
-        Self {
-            width,
-            height,
-            unpadded_bytes_per_row,
-            padded_bytes_per_row,
-        }
-    }
-}
 
 pub async fn create_png(
     png_output_path: &str,
     device: &wgpu::Device,
     output_buffer: wgpu::Buffer,
-    buffer_dimensions: &BufferDimensions,
+    texture_descriptor: &wgpu::TextureDescriptor<'_>,
 ) {
+    let texture_extent = texture_descriptor.size;
+
     // Note that we're not calling `.await` here.
     let buffer_slice = output_buffer.slice(..);
 
@@ -77,31 +55,24 @@ pub async fn create_png(
     }
 
     if let Some(Ok(())) = receiver.receive().await {
-        let padded_buffer = buffer_slice.get_mapped_range();
+        let buffer_view = buffer_slice.get_mapped_range();
 
         let mut png_encoder = png::Encoder::new(
             File::create(png_output_path).unwrap(),
-            buffer_dimensions.width as u32,
-            buffer_dimensions.height as u32,
+            texture_extent.width as u32,
+            texture_extent.height as u32,
         );
         png_encoder.set_depth(png::BitDepth::Eight);
         png_encoder.set_color(png::ColorType::Rgba);
         let mut png_writer = png_encoder
             .write_header()
-            .unwrap()
-            .into_stream_writer_with_size(buffer_dimensions.unpadded_bytes_per_row).unwrap();
+            .unwrap();
 
-        // from the padded_buffer we write just the unpadded bytes into the image
-        for chunk in padded_buffer.chunks(buffer_dimensions.padded_bytes_per_row) {
-            png_writer
-                .write_all(&chunk[..buffer_dimensions.unpadded_bytes_per_row])
-                .unwrap();
-        }
-        png_writer.finish().unwrap();
+        png_writer.write_image_data(&buffer_view).unwrap();
 
         // With the current interface, we have to make sure all mapped views are
         // dropped before we unmap the buffer.
-        drop(padded_buffer);
+        drop(buffer_view);
 
         output_buffer.unmap();
     }
@@ -207,8 +178,7 @@ pub fn render_test(
         device.stop_capture();
     }
 
-    let buffer_dimensions = BufferDimensions::new(512, 512);
-    block_on(create_png(name, device, output_buffer, &buffer_dimensions));
+    block_on(create_png(name, device, output_buffer, &texture_desc));
 }
 
 pub fn png_not_black(path: &str) -> bool {
