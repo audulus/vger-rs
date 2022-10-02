@@ -54,6 +54,12 @@ impl Color {
         b: 1.0,
         a: 1.0,
     };
+    pub const WHITE: Color = Color {
+        r: 1.0,
+        g: 1.0,
+        b: 1.0,
+        a: 1.0,
+    };
 
     pub fn hex(hex: &str) -> Result<Color, String> {
         if hex.len() == 9 && hex.starts_with("#") {

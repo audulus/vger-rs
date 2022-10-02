@@ -259,7 +259,7 @@ fn text() {
     vger.begin(512.0, 512.0, 1.0);
 
     vger.translate([32.0, 256.0]);
-    vger.text("This is a test", 32, Color::CYAN, None);
+    vger.text("This is a test", 32, Color::WHITE, None);
 
     let png_name = "text.png";
     render_test(&mut vger, &device, &queue, png_name, true);
@@ -275,7 +275,7 @@ fn text_small() {
     vger.begin(512.0, 512.0, 1.0);
 
     vger.translate([32.0, 256.0]);
-    vger.text("53", 18, Color::CYAN, None);
+    vger.text("53", 18, Color::WHITE, None);
 
     let png_name = "text_small.png";
     render_test(&mut vger, &device, &queue, png_name, true);
@@ -300,7 +300,7 @@ fn text_scale() {
     vger.begin(512.0, 512.0, 2.0);
 
     vger.translate([32.0, 256.0]);
-    vger.text("This is a test", 32, Color::CYAN, None);
+    vger.text("This is a test", 32, Color::WHITE, None);
 
     let png_name = "text_scale.png";
     render_test(&mut vger, &device, &queue, png_name, true);
@@ -334,7 +334,7 @@ fn text_box() {
 
     vger.stroke_rect(bounds.origin, bounds.max(), 10.0, 4.0, paint);
 
-    vger.text(lorem, 18, Color::CYAN, Some(448.0));
+    vger.text(lorem, 18, Color::WHITE, Some(448.0));
 
     let png_name = "text_box.png";
     render_test(&mut vger, &device, &queue, png_name, true);
@@ -359,7 +359,7 @@ fn test_scissor() {
     vger.begin(512.0, 512.0, 2.0);
 
     vger.scissor(euclid::rect(200.0, 200.0, 100.0, 100.0));
-    let cyan = vger.color_paint(Color::CYAN);
+    let cyan = vger.color_paint(Color::WHITE);
     vger.fill_rect(euclid::rect(100.0, 100.0, 300.0, 300.0), 10.0, cyan);
 
     let png_name = "scissor.png";
@@ -386,7 +386,7 @@ fn test_scissor_text() {
 
     vger.stroke_rect(bounds.origin, bounds.max(), 10.0, 4.0, paint);
 
-    vger.text(lorem, 18, Color::CYAN, Some(448.0));
+    vger.text(lorem, 18, Color::WHITE, Some(448.0));
 
     let png_name = "text_box_scissor.png";
     render_test(&mut vger, &device, &queue, png_name, true);
