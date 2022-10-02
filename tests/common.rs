@@ -92,7 +92,7 @@ fn get_texture_data(
 
     let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
-        size: 512 * 512 * 4,
+        size: 512 * 512 * (bytes_per_pixel as u64),
         usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
