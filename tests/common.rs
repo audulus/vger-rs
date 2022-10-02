@@ -1,6 +1,6 @@
+use futures::executor::block_on;
 use std::fs::File;
 use vger::*;
-use futures::executor::block_on;
 
 pub async fn setup() -> (wgpu::Device, wgpu::Queue) {
     let backend = wgpu::Backends::all();
@@ -64,9 +64,7 @@ pub async fn create_png(
         );
         png_encoder.set_depth(png::BitDepth::Eight);
         png_encoder.set_color(png::ColorType::Rgba);
-        let mut png_writer = png_encoder
-            .write_header()
-            .unwrap();
+        let mut png_writer = png_encoder.write_header().unwrap();
 
         png_writer.write_image_data(&buffer_view).unwrap();
 
@@ -107,8 +105,7 @@ fn get_texture_data(
                 layout: wgpu::ImageDataLayout {
                     offset: 0,
                     bytes_per_row: Some(
-                        std::num::NonZeroU32::new(texture_extent.width * 4)
-                            .unwrap(),
+                        std::num::NonZeroU32::new(texture_extent.width * 4).unwrap(),
                     ),
                     rows_per_image: None,
                 },
