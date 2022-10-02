@@ -297,9 +297,9 @@ fn text_scale() {
 
     let mut vger = Vger::new(&device, wgpu::TextureFormat::Rgba8UnormSrgb);
 
-    vger.begin(512.0, 512.0, 2.0);
+    vger.begin(256.0, 256.0, 2.0);
 
-    vger.translate([32.0, 256.0]);
+    vger.translate([32.0, 64.0]);
     vger.text("This is a test", 32, Color::WHITE, None);
 
     let png_name = "text_scale.png";
