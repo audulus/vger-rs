@@ -66,7 +66,7 @@ pub async fn create_png(
         png_encoder.set_color(match texture_descriptor.format {
             wgpu::TextureFormat::Rgba8UnormSrgb => png::ColorType::Rgba,
             wgpu::TextureFormat::R8Unorm => png::ColorType::Grayscale,
-             _ => panic!("unsupported pixel format")
+            _ => panic!("unsupported pixel format"),
         });
         let mut png_writer = png_encoder.write_header().unwrap();
 
@@ -91,12 +91,12 @@ fn get_texture_data(
     let bytes_per_pixel = match descriptor.format {
         wgpu::TextureFormat::Rgba8UnormSrgb => 4,
         wgpu::TextureFormat::R8Unorm => 1,
-        _ => panic!("unsupported pixel format")
+        _ => panic!("unsupported pixel format"),
     };
 
     let output_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
-        size: 512 * 512 * (bytes_per_pixel as u64),
+        size: (texture_extent.width * texture_extent.height * bytes_per_pixel) as u64,
         usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
@@ -186,6 +186,17 @@ pub fn render_test(
     }
 
     block_on(create_png(name, device, output_buffer, &texture_desc));
+}
+
+pub fn save_png(
+    texture: &wgpu::Texture,
+    texture_desc: &wgpu::TextureDescriptor,
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    name: &str,
+) {
+    let output_buffer = get_texture_data(texture_desc, device, queue, texture);
+    block_on(create_png(name, device, output_buffer, texture_desc));
 }
 
 pub fn png_not_black(path: &str) -> bool {

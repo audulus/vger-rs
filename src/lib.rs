@@ -21,7 +21,7 @@ use gpu_vec::*;
 pub mod color;
 pub use color::Color;
 
-mod atlas;
+pub mod atlas;
 
 mod glyphs;
 use glyphs::GlyphCache;
