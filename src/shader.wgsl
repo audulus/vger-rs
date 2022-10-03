@@ -606,6 +606,15 @@ var glyph_atlas: texture_2d<f32>;
 @binding(2)
 var samp : sampler;
 
+// sRGB to linear conversion for one channel.
+fn toLinear(s: f32) -> f32
+{
+    if s < 0.04045 {
+        return s/12.92;
+    }
+    return pow((s + 0.055)/1.055, 2.4);
+}
+
 @fragment
 fn fs_main(
     in: VertexOutput,
@@ -625,7 +634,10 @@ fn fs_main(
     if(prim.prim_type == 8u) { // vgerGlyph
 
         let c = paint.inner_color;
-        var color = vec4<f32>(c.rgb, a);
+
+        // XXX: using toLinear is a bit of a guess. Gets us closer
+        // to matching the glyph atlas in the output.
+        var color = vec4<f32>(c.rgb, toLinear(a));
 
         //if(glow) {
         //    color.a *= paint.glow;
