@@ -80,13 +80,7 @@ impl Atlas {
 
             let sz = Atlas::ATLAS_SIZE as usize;
 
-            let mut data = vec![];
-            data.reserve(sz * sz);
-            for _ in 0..sz {
-                for _ in 0..sz {
-                    data.push(0 as u8);
-                }
-            }
+            let data = vec![0_u8;sz * sz];
 
             let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("atlas temp buffer"),
