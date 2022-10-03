@@ -62,7 +62,7 @@ impl Color {
     };
 
     pub fn hex(hex: &str) -> Result<Color, String> {
-        if hex.len() == 9 && hex.starts_with("#") {
+        if hex.len() == 9 && hex.starts_with('#') {
             // #FFFFFFFF (Red Green Blue Alpha)
             Ok(Color {
                 r: map_err(u8::from_str_radix(&hex[1..3], 16))? as f32 / 255.0,
@@ -70,7 +70,7 @@ impl Color {
                 b: map_err(u8::from_str_radix(&hex[5..7], 16))? as f32 / 255.0,
                 a: map_err(u8::from_str_radix(&hex[7..9], 16))? as f32 / 255.0,
             })
-        } else if hex.len() == 7 && hex.starts_with("#") {
+        } else if hex.len() == 7 && hex.starts_with('#') {
             // #FFFFFF (Red Green Blue)
             Ok(Color {
                 r: map_err(u8::from_str_radix(&hex[1..3], 16))? as f32 / 255.0,
