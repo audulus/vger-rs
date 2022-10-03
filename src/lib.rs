@@ -586,10 +586,10 @@ impl Vger {
                 assert!(glyph.height == rect.height as usize);
 
                 prim.quad_bounds = [
-                    (glyph.x),
-                    (glyph.y),
-                    (glyph.x + glyph.width as f32),
-                    (glyph.y + glyph.height as f32),
+                    glyph.x / scale,
+                    glyph.y / scale,
+                    (glyph.x + glyph.width as f32) / scale,
+                    (glyph.y + glyph.height as f32) / scale,
                 ];
                 // println!("quad_bounds: {:?}", prim.quad_bounds);
 
