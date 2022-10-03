@@ -592,10 +592,7 @@ impl Vger {
                     (glyph.y + glyph.height as f32) / scale,
                 ];
                 // println!("quad_bounds: {:?}", prim.quad_bounds);
-
-                // The extra +/- 1.0 offset ensures we cover the same
-                // number of pixels when rasterizing as the glyph
-                // in the texture.
+                
                 prim.tex_bounds = [
                     rect.x as f32,
                     (rect.y + rect.height) as f32,
