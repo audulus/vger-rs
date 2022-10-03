@@ -617,8 +617,8 @@ fn fs_main(
     let scissor = scissors.scissors[prim.scissor];
 
     // Look up glyph alpha (if not a glyph, still have to because of wgsl).
-    let a = textureSample(glyph_atlas, samp, (in.t+0.5)/1024.0).r;
-    // let a = textureLoad(glyph_atlas, vec2<i32>(in.t), 0).r;
+    // let a = textureSample(glyph_atlas, samp, (in.t+0.5)/1024.0).r;
+    let a = textureLoad(glyph_atlas, vec2<i32>(in.t), 0).r;
 
     let s = scissor_mask(scissor, in.p);
 
@@ -626,9 +626,6 @@ fn fs_main(
 
         let c = paint.inner_color;
         var color = vec4<f32>(c.rgb, a);
-
-        //auto c = paint.innerColor;
-        //auto color = float4(c.rgb, c.a * glyphs.sample(glyphSampler, in.t).a);
 
         //if(glow) {
         //    color.a *= paint.glow;
