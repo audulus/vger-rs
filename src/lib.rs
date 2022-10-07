@@ -743,6 +743,11 @@ impl Vger {
         }
     }
 
+    /// Gets the current transform.
+    pub fn current_transform(&self) -> LocalToWorld {
+        *self.tx_stack.last().unwrap()
+    }
+
     /// Sets the current scissor rect.
     pub fn scissor(&mut self, rect: LocalRect) {
         if let Some(m) = self.scissor_stack.last_mut() {
