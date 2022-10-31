@@ -32,3 +32,5 @@ The bezier path fill case is somewhat original. To avoid having to solve quadrat
 [Text Rendering Hates You](https://faultlore.com/blah/text-hates-you/)
 
 [Adventures in Text Rendering](https://www.warp.dev/blog/adventures-text-rendering-kerning-glyph-atlases)
+
+[Vector Graphics on GPU](https://gasiulis.name/vector-graphics-on-gpu/
