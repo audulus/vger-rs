@@ -25,4 +25,4 @@ rand = "0.7.3"
 [dev-dependencies]
 png = "0.17.6"
 futures = "0.3"
-futures-intrusive = "0.4"
+futures-intrusive = "0.5"
