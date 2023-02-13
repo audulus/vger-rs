@@ -3,10 +3,11 @@ use std::fs::File;
 use vger::*;
 
 pub async fn setup() -> (wgpu::Device, wgpu::Queue) {
-    let backend = wgpu::Backends::all();
-    let instance = wgpu::Instance::new(backend);
+    let instance_desc = wgpu::InstanceDescriptor::default();
 
-    let adapter = wgpu::util::initialize_adapter_from_env_or_default(&instance, backend, None)
+    let instance = wgpu::Instance::new(instance_desc);
+
+    let adapter = wgpu::util::initialize_adapter_from_env_or_default(&instance, wgpu::Backends::all(), None)
         .await
         .expect("No suitable GPU adapters found on the system!");
 
@@ -158,6 +159,7 @@ pub fn render_test(
         format: wgpu::TextureFormat::Rgba8UnormSrgb,
         usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
         label: Some("render_texture"),
+        view_formats: &[wgpu::TextureFormat::Rgba8UnormSrgb],
     };
 
     let render_texture = device.create_texture(&texture_desc);

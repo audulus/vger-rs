@@ -44,6 +44,7 @@ impl Atlas {
             format: wgpu::TextureFormat::R8Unorm,
             usage: wgpu::TextureUsages::COPY_SRC | wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::TEXTURE_BINDING,
             label: Some("atlas_texture"),
+            view_formats: &[wgpu::TextureFormat::R8Unorm],
         }
     }
 

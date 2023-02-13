@@ -1,34 +1,34 @@
 
 
 /// Filled circle.
-let vgerCircle = 0;
+const vgerCircle = 0;
 
 /// Stroked arc.
-let vgerArc = 1;
+const vgerArc = 1;
 
 /// Rounded corner rectangle.
-let vgerRect = 2;
+const vgerRect = 2;
 
 /// Stroked rounded rectangle.
-let vgerRectStroke = 3;
+const vgerRectStroke = 3;
 
 /// Single-segment quadratic bezier curve.
-let vgerBezier = 4;
+const vgerBezier = 4;
 
 /// line segment
-let vgerSegment = 5;
+const vgerSegment = 5;
 
 /// Multi-segment bezier curve.
-let vgerCurve = 6;
+const vgerCurve = 6;
 
 /// Connection wire. See https://www.shadertoy.com/view/NdsXRl
-let vgerWire = 7;
+const vgerWire = 7;
 
 /// Text rendering.
-let vgerGlyph = 8;
+const vgerGlyph = 8;
 
 /// Path fills.
-let vgerPathFill = 9;
+const vgerPathFill = 9;
 
 struct Prim {
 
@@ -240,8 +240,8 @@ fn get_distance_vector(b0: vec2<f32>, b1: vec2<f32>, b2: vec2<f32>) -> vec2<f32>
 
     let f=b*d-a*a;
     let d21=b2-b1; let d10=b1-b0; let d20=b2-b0;
-    let gf=2.0*(b*d21+d*d10+a*d20);
-    let gf=vec2<f32>(gf.y,-gf.x);
+    var gf=2.0*(b*d21+d*d10+a*d20);
+    gf=vec2<f32>(gf.y,-gf.x);
     let pp=-f*gf/dot(gf,gf);
     let d0p=b0-pp;
     let ap=det(d0p,d20); let bp=2.0*det(d10,d0p);
