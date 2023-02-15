@@ -1,6 +1,7 @@
 # vger-rs
 
 ![build status](https://github.com/audulus/vger-rs/actions/workflows/rust.yml/badge.svg)
+[![dependency status](https://deps.rs/repo/github/audulus/vger-rs/status.svg)](https://deps.rs/repo/github/audulus/vger-rs)
 
 vger is a vector graphics renderer which renders a limited set of primitives, but does so almost entirely on the GPU. Port of [VGER](https://github.com/audulus/vger) to Rust. Used in [rui](https://github.com/audulus/rui).
 
