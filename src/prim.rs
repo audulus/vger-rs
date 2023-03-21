@@ -28,6 +28,9 @@ pub enum PrimType {
     /// Text rendering.
     Glyph,
 
+    /// Colored glyph e.g. emoji.
+    ColorGlyph,
+
     /// Path fills.
     PathFill,
 }
