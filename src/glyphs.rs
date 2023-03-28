@@ -22,7 +22,15 @@ pub struct GlyphCache {
     pub color_atlas: Atlas,
     pub font: fontdue::Font,
     info: HashMap<(char, u32), GlyphInfo>,
-    atlas_infos: HashMap<(cosmic_text::fontdb::ID, u16, u32, SubpixelBin), AtlasInfo>,
+    atlas_infos: HashMap<
+        (
+            cosmic_text::fontdb::ID,
+            u16,
+            u32,
+            (SubpixelBin, SubpixelBin),
+        ),
+        AtlasInfo,
+    >,
     svg_infos: HashMap<Vec<u8>, HashMap<(u32, u32), AtlasInfo>>,
 }
 
@@ -82,7 +90,7 @@ impl GlyphCache {
         font_id: cosmic_text::fontdb::ID,
         glyph_id: u16,
         size: u32,
-        subpx: SubpixelBin,
+        subpx: (SubpixelBin, SubpixelBin),
         image: impl FnOnce() -> SwashImage,
     ) -> AtlasInfo {
         let key = (font_id, glyph_id, size, subpx);

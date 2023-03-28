@@ -578,7 +578,7 @@ impl Vger {
         font_id: cosmic_text::fontdb::ID,
         glyph_id: u16,
         size: u32,
-        subpx: SubpixelBin,
+        subpx: (SubpixelBin, SubpixelBin),
         image: impl FnOnce() -> SwashImage,
         paint_index: PaintIndex,
     ) {
