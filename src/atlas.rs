@@ -22,7 +22,7 @@ pub struct Atlas {
 }
 
 impl Atlas {
-    pub const ATLAS_SIZE: u32 = 1024;
+    pub const ATLAS_SIZE: u32 = 4096;
     pub const RECT_PADDING: i32 = 6;
 
     fn get_packer_config() -> rect_packer::Config {

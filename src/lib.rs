@@ -604,6 +604,7 @@ impl Vger {
                 (rect.y + rect.height) as f32,
             ];
             prim.paint = paint_index.index as u32;
+            prim.scissor = self.add_scissor() as u32;
 
             self.render(prim);
         }
@@ -641,6 +642,7 @@ impl Vger {
             if let Some(paint_index) = paint_index {
                 prim.paint = paint_index.index as u32;
             }
+            prim.scissor = self.add_scissor() as u32;
 
             self.render(prim);
         }
