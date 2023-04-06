@@ -33,6 +33,9 @@ const vgerColorGlyph = 9;
 /// Path fills.
 const vgerPathFill = 10;
 
+/// Svg with override color
+const overrideColorSvg = 11;
+
 struct Prim {
 
     /// Min and max coordinates of the quad we're rendering.
@@ -351,6 +354,10 @@ fn sdPrimBounds(prim: Prim) -> BBox {
                 b = expand(b, cvs.cvs[i32(prim.start)+i]);
             }
         }
+        case 11u: { // overrideColorSvg
+            b.min = prim.cv0;
+            b.max = prim.cv1;
+        }
         default: {}
     }
     return b;
@@ -475,6 +482,11 @@ fn sdPrim(prim: Prim, p: vec2<f32>, filterWidth: f32) -> f32 {
             }
             d = d * s;
             break;
+        }
+        case 11u: { // overrideColorSvg
+            let center = 0.5*(prim.cv1 + prim.cv0);
+            let size = prim.cv1 - prim.cv0;
+            d = sdBox(p - center, 0.5*size, prim.radius);
         }
         default: { }
     }
@@ -679,6 +691,21 @@ fn fs_main(
         // XXX: using toLinear is a bit of a guess. Gets us closer
         // to matching the glyph atlas in the output.
         var color = vec4<f32>(color_mask.rgb, c.a * color_mask.a);
+
+        //if(glow) {
+        //    color.a *= paint.glow;
+        //}
+
+        return s * color;
+    }
+    
+    if(prim.prim_type == 11u) { // overrideColorSvg
+
+        let c = paint.inner_color;
+
+        // XXX: using toLinear is a bit of a guess. Gets us closer
+        // to matching the glyph atlas in the output.
+        var color = vec4<f32>(c.rgb, c.a * color_mask.a);
 
         //if(glow) {
         //    color.a *= paint.glow;

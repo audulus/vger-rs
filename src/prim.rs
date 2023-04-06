@@ -33,6 +33,9 @@ pub enum PrimType {
 
     /// Path fills.
     PathFill,
+
+    /// Svg with override color
+    OverrideColorSvg,
 }
 
 #[derive(Copy, Clone, Default)]

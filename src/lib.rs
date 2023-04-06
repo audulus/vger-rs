@@ -642,10 +642,10 @@ impl Vger {
         let info = self.glyph_cache.get_svg_mask(hash, width, height, image);
         if let Some(rect) = info.rect {
             let mut prim = Prim::default();
-            prim.prim_type = if info.colored {
-                PrimType::ColorGlyph
+            prim.prim_type = if paint_index.is_some() {
+                PrimType::OverrideColorSvg
             } else {
-                PrimType::Glyph
+                PrimType::ColorGlyph
             } as u32;
 
             let x = x + info.left as f32;
