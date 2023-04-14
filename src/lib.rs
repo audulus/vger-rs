@@ -276,6 +276,7 @@ impl Vger {
         self.scissor_stack.push(Scissor::new());
         self.paint_count = 0;
         self.xform_count = 0;
+        self.add_xform();
         self.scissor_count = 0;
         self.pen = LocalPoint::zero();
     }
@@ -352,7 +353,6 @@ impl Vger {
         prim.paint = paint_index.index as u32;
         prim.quad_bounds = [c.x - radius, c.y - radius, c.x + radius, c.y + radius];
         prim.tex_bounds = prim.quad_bounds;
-        prim.xform = self.add_xform() as u32;
         prim.scissor = self.add_scissor() as u32;
 
         self.render(prim);
@@ -389,7 +389,6 @@ impl Vger {
             c.y + radius + width,
         ];
         prim.tex_bounds = prim.quad_bounds;
-        prim.xform = self.add_xform() as u32;
         prim.scissor = self.add_scissor() as u32;
 
         self.render(prim);
@@ -415,7 +414,6 @@ impl Vger {
         prim.paint = paint_index.index as u32;
         prim.quad_bounds = [min.x, min.y, max.x, max.y];
         prim.tex_bounds = prim.quad_bounds;
-        prim.xform = self.add_xform() as u32;
         prim.scissor = self.add_scissor() as u32;
 
         self.render(prim);
@@ -441,7 +439,6 @@ impl Vger {
         prim.paint = paint_index.index as u32;
         prim.quad_bounds = [min.x - width, min.y - width, max.x + width, max.y + width];
         prim.tex_bounds = prim.quad_bounds;
-        prim.xform = self.add_xform() as u32;
         prim.scissor = self.add_scissor() as u32;
 
         self.render(prim);
@@ -472,7 +469,6 @@ impl Vger {
             ap.y.max(bp.y) + width * 2.0,
         ];
         prim.tex_bounds = prim.quad_bounds;
-        prim.xform = self.add_xform() as u32;
         prim.scissor = self.add_scissor() as u32;
 
         self.render(prim);
@@ -507,7 +503,6 @@ impl Vger {
             ap.y.max(bp.y).max(cp.y) + width,
         ];
         prim.tex_bounds = prim.quad_bounds;
-        prim.xform = self.add_xform() as u32;
         prim.scissor = self.add_scissor() as u32;
 
         self.render(prim);
@@ -533,7 +528,6 @@ impl Vger {
 
     /// Fills a path.
     pub fn fill(&mut self, paint_index: PaintIndex) {
-        let xform = self.add_xform();
         let scissor = self.add_scissor();
 
         self.path_scanner.init();
@@ -542,7 +536,6 @@ impl Vger {
             let mut prim = Prim::default();
             prim.prim_type = PrimType::PathFill as u32;
             prim.paint = paint_index.index as u32;
-            prim.xform = xform as u32;
             prim.scissor = scissor as u32;
             prim.start = self.scenes[self.cur_scene].cvs.len() as u32;
 
@@ -675,7 +668,6 @@ impl Vger {
         let scaled_size = size as f32 * scale;
 
         let paint = self.color_paint(color);
-        let xform = self.add_xform() as u32;
         let scissor = self.add_scissor() as u32;
 
         let mut prims = vec![];
@@ -687,7 +679,6 @@ impl Vger {
             if let Some(rect) = info.rect {
                 let mut prim = Prim::default();
                 prim.prim_type = PrimType::Glyph as u32;
-                prim.xform = xform;
                 prim.scissor = scissor;
                 assert!(glyph.width == rect.width as usize);
                 assert!(glyph.height == rect.height as usize);
