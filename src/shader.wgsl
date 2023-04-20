@@ -421,7 +421,7 @@ fn sdPrim(prim: Prim, p: vec2<f32>, filterWidth: f32) -> f32 {
             d = abs(sdBox(p - center, 0.5*size, prim.radius)) - prim.width/2.0;
         }
         case 4u: { // vgerBezier
-            d = sdBezierApprox(p, prim.cv0, prim.cv1, prim.cv2) - prim.width;
+            d = sdBezierApprox(p, prim.cv0, prim.cv1, prim.cv2) - prim.width/2.0;
         }
         case 5u: { // vgerSegment
             d = sdSegment2(p, prim.cv0, prim.cv1, prim.width);
