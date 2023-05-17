@@ -21,7 +21,7 @@ euclid = "0.22.7"
 fontdue = "0.7.2"
 rect_packer = "0.2.1"
 rand = "0.7.3"
-cosmic-text = { git = "https://github.com/lapce/cosmic-text", rev = "5cbf0621f6052412701ad16c5095dfe39227cb4e" }
+cosmic-text = { git = "https://github.com/lapce/cosmic-text", rev = "88bda037195ed21402eba66d85602728d99cbb48" }
 # cosmic-text = { path = "../cosmic-text" }
 
 [dev-dependencies]
