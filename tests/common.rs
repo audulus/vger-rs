@@ -115,9 +115,7 @@ fn get_texture_data(
                 buffer: &output_buffer,
                 layout: wgpu::ImageDataLayout {
                     offset: 0,
-                    bytes_per_row: Some(
-                        std::num::NonZeroU32::new(texture_extent.width * bytes_per_pixel).unwrap(),
-                    ),
+                    bytes_per_row: Some(texture_extent.width * bytes_per_pixel),
                     rows_per_image: None,
                 },
             },

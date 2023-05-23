@@ -100,7 +100,7 @@ impl Atlas {
                     buffer: &buffer,
                     layout: wgpu::ImageDataLayout {
                         offset: 0,
-                        bytes_per_row: std::num::NonZeroU32::new(sz as u32),
+                        bytes_per_row: Some(sz as u32),
                         rows_per_image: None,
                     },
                 },
@@ -154,7 +154,7 @@ impl Atlas {
                     buffer: &buffer,
                     layout: wgpu::ImageDataLayout {
                         offset: 0,
-                        bytes_per_row: std::num::NonZeroU32::new(padded_width as u32),
+                        bytes_per_row: Some(padded_width as u32),
                         rows_per_image: None,
                     },
                 },
