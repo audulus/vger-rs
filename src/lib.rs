@@ -27,6 +27,8 @@ pub mod atlas;
 mod glyphs;
 use glyphs::GlyphCache;
 
+use wgpu::util::DeviceExt;
+
 #[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 struct Uniforms {
@@ -35,6 +37,11 @@ struct Uniforms {
 
 #[derive(Copy, Clone, Debug)]
 pub struct PaintIndex {
+    index: usize,
+}
+
+#[derive(Copy, Clone, Debug)]
+pub struct ImageIndex {
     index: usize,
 }
 
@@ -83,6 +90,7 @@ pub struct Vger {
     pen: LocalPoint,
     pub glyph_cache: GlyphCache,
     layout: Layout,
+    images: Vec<Option<wgpu::Texture>>,
 }
 
 impl Vger {
@@ -228,6 +236,7 @@ impl Vger {
             pen: LocalPoint::zero(),
             glyph_cache,
             layout,
+            images: vec![],
         }
     }
 
@@ -806,5 +815,77 @@ impl Vger {
             outer_color,
             glow,
         ))
+    }
+
+    /// Create an image from pixel data in memory.
+    /// Must be RGBA8.
+    pub fn create_image_pixels(&mut self, data: &[u8], width: u32, height: u32) -> ImageIndex {
+
+        let texture_size = wgpu::Extent3d {
+            width,
+            height,
+            depth_or_array_layers: 1,
+        };
+        
+        let texture_desc = wgpu::TextureDescriptor {
+            size: texture_size,
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::TEXTURE_BINDING,
+            label: Some("lyte image"),
+            view_formats: &[wgpu::TextureFormat::Rgba8UnormSrgb],
+        };
+    
+        let texture = self.device.create_texture(&texture_desc);
+
+        let buffer = self.device.create_buffer_init(
+            &wgpu::util::BufferInitDescriptor {
+                label: Some("Temp Buffer"),
+                contents: &data,
+                usage: wgpu::BufferUsages::COPY_SRC,
+            }
+        );
+        
+        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("texture_buffer_copy_encoder"),
+        });
+
+        let image_size = wgpu::Extent3d {
+            width: width,
+            height: height,
+            depth_or_array_layers: 1,
+        };
+        
+        encoder.copy_buffer_to_texture(
+            wgpu::ImageCopyBuffer {
+                buffer: &buffer,
+                layout: wgpu::ImageDataLayout {
+                    offset: 0,
+                    bytes_per_row: Some(width * 4),
+                    rows_per_image: Some(height),
+                },
+            },
+            wgpu::ImageCopyTexture {
+                texture: &texture,
+                mip_level: 0,
+                aspect: wgpu::TextureAspect::All,
+                origin: wgpu::Origin3d::ZERO,
+            },
+            image_size,
+        );
+        
+        self.queue.submit(std::iter::once(encoder.finish()));
+        
+        let index = ImageIndex{index: self.images.len()};
+
+        self.images.push(Some(texture));
+
+        return index;
+    }
+
+    pub fn delete_image(&mut self, image: ImageIndex) {
+        self.images[image.index] = None;
     }
 }
