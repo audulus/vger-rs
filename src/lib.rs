@@ -1,4 +1,5 @@
 use fontdue::layout::{CoordinateSystem, Layout, LayoutSettings, TextStyle};
+use std::sync::Arc;
 
 mod path;
 use path::*;
@@ -63,6 +64,7 @@ impl Scissor {
 }
 
 pub struct Vger {
+    device: Arc<wgpu::Device>,
     scenes: [Scene; 3],
     cur_scene: usize,
     cur_layer: usize,
@@ -84,7 +86,7 @@ pub struct Vger {
 
 impl Vger {
     /// Create a new renderer given a device and output pixel format.
-    pub fn new(device: &wgpu::Device, texture_format: wgpu::TextureFormat) -> Self {
+    pub fn new(device: Arc<wgpu::Device>, texture_format: wgpu::TextureFormat) -> Self {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!(
@@ -92,7 +94,7 @@ impl Vger {
             ))),
         });
 
-        let scenes = [Scene::new(device), Scene::new(device), Scene::new(device)];
+        let scenes = [Scene::new(&device), Scene::new(&device), Scene::new(&device)];
 
         let uniform_bind_group_layout =
             device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -127,11 +129,11 @@ impl Vger {
                 label: Some("uniform_bind_group_layout"),
             });
 
-        let glyph_cache = GlyphCache::new(device);
+        let glyph_cache = GlyphCache::new(&device);
 
         let texture_view = glyph_cache.create_view();
 
-        let uniforms = GPUVec::new_uniforms(device, "uniforms");
+        let uniforms = GPUVec::new_uniforms(&device, "uniforms");
 
         let glyph_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
             label: Some("glyph"),
@@ -159,7 +161,7 @@ impl Vger {
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
             bind_group_layouts: &[
-                &Scene::bind_group_layout(device),
+                &Scene::bind_group_layout(&device),
                 &uniform_bind_group_layout,
             ],
             push_constant_ranges: &[],
@@ -204,6 +206,7 @@ impl Vger {
         let layout = Layout::new(CoordinateSystem::PositiveYUp);
 
         Self {
+            device,
             scenes,
             cur_scene: 0,
             cur_layer: 0,
