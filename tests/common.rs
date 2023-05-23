@@ -177,7 +177,7 @@ pub fn render_test(
         depth_stencil_attachment: None,
     };
 
-    vger.encode(device, &desc, queue);
+    vger.encode(&desc);
 
     let output_buffer = get_texture_data(&texture_desc, device, queue, &render_texture);
 

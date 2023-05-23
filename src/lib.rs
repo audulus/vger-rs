@@ -65,6 +65,7 @@ impl Scissor {
 
 pub struct Vger {
     device: Arc<wgpu::Device>,
+    queue: Arc<wgpu::Queue>,
     scenes: [Scene; 3],
     cur_scene: usize,
     cur_layer: usize,
@@ -86,7 +87,9 @@ pub struct Vger {
 
 impl Vger {
     /// Create a new renderer given a device and output pixel format.
-    pub fn new(device: Arc<wgpu::Device>, texture_format: wgpu::TextureFormat) -> Self {
+    pub fn new(device: Arc<wgpu::Device>,
+               queue: Arc<wgpu::Queue>,
+               texture_format: wgpu::TextureFormat) -> Self {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!(
@@ -207,6 +210,7 @@ impl Vger {
 
         Self {
             device,
+            queue,
             scenes,
             cur_scene: 0,
             cur_layer: 0,
@@ -263,10 +267,10 @@ impl Vger {
     /// Encode all rendering to a command buffer.
     pub fn encode(
         &mut self,
-        device: &wgpu::Device,
         render_pass: &wgpu::RenderPassDescriptor,
-        queue: &wgpu::Queue,
     ) {
+        let device = &self.device;
+        let queue = &self.queue;
         self.scenes[self.cur_scene].update(device, queue);
         self.uniforms.update(device, queue);
 
