@@ -219,7 +219,7 @@ fn bezier_stroke_gradient() {
 }
 
 fn rand2<T: rand::Rng>(rng: &mut T) -> LocalPoint {
-    LocalPoint::new(rng.gen_range(0.0, 512.0), rng.gen_range(0.0, 512.0))
+    LocalPoint::new(rng.gen_range(0.0..512.0), rng.gen_range(0.0..512.0))
 }
 
 #[test]
