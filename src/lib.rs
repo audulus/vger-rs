@@ -698,8 +698,7 @@ impl Vger {
             for line in lines {
                 let mut rect = LocalRect::zero();
 
-                for i in line.glyph_start..line.glyph_end {
-                    let glyph = glyphs[i];
+                for glyph in &glyphs[line.glyph_start..line.glyph_end] {
                     rect = rect.union(&LocalRect::new(
                         [glyph.x, glyph.y].into(),
                         [glyph.width as f32, glyph.height as f32].into(),
