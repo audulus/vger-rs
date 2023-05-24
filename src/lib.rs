@@ -857,8 +857,8 @@ impl Vger {
             });
 
         let image_size = wgpu::Extent3d {
-            width: width,
-            height: height,
+            width,
+            height,
             depth_or_array_layers: 1,
         };
 
