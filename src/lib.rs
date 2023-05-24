@@ -846,7 +846,7 @@ impl Vger {
             .device
             .create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("Temp Buffer"),
-                contents: &data,
+                contents: data,
                 usage: wgpu::BufferUsages::COPY_SRC,
             });
 
@@ -888,7 +888,7 @@ impl Vger {
 
         self.images.push(Some(texture));
 
-        return index;
+        index
     }
 
     pub fn delete_image(&mut self, image: ImageIndex) {
