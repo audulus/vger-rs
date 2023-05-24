@@ -42,7 +42,9 @@ impl Atlas {
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
             format: wgpu::TextureFormat::R8Unorm,
-            usage: wgpu::TextureUsages::COPY_SRC | wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::TEXTURE_BINDING,
+            usage: wgpu::TextureUsages::COPY_SRC
+                | wgpu::TextureUsages::COPY_DST
+                | wgpu::TextureUsages::TEXTURE_BINDING,
             label: Some("atlas_texture"),
             view_formats: &[wgpu::TextureFormat::R8Unorm],
         }
@@ -81,7 +83,7 @@ impl Atlas {
 
             let sz = Atlas::ATLAS_SIZE as usize;
 
-            let data = vec![0_u8;sz * sz];
+            let data = vec![0_u8; sz * sz];
 
             let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("atlas temp buffer"),

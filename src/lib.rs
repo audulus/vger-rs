@@ -95,9 +95,11 @@ pub struct Vger {
 
 impl Vger {
     /// Create a new renderer given a device and output pixel format.
-    pub fn new(device: Arc<wgpu::Device>,
-               queue: Arc<wgpu::Queue>,
-               texture_format: wgpu::TextureFormat) -> Self {
+    pub fn new(
+        device: Arc<wgpu::Device>,
+        queue: Arc<wgpu::Queue>,
+        texture_format: wgpu::TextureFormat,
+    ) -> Self {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(std::borrow::Cow::Borrowed(include_str!(
@@ -105,7 +107,11 @@ impl Vger {
             ))),
         });
 
-        let scenes = [Scene::new(&device), Scene::new(&device), Scene::new(&device)];
+        let scenes = [
+            Scene::new(&device),
+            Scene::new(&device),
+            Scene::new(&device),
+        ];
 
         let uniform_bind_group_layout =
             device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -274,10 +280,7 @@ impl Vger {
     }
 
     /// Encode all rendering to a command buffer.
-    pub fn encode(
-        &mut self,
-        render_pass: &wgpu::RenderPassDescriptor,
-    ) {
+    pub fn encode(&mut self, render_pass: &wgpu::RenderPassDescriptor) {
         let device = &self.device;
         let queue = &self.queue;
         self.scenes[self.cur_scene].update(device, queue);
@@ -608,7 +611,7 @@ impl Vger {
                     (glyph.y + glyph.height as f32) / scale,
                 ];
                 // println!("quad_bounds: {:?}", prim.quad_bounds);
-                
+
                 prim.tex_bounds = [
                     rect.x as f32,
                     (rect.y + rect.height) as f32,
@@ -820,13 +823,12 @@ impl Vger {
     /// Create an image from pixel data in memory.
     /// Must be RGBA8.
     pub fn create_image_pixels(&mut self, data: &[u8], width: u32, height: u32) -> ImageIndex {
-
         let texture_size = wgpu::Extent3d {
             width,
             height,
             depth_or_array_layers: 1,
         };
-        
+
         let texture_desc = wgpu::TextureDescriptor {
             size: texture_size,
             mip_level_count: 1,
@@ -837,27 +839,29 @@ impl Vger {
             label: Some("lyte image"),
             view_formats: &[wgpu::TextureFormat::Rgba8UnormSrgb],
         };
-    
+
         let texture = self.device.create_texture(&texture_desc);
 
-        let buffer = self.device.create_buffer_init(
-            &wgpu::util::BufferInitDescriptor {
+        let buffer = self
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("Temp Buffer"),
                 contents: &data,
                 usage: wgpu::BufferUsages::COPY_SRC,
-            }
-        );
-        
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("texture_buffer_copy_encoder"),
-        });
+            });
+
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("texture_buffer_copy_encoder"),
+            });
 
         let image_size = wgpu::Extent3d {
             width: width,
             height: height,
             depth_or_array_layers: 1,
         };
-        
+
         encoder.copy_buffer_to_texture(
             wgpu::ImageCopyBuffer {
                 buffer: &buffer,
@@ -875,10 +879,12 @@ impl Vger {
             },
             image_size,
         );
-        
+
         self.queue.submit(std::iter::once(encoder.finish()));
-        
-        let index = ImageIndex{index: self.images.len()};
+
+        let index = ImageIndex {
+            index: self.images.len(),
+        };
 
         self.images.push(Some(texture));
 
