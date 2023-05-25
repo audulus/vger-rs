@@ -91,6 +91,8 @@ pub struct Vger {
     pub glyph_cache: GlyphCache,
     layout: Layout,
     images: Vec<Option<wgpu::Texture>>,
+    image_bind_groups: Vec<Option<wgpu::BindGroup>>,
+    image_bind_group_layout: wgpu::BindGroupLayout,
 }
 
 impl Vger {
@@ -144,6 +146,23 @@ impl Vger {
                     },
                 ],
                 label: Some("uniform_bind_group_layout"),
+            });
+
+        let image_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Texture {
+                            multisampled: false,
+                            sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                        },
+                        count: None,
+                    },
+                ],
+                label: Some("image_bind_group_layout"),
             });
 
         let glyph_cache = GlyphCache::new(&device);
@@ -243,6 +262,8 @@ impl Vger {
             glyph_cache,
             layout,
             images: vec![],
+            image_bind_groups: vec![],
+            image_bind_group_layout,
         }
     }
 
@@ -319,6 +340,8 @@ impl Vger {
                 if image_id >= 0 && image_id != current_texture {
 
                     current_texture = image_id;
+
+                    rpass.set_bind_group(2, self.image_bind_groups[image_id as usize].as_ref().unwrap(), &[]);
 
                     println!("image changed: encoding {:?} prims", m);
                     rpass.draw(/*vertices*/ 0..4, /*instances*/ start ..(start+m));
@@ -911,12 +934,28 @@ impl Vger {
             index: self.images.len(),
         };
 
+        let texture_view = texture.create_view(&wgpu::TextureViewDescriptor::default());
+
         self.images.push(Some(texture));
+
+        let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+            layout: &self.image_bind_group_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: wgpu::BindingResource::TextureView(&texture_view),
+                },
+            ],
+            label: Some("vger bind group"),
+        });
+
+        self.image_bind_groups.push(Some(bind_group));
 
         index
     }
 
     pub fn delete_image(&mut self, image: ImageIndex) {
         self.images[image.index] = None;
+        self.image_bind_groups[image.index] = None;
     }
 }

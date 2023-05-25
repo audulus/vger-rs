@@ -606,6 +606,10 @@ var glyph_atlas: texture_2d<f32>;
 @binding(2)
 var samp : sampler;
 
+@group(2)
+@binding(0)
+var tex : texture_2d<f32>;
+
 // sRGB to linear conversion for one channel.
 fn toLinear(s: f32) -> f32
 {
