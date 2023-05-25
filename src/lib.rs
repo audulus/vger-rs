@@ -93,6 +93,7 @@ pub struct Vger {
     images: Vec<Option<wgpu::Texture>>,
     image_bind_groups: Vec<Option<wgpu::BindGroup>>,
     image_bind_group_layout: wgpu::BindGroupLayout,
+    default_image_bind_group: wgpu::BindGroup,
 }
 
 impl Vger {
@@ -152,7 +153,7 @@ impl Vger {
             device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
                 entries: &[
                     wgpu::BindGroupLayoutEntry {
-                        binding: 1,
+                        binding: 0,
                         visibility: wgpu::ShaderStages::FRAGMENT,
                         ty: wgpu::BindingType::Texture {
                             multisampled: false,
@@ -194,11 +195,23 @@ impl Vger {
             label: Some("vger bind group"),
         });
 
+        let default_image_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            layout: &image_bind_group_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: wgpu::BindingResource::TextureView(&texture_view),
+                },
+            ],
+            label: Some("vger default image bind group"),
+        });
+
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,
             bind_group_layouts: &[
                 &Scene::bind_group_layout(&device),
                 &uniform_bind_group_layout,
+                &image_bind_group_layout,
             ],
             push_constant_ranges: &[],
         });
@@ -264,6 +277,7 @@ impl Vger {
             images: vec![],
             image_bind_groups: vec![],
             image_bind_group_layout,
+            default_image_bind_group,
         }
     }
 
@@ -326,6 +340,7 @@ impl Vger {
             );
 
             rpass.set_bind_group(1, &self.uniform_bind_group, &[]);
+            rpass.set_bind_group(2, &self.default_image_bind_group, &[]);
 
             let scene = &self.scenes[self.cur_scene];
             let n = scene.prims[self.cur_layer].len();

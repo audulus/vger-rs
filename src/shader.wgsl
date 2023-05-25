@@ -633,6 +633,11 @@ fn fs_main(
     // let a = textureSample(glyph_atlas, samp, (in.t+0.5)/1024.0).r;
     let a = textureLoad(glyph_atlas, vec2<i32>(in.t), 0).r;
 
+    // Look up image color (if no active image, still have to because of wgsl).
+    // Note that we could use a separate shader if that's a perf hit.
+    let t = unpack_mat3x2(paint.xform) * vec3<f32>(in.t, 1.0);
+    var color = textureSample(tex, samp, t);
+
     let s = scissor_mask(scissor, in.p);
 
     if(prim.prim_type == 8u) { // vgerGlyph
@@ -651,7 +656,9 @@ fn fs_main(
     }
 
     let d = sdPrim(prim, in.t, fw);
-    let color = apply(paint, in.t);
+    if paint.image == -1 {
+        color = apply(paint, in.t);
+    }
 
     return s * mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
 }
