@@ -355,7 +355,9 @@ impl Vger {
                 if image_id >= 0 && image_id != current_texture {
 
                     println!("image changed: encoding {:?} prims", m);
-                    rpass.draw(/*vertices*/ 0..4, /*instances*/ start ..(start+m));
+                    if m > 0 {
+                        rpass.draw(/*vertices*/ 0..4, /*instances*/ start ..(start+m));
+                    }
 
                     current_texture = image_id;
                     rpass.set_bind_group(2, self.image_bind_groups[image_id as usize].as_ref().unwrap(), &[]);
