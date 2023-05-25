@@ -1,4 +1,5 @@
 use std::mem::size_of;
+use std::ops::Index;
 use wgpu::*;
 
 pub struct GPUVec<T: Copy> {
@@ -101,5 +102,13 @@ impl<T: Copy> GPUVec<T> {
 
     pub fn len(&self) -> usize {
         self.data.len()
+    }
+}
+
+impl<T: Copy> Index<usize> for GPUVec<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.data[index]
     }
 }
