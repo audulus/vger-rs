@@ -285,6 +285,7 @@ impl Vger {
         let queue = &self.queue;
         self.scenes[self.cur_scene].update(device, queue);
         self.uniforms.update(device, queue);
+        let mut current_texture = -1;
 
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("vger encoder"),
@@ -305,10 +306,35 @@ impl Vger {
 
             rpass.set_bind_group(1, &self.uniform_bind_group, &[]);
 
-            let n = self.scenes[self.cur_scene].prims[self.cur_layer].len();
-            // println!("encoding {:?} prims", n);
+            let scene = &self.scenes[self.cur_scene];
+            let n = scene.prims[self.cur_layer].len();
+            let mut m: u32 = 0;
+            let mut start: u32 = 0;
 
-            rpass.draw(/*vertices*/ 0..4, /*instances*/ 0..(n as u32))
+            for i in 0..n {
+                let prim = &scene.prims[self.cur_layer][i];
+                let image_id = scene.paints[prim.paint as usize].image;
+
+                // Image changed, render.
+                if image_id >= 0 && image_id != current_texture {
+
+                    current_texture = image_id;
+
+                    println!("image changed: encoding {:?} prims", m);
+                    rpass.draw(/*vertices*/ 0..4, /*instances*/ start ..(start+m));
+
+                    start += m;
+                    m = 0;
+                }
+
+                m += 1;
+            }
+            
+            println!("encoding {:?} prims", m);
+
+            if m > 0 {
+                rpass.draw(/*vertices*/ 0..4, /*instances*/ start ..(start+m))
+            }
         }
         queue.submit(Some(encoder.finish()));
 

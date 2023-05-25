@@ -7,7 +7,7 @@ pub struct Paint {
     xform: WorldToLocal, // mat3x2<f32>
 
     glow: f32,
-    image: i32,
+    pub image: i32,
 
     inner_color: Color, // vec4<f32>
     outer_color: Color, // vec4<f32>
