@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::*;
 
 pub const MAX_LAYERS: usize = 4;
@@ -5,6 +7,7 @@ pub const MAX_LAYERS: usize = 4;
 type Mat4x4 = [f32; 16];
 
 pub(crate) struct Scene {
+    pub depthed_prims: HashMap<i32, Vec<Prim>>,
     pub prims: [GPUVec<Prim>; MAX_LAYERS],
     pub cvs: GPUVec<LocalPoint>,
     pub xforms: GPUVec<Mat4x4>,
@@ -40,6 +43,7 @@ impl Scene {
         ];
 
         Self {
+            depthed_prims: HashMap::new(),
             prims,
             cvs,
             xforms,
@@ -87,6 +91,13 @@ impl Scene {
     }
 
     pub fn update(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
+        let mut keys: Vec<i32> = self.depthed_prims.keys().copied().collect();
+        keys.sort();
+        for z_index in keys {
+            let mut prims = self.depthed_prims.remove(&z_index).unwrap();
+            self.prims[0].append(&mut prims);
+        }
+
         for i in 0..4 {
             self.prims[i].update(device, queue);
         }
@@ -97,6 +108,7 @@ impl Scene {
     }
 
     pub fn clear(&mut self) {
+        self.depthed_prims.clear();
         for i in 0..4 {
             self.prims[i].clear();
         }

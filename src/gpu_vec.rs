@@ -95,6 +95,10 @@ impl<T: Copy> GPUVec<T> {
         self.data.clear();
     }
 
+    pub fn append(&mut self, values: &mut Vec<T>) {
+        self.data.append(values);
+    }
+
     pub fn push(&mut self, value: T) {
         self.data.push(value);
     }

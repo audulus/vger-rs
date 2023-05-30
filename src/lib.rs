@@ -67,6 +67,7 @@ pub struct Vger {
     scenes: [Scene; 3],
     cur_scene: usize,
     cur_layer: usize,
+    cur_z_index: i32,
     tx_stack: Vec<LocalToWorld>,
     scissor_stack: Vec<Scissor>,
     device_px_ratio: f32,
@@ -242,6 +243,7 @@ impl Vger {
             scenes,
             cur_scene: 0,
             cur_layer: 0,
+            cur_z_index: 0,
             tx_stack: vec![],
             scissor_stack: vec![],
             device_px_ratio: 1.0,
@@ -334,7 +336,11 @@ impl Vger {
     }
 
     fn render(&mut self, prim: Prim) {
-        self.scenes[self.cur_scene].prims[self.cur_layer].push(prim);
+        let prims = self.scenes[self.cur_scene]
+            .depthed_prims
+            .entry(self.cur_z_index)
+            .or_default();
+        prims.push(prim);
     }
 
     /// Fills a circle.
@@ -856,6 +862,10 @@ impl Vger {
                 m.size = rect.size.to_array();
             }
         }
+    }
+
+    pub fn set_z_index(&mut self, z_index: i32) {
+        self.cur_z_index = z_index;
     }
 
     /// Resets the current scissor rect.
