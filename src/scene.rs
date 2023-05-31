@@ -15,19 +15,22 @@ pub(crate) struct Scene {
 
 pub const MAX_PRIMS: usize = 65536;
 
+// Initial prim capacity.
+pub const INIT_PRIMS: usize = 1024;
+
 impl Scene {
     pub fn new(device: &wgpu::Device) -> Self {
         let prims = [
-            GPUVec::new(device, MAX_PRIMS, "Prim Buffer 0"),
-            GPUVec::new(device, MAX_PRIMS, "Prim Buffer 1"),
-            GPUVec::new(device, MAX_PRIMS, "Prim Buffer 2"),
-            GPUVec::new(device, MAX_PRIMS, "Prim Buffer 3"),
+            GPUVec::new(device, INIT_PRIMS, "Prim Buffer 0"),
+            GPUVec::new(device, INIT_PRIMS, "Prim Buffer 1"),
+            GPUVec::new(device, INIT_PRIMS, "Prim Buffer 2"),
+            GPUVec::new(device, INIT_PRIMS, "Prim Buffer 3"),
         ];
 
-        let cvs = GPUVec::new(device, MAX_PRIMS, "cv Buffer");
-        let xforms = GPUVec::new(device, MAX_PRIMS, "Xform Buffer");
-        let paints = GPUVec::new(device, MAX_PRIMS, "Paint Buffer");
-        let scissors = GPUVec::new(device, MAX_PRIMS, "scissor Buffer");
+        let cvs = GPUVec::new(device, INIT_PRIMS, "cv Buffer");
+        let xforms = GPUVec::new(device, INIT_PRIMS, "Xform Buffer");
+        let paints = GPUVec::new(device, INIT_PRIMS, "Paint Buffer");
+        let scissors = GPUVec::new(device, INIT_PRIMS, "scissor Buffer");
 
         let bind_group_layout = Self::bind_group_layout(device);
 
