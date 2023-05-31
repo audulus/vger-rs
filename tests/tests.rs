@@ -462,3 +462,40 @@ fn test_scissor_text() {
     render_test(&mut vger, &device, &queue, png_name, true);
     assert!(png_not_black(png_name));
 }
+
+#[test]
+fn segment_stroke_stress() {
+    let (device, queue) = setup();
+
+    let mut vger = Vger::new(
+        device.clone(),
+        queue.clone(),
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+    );
+
+    vger.begin(512.0, 512.0, 1.0);
+
+    let paint = vger.linear_gradient(
+        [0.0, 0.0],
+        [512.0, 512.0],
+        Color::CYAN,
+        Color::MAGENTA,
+        0.0,
+    );
+
+    for _ in 0..100000 {
+        let mut rng = rand::thread_rng();
+        let a = rand2(&mut rng);
+        let b = rand2(&mut rng);
+    
+        vger.stroke_segment(a, b, 4.0, paint);
+    }
+
+    render_test(
+        &mut vger,
+        &device,
+        &queue,
+        "segment_stroke_stress.png",
+        false,
+    );
+}
