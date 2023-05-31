@@ -475,19 +475,13 @@ fn segment_stroke_stress() {
 
     vger.begin(512.0, 512.0, 1.0);
 
-    let paint = vger.linear_gradient(
-        [0.0, 0.0],
-        [512.0, 512.0],
-        Color::CYAN,
-        Color::MAGENTA,
-        0.0,
-    );
+    let paint = vger.linear_gradient([0.0, 0.0], [512.0, 512.0], Color::CYAN, Color::MAGENTA, 0.0);
 
     for _ in 0..100000 {
         let mut rng = rand::thread_rng();
         let a = rand2(&mut rng);
         let b = rand2(&mut rng);
-    
+
         vger.stroke_segment(a, b, 4.0, paint);
     }
 
