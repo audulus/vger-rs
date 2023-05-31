@@ -349,7 +349,7 @@ impl Vger {
 
                 // Image changed, render.
                 if image_id >= 0 && image_id != current_texture {
-                    println!("image changed: encoding {:?} prims", m);
+                    // println!("image changed: encoding {:?} prims", m);
                     if m > 0 {
                         rpass.draw(
                             /*vertices*/ 0..4,
@@ -371,7 +371,7 @@ impl Vger {
                 m += 1;
             }
 
-            println!("encoding {:?} prims", m);
+            // println!("encoding {:?} prims", m);
 
             if m > 0 {
                 rpass.draw(
