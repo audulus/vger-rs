@@ -46,7 +46,7 @@ impl<T: Copy> GPUVec<T> {
     ///
     /// We'd like to write directly to the mapped buffer, but that seemed
     /// tricky with wgpu.
-    pub fn update(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
+    pub fn update(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) -> bool {
         let mut realloc = false;
         while self.data.len() > self.capacity {
             self.capacity *= 2;
@@ -65,7 +65,8 @@ impl<T: Copy> GPUVec<T> {
         let sz = self.data.len() * size_of::<T>();
         queue.write_buffer(&self.buffer, 0, unsafe {
             std::slice::from_raw_parts_mut(self.data[..].as_ptr() as *mut u8, sz)
-        })
+        });
+        realloc
     }
 
     pub fn bind_group_layout_entry(binding: u32) -> wgpu::BindGroupLayoutEntry {

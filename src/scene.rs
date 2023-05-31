@@ -10,7 +10,6 @@ pub(crate) struct Scene {
     pub xforms: GPUVec<Mat4x4>,
     pub paints: GPUVec<Paint>,
     pub scissors: GPUVec<Scissor>,
-    //pub bind_group_layout: wgpu::BindGroupLayout,
     pub bind_groups: [wgpu::BindGroup; MAX_LAYERS],
 }
 
@@ -33,10 +32,42 @@ impl Scene {
         let bind_group_layout = Self::bind_group_layout(device);
 
         let bind_groups = [
-            Scene::bind_group(device, &bind_group_layout, &prims[0], &cvs, &xforms, &paints, &scissors),
-            Scene::bind_group(device, &bind_group_layout, &prims[1], &cvs, &xforms, &paints, &scissors),
-            Scene::bind_group(device, &bind_group_layout, &prims[2], &cvs, &xforms, &paints, &scissors),
-            Scene::bind_group(device, &bind_group_layout, &prims[3], &cvs, &xforms, &paints, &scissors),
+            Scene::bind_group(
+                device,
+                &bind_group_layout,
+                &prims[0],
+                &cvs,
+                &xforms,
+                &paints,
+                &scissors,
+            ),
+            Scene::bind_group(
+                device,
+                &bind_group_layout,
+                &prims[1],
+                &cvs,
+                &xforms,
+                &paints,
+                &scissors,
+            ),
+            Scene::bind_group(
+                device,
+                &bind_group_layout,
+                &prims[2],
+                &cvs,
+                &xforms,
+                &paints,
+                &scissors,
+            ),
+            Scene::bind_group(
+                device,
+                &bind_group_layout,
+                &prims[3],
+                &cvs,
+                &xforms,
+                &paints,
+                &scissors,
+            ),
         ];
 
         Self {
@@ -45,7 +76,6 @@ impl Scene {
             xforms,
             paints,
             scissors,
-            //bind_group_layout,
             bind_groups,
         }
     }
@@ -72,7 +102,6 @@ impl Scene {
         paints: &GPUVec<Paint>,
         scissors: &GPUVec<Scissor>,
     ) -> wgpu::BindGroup {
-
         device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &bind_group_layout,
             entries: &[
@@ -87,13 +116,31 @@ impl Scene {
     }
 
     pub fn update(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
+        let mut update_bind_groups = false;
+
         for i in 0..4 {
-            self.prims[i].update(device, queue);
+            update_bind_groups |= self.prims[i].update(device, queue);
         }
-        self.cvs.update(device, queue);
-        self.xforms.update(device, queue);
-        self.paints.update(device, queue);
-        self.scissors.update(device, queue);
+        update_bind_groups |= self.cvs.update(device, queue);
+        update_bind_groups |= self.xforms.update(device, queue);
+        update_bind_groups |= self.paints.update(device, queue);
+        update_bind_groups |= self.scissors.update(device, queue);
+
+        // If anything changed, regenerate all the bind groups.
+        if update_bind_groups {
+            let bind_group_layout = Scene::bind_group_layout(device);
+            for layer in 0..MAX_LAYERS {
+                self.bind_groups[layer] = Scene::bind_group(
+                    device,
+                    &bind_group_layout,
+                    &self.prims[layer],
+                    &self.cvs,
+                    &self.xforms,
+                    &self.paints,
+                    &self.scissors,
+                );
+            }
+        }
     }
 
     pub fn clear(&mut self) {
