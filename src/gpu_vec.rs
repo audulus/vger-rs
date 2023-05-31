@@ -47,13 +47,9 @@ impl<T: Copy> GPUVec<T> {
     /// We'd like to write directly to the mapped buffer, but that seemed
     /// tricky with wgpu.
     pub fn update(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) -> bool {
-        let mut realloc = false;
-        while self.data.len() > self.capacity {
-            self.capacity *= 2;
-            realloc = true;
-        }
-
+        let realloc = self.data.len() > self.capacity;
         if realloc {
+            self.capacity = self.data.len().next_power_of_two();
             self.buffer = device.create_buffer(&wgpu::BufferDescriptor {
                 label: Some(self.label.as_str()),
                 size: (size_of::<T>() * self.capacity) as u64,
