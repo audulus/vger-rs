@@ -151,18 +151,16 @@ impl Vger {
 
         let image_bind_group_layout =
             device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::FRAGMENT,
-                        ty: wgpu::BindingType::Texture {
-                            multisampled: false,
-                            sample_type: wgpu::TextureSampleType::Float { filterable: true },
-                            view_dimension: wgpu::TextureViewDimension::D2,
-                        },
-                        count: None,
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Texture {
+                        multisampled: false,
+                        sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                        view_dimension: wgpu::TextureViewDimension::D2,
                     },
-                ],
+                    count: None,
+                }],
                 label: Some("image_bind_group_layout"),
             });
 
@@ -197,12 +195,10 @@ impl Vger {
 
         let default_image_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &image_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::TextureView(&texture_view),
-                },
-            ],
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: wgpu::BindingResource::TextureView(&texture_view),
+            }],
             label: Some("vger default image bind group"),
         });
 
@@ -353,14 +349,20 @@ impl Vger {
 
                 // Image changed, render.
                 if image_id >= 0 && image_id != current_texture {
-
                     println!("image changed: encoding {:?} prims", m);
                     if m > 0 {
-                        rpass.draw(/*vertices*/ 0..4, /*instances*/ start ..(start+m));
+                        rpass.draw(
+                            /*vertices*/ 0..4,
+                            /*instances*/ start..(start + m),
+                        );
                     }
 
                     current_texture = image_id;
-                    rpass.set_bind_group(2, self.image_bind_groups[image_id as usize].as_ref().unwrap(), &[]);
+                    rpass.set_bind_group(
+                        2,
+                        self.image_bind_groups[image_id as usize].as_ref().unwrap(),
+                        &[],
+                    );
 
                     start += m;
                     m = 0;
@@ -368,11 +370,14 @@ impl Vger {
 
                 m += 1;
             }
-            
+
             println!("encoding {:?} prims", m);
 
             if m > 0 {
-                rpass.draw(/*vertices*/ 0..4, /*instances*/ start ..(start+m))
+                rpass.draw(
+                    /*vertices*/ 0..4,
+                    /*instances*/ start..(start + m),
+                )
             }
         }
         queue.submit(Some(encoder.finish()));
@@ -956,12 +961,10 @@ impl Vger {
 
         let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &self.image_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: wgpu::BindingResource::TextureView(&texture_view),
-                },
-            ],
+            entries: &[wgpu::BindGroupEntry {
+                binding: 1,
+                resource: wgpu::BindingResource::TextureView(&texture_view),
+            }],
             label: Some("vger bind group"),
         });
 
