@@ -59,7 +59,7 @@ impl Scene {
                 GPUVec::<Paint>::bind_group_layout_entry(3),
                 GPUVec::<Scissor>::bind_group_layout_entry(4),
             ],
-            label: Some("bind_group_layout"),
+            label: Some("BindGroupLayout for Scene"),
         })
     }
 
