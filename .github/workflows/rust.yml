@@ -19,3 +19,21 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       run: cargo build --verbose
+      
+  build-wasm:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    # Note that we can't run the tests because GitHub CI doesn't have GPUs.
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install Rust WASM target
+      run: rustup target add wasm32-unknown-unknown
+        
+    - name: Build
+      run: cargo build --release --target wasm32-unknown-unknown
