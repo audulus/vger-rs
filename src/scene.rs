@@ -34,7 +34,7 @@ impl Scene {
 
         let bind_group_layout = Self::bind_group_layout(device);
 
-        let bind_groups = [0,1,2,3].map(|i| 
+        let bind_groups = [0, 1, 2, 3].map(|i| {
             Scene::bind_group(
                 device,
                 &bind_group_layout,
@@ -44,7 +44,7 @@ impl Scene {
                 &paints,
                 &scissors,
             )
-        );
+        });
 
         Self {
             prims,
