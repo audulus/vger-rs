@@ -61,8 +61,8 @@ pub async fn create_png(
 
         let mut png_encoder = png::Encoder::new(
             File::create(png_output_path).unwrap(),
-            texture_extent.width as u32,
-            texture_extent.height as u32,
+            texture_extent.width,
+            texture_extent.height,
         );
         png_encoder.set_depth(png::BitDepth::Eight);
         png_encoder.set_color(match texture_descriptor.format {
