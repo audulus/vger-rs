@@ -16,7 +16,7 @@ jobs:
 
     # Note that we can't run the tests because GitHub CI doesn't have GPUs.
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Build
       run: cargo build --verbose
       
@@ -30,7 +30,7 @@ jobs:
 
     # Note that we can't run the tests because GitHub CI doesn't have GPUs.
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     
     - name: Install Rust WASM target
       run: rustup target add wasm32-unknown-unknown
