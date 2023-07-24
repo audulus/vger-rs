@@ -79,7 +79,7 @@ impl Scene {
         scissors: &GPUVec<Scissor>,
     ) -> wgpu::BindGroup {
         device.create_bind_group(&wgpu::BindGroupDescriptor {
-            layout: &bind_group_layout,
+            layout: bind_group_layout,
             entries: &[
                 prims.bind_group_entry(0),
                 cvs.bind_group_entry(1),
