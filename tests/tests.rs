@@ -493,3 +493,65 @@ fn segment_stroke_stress() {
         false,
     );
 }
+
+#[test]
+fn segment_stroke_vertical() {
+    let (device, queue) = setup();
+
+    let mut vger = Vger::new(
+        device.clone(),
+        queue.clone(),
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+    );
+
+    vger.begin(512.0, 512.0, 1.0);
+
+    let paint = vger.linear_gradient(
+        [100.0, 100.0],
+        [100.0, 200.0],
+        Color::CYAN,
+        Color::MAGENTA,
+        0.0,
+    );
+
+    vger.stroke_segment([100.0, 100.0], [100.0, 200.0], 4.0, paint);
+
+    render_test(
+        &mut vger,
+        &device,
+        &queue,
+        "segment_stroke_vertical.png",
+        false,
+    );
+}
+
+#[test]
+fn segment_stroke_horizontal() {
+    let (device, queue) = setup();
+
+    let mut vger = Vger::new(
+        device.clone(),
+        queue.clone(),
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+    );
+
+    vger.begin(512.0, 512.0, 1.0);
+
+    let paint = vger.linear_gradient(
+        [100.0, 100.0],
+        [200.0, 100.0],
+        Color::CYAN,
+        Color::MAGENTA,
+        0.0,
+    );
+
+    vger.stroke_segment([100.0, 100.0], [200.0, 100.0], 4.0, paint);
+
+    render_test(
+        &mut vger,
+        &device,
+        &queue,
+        "segment_stroke_horizontal.png",
+        false,
+    );
+}
