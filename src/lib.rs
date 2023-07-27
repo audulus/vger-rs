@@ -525,10 +525,10 @@ impl Vger {
         prim.width = width;
         prim.paint = paint_index.index as u32;
         prim.quad_bounds = [
-            ap.x.min(bp.x)-width/2.0,
-            ap.y.min(bp.y)-width/2.0,
-            ap.x.max(bp.x)+width/2.0,
-            ap.y.max(bp.y)+width/2.0,
+            ap.x.min(bp.x) - width / 2.0,
+            ap.y.min(bp.y) - width / 2.0,
+            ap.x.max(bp.x) + width / 2.0,
+            ap.y.max(bp.y) + width / 2.0,
         ];
         prim.tex_bounds = prim.quad_bounds;
         prim.xform = self.add_xform() as u32;
