@@ -27,8 +27,11 @@ const vgerWire = 7;
 /// Text rendering.
 const vgerGlyph = 8;
 
+/// Text rendering.
+const vgerColorGlyph = 9;
+
 /// Path fills.
-const vgerPathFill = 9;
+const vgerPathFill = 10;
 
 struct Prim {
 
@@ -103,12 +106,13 @@ fn sdBox(p: vec2<f32>, b: vec2<f32>, r: f32) -> f32
     return length(max(d,vec2<f32>(0.0, 0.0))) + min(max(d.x,d.y),0.0)-r;
 }
 
-fn sdSegment(p: vec2<f32>, a: vec2<f32>, b: vec2<f32>) -> f32
+fn sdSegment(p: vec2<f32>, a: vec2<f32>, b: vec2<f32>, width: f32) -> f32
 {
-    let pa = p-a;
-    let ba = b-a;
-    let h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
-    return length( pa - ba*h );
+    var dir = a-b;
+    let lngth = length(dir);
+    dir = dir / lngth;
+    let proj = max(0.0, min(lngth, dot((a - p), dir))) * dir;
+    return length( (a - p) - proj ) - (width / 2.0);
 }
 
 fn sdSegment2(p: vec2<f32>, a: vec2<f32>, b: vec2<f32>, width: f32) -> f32
@@ -336,7 +340,11 @@ fn sdPrimBounds(prim: Prim) -> BBox {
             b.min = prim.cv0;
             b.max = prim.cv1;
         }
-        case 9u: { // vgerPathFill
+        case 9u: { // vgerColorGlyph
+            b.min = prim.cv0;
+            b.max = prim.cv1;
+        }
+        case 10u: { // vgerPathFill
             b.min = vec2<f32>(1e10, 1e10);
             b.max = -b.min;
             for(var i: i32 = 0; i < i32(prim.count * 3u); i = i+1) {
@@ -425,7 +433,12 @@ fn sdPrim(prim: Prim, p: vec2<f32>, filterWidth: f32) -> f32 {
             let size = prim.cv1 - prim.cv0;
             d = sdBox(p - center, 0.5*size, prim.radius);
         }
-        case 9u: { // vgerPathFill
+        case 9u: { // vgerColorGlyph
+            let center = 0.5*(prim.cv1 + prim.cv0);
+            let size = prim.cv1 - prim.cv0;
+            d = sdBox(p - center, 0.5*size, prim.radius);
+        }
+        case 10u: { // vgerPathFill
             for(var i=0; i<i32(prim.count); i = i+1) {
                 let j = i32(prim.start) + 3*i;
                 let a = cvs.cvs[j];
@@ -531,7 +544,7 @@ fn vs_main(
     }
 
     out.p = (xforms.xforms[prim.xform] * vec4<f32>(q, 0.0, 1.0)).xy;
-    out.position = vec4<f32>(2.0 * out.p / uniforms.size - 1.0, 0.0, 1.0);
+    out.position = vec4<f32>((2.0 * out.p / uniforms.size - 1.0) * vec2<f32>(1.0, -1.0), 0.0, 1.0);
 
     return out;
 }
@@ -604,6 +617,10 @@ var glyph_atlas: texture_2d<f32>;
 
 @group(1)
 @binding(2)
+var color_atlas: texture_2d<f32>;
+
+@group(1)
+@binding(3)
 var samp : sampler;
 
 @group(2)
@@ -631,7 +648,8 @@ fn fs_main(
 
     // Look up glyph alpha (if not a glyph, still have to because of wgsl).
     // let a = textureSample(glyph_atlas, samp, (in.t+0.5)/1024.0).r;
-    let a = textureLoad(glyph_atlas, vec2<i32>(in.t), 0).r;
+    let mask = textureLoad(glyph_atlas, vec2<i32>(in.t), 0);
+    let color_mask = textureLoad(color_atlas, vec2<i32>(in.t), 0);
 
     // Look up image color (if no active image, still have to because of wgsl).
     // Note that we could use a separate shader if that's a perf hit.
@@ -641,12 +659,30 @@ fn fs_main(
     let s = scissor_mask(scissor, in.p);
 
     if(prim.prim_type == 8u) { // vgerGlyph
+        if (mask.r <= 0.0) {
+            discard;
+        }
 
         let c = paint.inner_color;
 
         // XXX: using toLinear is a bit of a guess. Gets us closer
         // to matching the glyph atlas in the output.
-        var color = vec4<f32>(c.rgb, toLinear(a));
+        var color = vec4<f32>(c.rgb, mask.r);
+
+        //if(glow) {
+        //    color.a *= paint.glow;
+        //}
+
+        return s * color;
+    }
+    
+    if(prim.prim_type == 9u) { // vgerColorGlyph
+
+        let c = paint.inner_color;
+
+        // XXX: using toLinear is a bit of a guess. Gets us closer
+        // to matching the glyph atlas in the output.
+        var color = vec4<f32>(color_mask.rgb, c.a * color_mask.a);
 
         //if(glow) {
         //    color.a *= paint.glow;

@@ -20,6 +20,7 @@ wgpu = "0.17.0"
 euclid = "0.22.7"
 fontdue = "0.7.2"
 rect_packer = "0.2.1"
+cosmic-text = { git = "https://github.com/lapce/cosmic-text", rev = "6b1dbb529a2396378c05e452b5dc82376ee25040" }
 
 [dev-dependencies]
 png = "0.17.6"

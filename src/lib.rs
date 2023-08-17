@@ -1,3 +1,4 @@
+use cosmic_text::{SubpixelBin, SwashImage};
 use fontdue::layout::{CoordinateSystem, Layout, LayoutSettings, TextStyle};
 use std::sync::Arc;
 
@@ -142,6 +143,16 @@ impl Vger {
                     wgpu::BindGroupLayoutEntry {
                         binding: 2,
                         visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Texture {
+                            multisampled: false,
+                            sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                        },
+                        count: None,
+                    },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 3,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
                         ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
                         count: None,
                     },
@@ -151,22 +162,35 @@ impl Vger {
 
         let image_bind_group_layout =
             device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                entries: &[wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture {
-                        multisampled: false,
-                        sample_type: wgpu::TextureSampleType::Float { filterable: true },
-                        view_dimension: wgpu::TextureViewDimension::D2,
+                entries: &[
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Texture {
+                            multisampled: false,
+                            sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                        },
+                        count: None,
                     },
-                    count: None,
-                }],
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Texture {
+                            multisampled: false,
+                            sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                        },
+                        count: None,
+                    },
+                ],
                 label: Some("image_bind_group_layout"),
             });
 
         let glyph_cache = GlyphCache::new(&device);
 
-        let texture_view = glyph_cache.create_view();
+        let mask_texture_view = glyph_cache.mask_atlas.create_view();
+        let color_texture_view = glyph_cache.color_atlas.create_view();
 
         let uniforms = GPUVec::new_uniforms(&device, "uniforms");
 
@@ -183,10 +207,14 @@ impl Vger {
                 uniforms.bind_group_entry(0),
                 wgpu::BindGroupEntry {
                     binding: 1,
-                    resource: wgpu::BindingResource::TextureView(&texture_view),
+                    resource: wgpu::BindingResource::TextureView(&mask_texture_view),
                 },
                 wgpu::BindGroupEntry {
                     binding: 2,
+                    resource: wgpu::BindingResource::TextureView(&color_texture_view),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 3,
                     resource: wgpu::BindingResource::Sampler(&glyph_sampler),
                 },
             ],
@@ -195,10 +223,16 @@ impl Vger {
 
         let default_image_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &image_bind_group_layout,
-            entries: &[wgpu::BindGroupEntry {
-                binding: 0,
-                resource: wgpu::BindingResource::TextureView(&texture_view),
-            }],
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: wgpu::BindingResource::TextureView(&mask_texture_view),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: wgpu::BindingResource::TextureView(&color_texture_view),
+                },
+            ],
             label: Some("vger default image bind group"),
         });
 
@@ -383,12 +417,7 @@ impl Vger {
         queue.submit(Some(encoder.finish()));
 
         // If we're getting close to full, reset the glyph cache.
-        let usage = self.glyph_cache.usage();
-        // println!("glyph cache usage {}", usage);
-        if usage > 0.7 {
-            // println!("clearing glyph cache");
-            self.glyph_cache.clear();
-        }
+        self.glyph_cache.check_usage();
     }
 
     fn render(&mut self, prim: Prim) {
@@ -647,6 +676,81 @@ impl Vger {
             &[&self.glyph_cache.font],
             &TextStyle::new(text, scaled_size, 0),
         );
+    }
+
+    pub fn render_glyph<'a>(
+        &mut self,
+        x: f32,
+        y: f32,
+        font_id: cosmic_text::fontdb::ID,
+        glyph_id: u16,
+        size: u32,
+        subpx: SubpixelBin,
+        image: impl FnOnce() -> SwashImage,
+        paint_index: PaintIndex,
+    ) {
+        let info = self
+            .glyph_cache
+            .get_glyph_mask(font_id, glyph_id, size, subpx, image);
+        if let Some(rect) = info.rect {
+            let mut prim = Prim::default();
+            prim.prim_type = if info.colored {
+                PrimType::ColorGlyph
+            } else {
+                PrimType::Glyph
+            } as u32;
+
+            let x = x + info.left as f32;
+            let y = y - info.top as f32;
+            prim.quad_bounds = [x, y, x + rect.width as f32, y + rect.height as f32];
+
+            prim.tex_bounds = [
+                rect.x as f32,
+                rect.y as f32,
+                (rect.x + rect.width) as f32,
+                (rect.y + rect.height) as f32,
+            ];
+            prim.paint = paint_index.index as u32;
+
+            self.render(prim);
+        }
+    }
+
+    pub fn render_svg(
+        &mut self,
+        x: f32,
+        y: f32,
+        hash: &[u8],
+        width: u32,
+        height: u32,
+        image: impl FnOnce() -> Vec<u8>,
+        paint_index: Option<PaintIndex>,
+    ) {
+        let info = self.glyph_cache.get_svg_mask(hash, width, height, image);
+        if let Some(rect) = info.rect {
+            let mut prim = Prim::default();
+            prim.prim_type = if info.colored {
+                PrimType::ColorGlyph
+            } else {
+                PrimType::Glyph
+            } as u32;
+
+            let x = x + info.left as f32;
+            let y = y - info.top as f32;
+            prim.quad_bounds = [x, y, x + rect.width as f32, y + rect.height as f32];
+
+            prim.tex_bounds = [
+                rect.x as f32,
+                rect.y as f32,
+                (rect.x + rect.width) as f32,
+                (rect.y + rect.height) as f32,
+            ];
+            if let Some(paint_index) = paint_index {
+                prim.paint = paint_index.index as u32;
+            }
+
+            self.render(prim);
+        }
     }
 
     /// Renders text.
@@ -976,5 +1080,51 @@ impl Vger {
     pub fn delete_image(&mut self, image: ImageIndex) {
         self.images[image.index] = None;
         self.image_bind_groups[image.index] = None;
+    }
+}
+
+#[derive(Hash, Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+#[repr(u8)]
+pub enum SubpixelOffset {
+    Zero = 0,
+    Quarter = 1,
+    Half = 2,
+    ThreeQuarters = 3,
+}
+
+impl Default for SubpixelOffset {
+    fn default() -> Self {
+        SubpixelOffset::Zero
+    }
+}
+
+impl SubpixelOffset {
+    // Skia quantizes subpixel offsets into 1/4 increments.
+    // Given the absolute position, return the quantized increment
+    pub fn quantize(pos: f32) -> Self {
+        // Following the conventions of Gecko and Skia, we want
+        // to quantize the subpixel position, such that abs(pos) gives:
+        // [0.0, 0.125) -> Zero
+        // [0.125, 0.375) -> Quarter
+        // [0.375, 0.625) -> Half
+        // [0.625, 0.875) -> ThreeQuarters,
+        // [0.875, 1.0) -> Zero
+        // The unit tests below check for this.
+        let apos = ((pos - pos.floor()) * 8.0) as i32;
+        match apos {
+            1..=2 => SubpixelOffset::Quarter,
+            3..=4 => SubpixelOffset::Half,
+            5..=6 => SubpixelOffset::ThreeQuarters,
+            _ => SubpixelOffset::Zero,
+        }
+    }
+
+    pub fn to_f32(self) -> f32 {
+        match self {
+            SubpixelOffset::Zero => 0.0,
+            SubpixelOffset::Quarter => 0.25,
+            SubpixelOffset::Half => 0.5,
+            SubpixelOffset::ThreeQuarters => 0.75,
+        }
     }
 }
