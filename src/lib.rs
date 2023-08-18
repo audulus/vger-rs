@@ -480,6 +480,39 @@ impl Vger {
         self.render(prim);
     }
 
+    /// Fills a blurred rectangle.
+    pub fn fill_blurred_rect<Rect: Into<LocalRect>>(
+        &mut self,
+        rect: Rect,
+        radius: f32,
+        paint_index: PaintIndex,
+        blur_radius: f32,
+    ) {
+        let mut prim = Prim::default();
+        prim.prim_type = PrimType::BlurredRect as u32;
+        let r: LocalRect = rect.into();
+        let min = r.min();
+        let max = r.max();
+        prim.cvs[0] = min.x;
+        prim.cvs[1] = min.y;
+        prim.cvs[2] = max.x;
+        prim.cvs[3] = max.y;
+        prim.cvs[4] = blur_radius;
+        prim.radius = radius;
+        prim.paint = paint_index.index as u32;
+        prim.quad_bounds = [
+            min.x - blur_radius * 3.0,
+            min.y - blur_radius * 3.0,
+            max.x + blur_radius * 3.0,
+            max.y + blur_radius * 3.0,
+        ];
+        prim.tex_bounds = prim.quad_bounds;
+        prim.xform = self.add_xform() as u32;
+        prim.scissor = self.add_scissor() as u32;
+
+        self.render(prim);
+    }
+
     /// Strokes a rectangle.
     pub fn stroke_rect(
         &mut self,

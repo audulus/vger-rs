@@ -30,6 +30,9 @@ const vgerGlyph = 8;
 /// Path fills.
 const vgerPathFill = 9;
 
+/// Rounded blurred rectangle.
+const vgerBlurredRect = 10;
+
 struct Prim {
 
     /// Min and max coordinates of the quad we're rendering.
@@ -343,6 +346,10 @@ fn sdPrimBounds(prim: Prim) -> BBox {
                 b = expand(b, cvs.cvs[i32(prim.start)+i]);
             }
         }
+        case 10u: { // vgerBlurredRect
+            b.min = prim.cv0;
+            b.max = prim.cv1;
+        }
         default: {}
     }
     return b;
@@ -462,6 +469,26 @@ fn sdPrim(prim: Prim, p: vec2<f32>, filterWidth: f32) -> f32 {
             }
             d = d * s;
             break;
+        }
+        case 10u: { // vgerBlurredRect
+            let blur_radius = prim.cv2.x;
+            let center = 0.5*(prim.cv1 + prim.cv0);
+            let half_size = 0.5*(prim.cv1 - prim.cv0);
+            let point = p - center;
+            
+            let low = point.y - half_size.y;
+            let high = point.y + half_size.y;
+            let start = clamp(-3.0 * blur_radius, low, high);
+            let end = clamp(3.0 * blur_radius, low, high);
+            
+            let step = (end - start) / 4.0;
+            var y = start + step * 0.5;
+            var value = 0.0;
+            for (var i: i32 = 0; i < 4; i++) {
+                value += roundedBoxShadowX(point.x, point.y - y, blur_radius, prim.radius, half_size) * gaussian(y, blur_radius) * step;
+                y += step;
+            }
+            d = 1.0 - value * 4.0;
         }
         default: { }
     }
@@ -617,6 +644,27 @@ fn toLinear(s: f32) -> f32
         return s/12.92;
     }
     return pow((s + 0.055)/1.055, 2.4);
+}
+
+// This approximates the error function, needed for the gaussian integral
+fn erf(x: vec2<f32>) -> vec2<f32> {
+    let s = sign(x);
+    let a = abs(x);
+    var y = 1.0 + (0.278393 + (0.230389 + 0.078108 * (a * a)) * a) * a;
+    y *= y;
+    return s - s / (y * y);
+}
+
+fn gaussian(x: f32, sigma: f32) -> f32 {
+  let pi: f32 = 3.141592653589793;
+  return exp(-(x * x) / (2.0 * sigma * sigma)) / (sqrt(2.0 * pi) * sigma);
+}
+
+fn roundedBoxShadowX(x: f32, y: f32, sigma: f32, corner: f32, halfSize: vec2<f32>) -> f32 {
+    let delta = min(halfSize.y - corner - abs(y), 0.0);
+    let curved = halfSize.x - corner + sqrt(max(0.0, corner * corner - delta * delta));
+    let integral = 0.5 + 0.5 * erf((x + vec2(-curved, curved)) * (sqrt(0.5) / sigma));
+    return integral.y - integral.x;
 }
 
 @fragment

@@ -30,6 +30,9 @@ pub enum PrimType {
 
     /// Path fills.
     PathFill,
+
+    /// Rounded blurred rectangle.
+    BlurredRect,
 }
 
 #[derive(Copy, Clone, Default)]
