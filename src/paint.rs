@@ -4,7 +4,7 @@ use crate::defs::*;
 #[derive(Clone, Copy)]
 #[repr(C)]
 pub struct Paint {
-    xform: WorldToLocal, // mat3x2<f32>
+    xform: LocalTransform, // mat3x2<f32>
 
     glow: f32,
     pub image: i32,
@@ -15,7 +15,7 @@ pub struct Paint {
 
 impl Paint {
     #[allow(dead_code)]
-    pub fn apply(&self, p: WorldPoint) -> Color {
+    pub fn apply(&self, p: LocalPoint) -> Color {
         let local_point = self.xform.transform_point(p);
         let d = local_point
             .clamp(LocalPoint::zero(), LocalPoint::new(1.0, 1.0))
@@ -26,7 +26,7 @@ impl Paint {
 
     pub fn solid_color(color: Color) -> Self {
         Self {
-            xform: WorldToLocal::identity(),
+            xform: LocalTransform::identity(),
             inner_color: color,
             outer_color: color,
             image: -1,
@@ -47,7 +47,7 @@ impl Paint {
             d = LocalVector::new(0.0, 1.0);
         }
 
-        let xform = LocalToWorld::new(d.x, d.y, -d.y, d.x, start.x, start.y)
+        let xform = LocalTransform::new(d.x, d.y, -d.y, d.x, start.x, start.y)
             .inverse()
             .unwrap();
 
@@ -82,9 +82,9 @@ mod tests {
                 0.0,
             );
 
-            assert_eq!(paint.apply(WorldPoint::new(0.0, 0.0)), Color::gray(0.0));
-            assert_eq!(paint.apply(WorldPoint::new(0.5, 0.0)), Color::gray(0.5));
-            assert_eq!(paint.apply(WorldPoint::new(1.0, 0.0)), Color::gray(1.0));
+            assert_eq!(paint.apply(LocalPoint::new(0.0, 0.0)), Color::gray(0.0));
+            assert_eq!(paint.apply(LocalPoint::new(0.5, 0.0)), Color::gray(0.5));
+            assert_eq!(paint.apply(LocalPoint::new(1.0, 0.0)), Color::gray(1.0));
         }
 
         {
@@ -96,8 +96,8 @@ mod tests {
                 0.0,
             );
 
-            assert_eq!(paint.apply(WorldPoint::new(0.0, 0.0)), Color::gray(0.0));
-            assert_eq!(paint.apply(WorldPoint::new(0.0, 1.0)), Color::gray(1.0));
+            assert_eq!(paint.apply(LocalPoint::new(0.0, 0.0)), Color::gray(0.0));
+            assert_eq!(paint.apply(LocalPoint::new(0.0, 1.0)), Color::gray(1.0));
         }
 
         {
@@ -109,11 +109,11 @@ mod tests {
                 0.0,
             );
 
-            assert_eq!(paint.apply(WorldPoint::new(0.0, 0.0)), Color::gray(0.0));
-            assert_eq!(paint.apply(WorldPoint::new(1.0, 0.0)), Color::gray(0.0));
-            assert_eq!(paint.apply(WorldPoint::new(1.5, 0.0)), Color::gray(0.5));
-            assert_eq!(paint.apply(WorldPoint::new(2.0, 0.0)), Color::gray(1.0));
-            assert_eq!(paint.apply(WorldPoint::new(3.0, 0.0)), Color::gray(1.0));
+            assert_eq!(paint.apply(LocalPoint::new(0.0, 0.0)), Color::gray(0.0));
+            assert_eq!(paint.apply(LocalPoint::new(1.0, 0.0)), Color::gray(0.0));
+            assert_eq!(paint.apply(LocalPoint::new(1.5, 0.0)), Color::gray(0.5));
+            assert_eq!(paint.apply(LocalPoint::new(2.0, 0.0)), Color::gray(1.0));
+            assert_eq!(paint.apply(LocalPoint::new(3.0, 0.0)), Color::gray(1.0));
         }
     }
 }
