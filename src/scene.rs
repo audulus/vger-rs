@@ -2,7 +2,7 @@ use crate::*;
 
 pub const MAX_LAYERS: usize = 4;
 
-pub (crate) type Mat4x4 = [f32; 16];
+pub(crate) type Mat4x4 = [f32; 16];
 
 pub(crate) struct Scene {
     pub prims: [GPUVec<Prim>; MAX_LAYERS],
