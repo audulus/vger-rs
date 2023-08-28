@@ -573,7 +573,7 @@ fn apply(paint: Paint, p: vec2<f32>) -> vec4<f32> {
 }
 
 struct Scissor {
-    xform: PackedMat3x2,
+    xform: mat4x4<f32>,
     origin: vec2<f32>,
     size: vec2<f32>,
 };
@@ -587,8 +587,8 @@ struct Scissors {
 var<storage> scissors: Scissors;
 
 fn scissor_mask(scissor: Scissor, p: vec2<f32>) -> f32 {
-    let M = unpack_mat3x2(scissor.xform);
-    let pp = (M * vec3<f32>(p, 1.0)).xy;
+    let M = scissor.xform;
+    let pp = (M * vec4<f32>(p, 0.0, 1.0)).xy;
     let center = scissor.origin + 0.5 * scissor.size;
     let size = scissor.size;
     if sdBox(pp - center, 0.5 * size, 0.0) < 0.0 {
