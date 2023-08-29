@@ -576,6 +576,8 @@ struct Scissor {
     xform: PackedMat3x2,
     origin: vec2<f32>,
     size: vec2<f32>,
+    radius: f32,
+    padding: f32,
 };
 
 struct Scissors {
@@ -591,10 +593,11 @@ fn scissor_mask(scissor: Scissor, p: vec2<f32>) -> f32 {
     let pp = (M * vec3<f32>(p, 1.0)).xy;
     let center = scissor.origin + 0.5 * scissor.size;
     let size = scissor.size;
-    if sdBox(pp - center, 0.5 * size, 0.0) < 0.0 {
-        return 1.0;
+    let value = 1.0 - sdBox(pp - center, 0.5 * size, scissor.radius);
+    if scissor.radius > 0.0 {
+        return value;
     } else {
-        return 0.0;
+        return round(value);
     }
 }
 
