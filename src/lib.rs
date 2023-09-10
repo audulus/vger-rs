@@ -790,7 +790,7 @@ impl Vger {
             let m = *self.tx_stack.last().unwrap();
             self.scenes[self.cur_scene]
                 .xforms
-                .push(m.to_3d().to_array());
+                .push(m.to_array());
             let n = self.xform_count;
             self.xform_count += 1;
             return n;
@@ -812,7 +812,8 @@ impl Vger {
     /// Translates the coordinate system.
     pub fn translate<Vec: Into<LocalVector>>(&mut self, offset: Vec) {
         if let Some(m) = self.tx_stack.last_mut() {
-            *m = (*m).pre_translate(offset.into());
+            let off: LocalVector = offset.into();
+            *m = (*m).pre_translate(off.to_3d());
         }
     }
 
@@ -820,14 +821,14 @@ impl Vger {
     pub fn scale<Vec: Into<LocalVector>>(&mut self, scale: Vec) {
         if let Some(m) = self.tx_stack.last_mut() {
             let s: LocalVector = scale.into();
-            *m = (*m).pre_scale(s.x, s.y);
+            *m = (*m).pre_scale(s.x, s.y, 1.0);
         }
     }
 
     /// Rotates the coordinate system.
     pub fn rotate(&mut self, theta: f32) {
         if let Some(m) = self.tx_stack.last_mut() {
-            *m = m.pre_rotate(euclid::Angle::<f32>::radians(theta));
+            *m = m.pre_rotate(0.0,0.0,1.0,euclid::Angle::<f32>::radians(theta));
         }
     }
 
@@ -841,7 +842,7 @@ impl Vger {
         if let Some(m) = self.scissor_stack.last_mut() {
             *m = Scissor::new();
             if let Some(xform) = self.tx_stack.last().unwrap().inverse() {
-                m.xform = xform.to_3d().to_array();
+                m.xform = xform.to_array();
                 m.origin = rect.origin.to_array();
                 m.size = rect.size.to_array();
             }

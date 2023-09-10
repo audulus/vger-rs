@@ -10,7 +10,7 @@ pub type LocalPoint = Point2D<f32, LocalSpace>;
 pub type LocalVector = Vector2D<f32, LocalSpace>;
 pub type LocalSize = Size2D<f32, LocalSpace>;
 
-pub type LocalToWorld = Transform2D<f32, LocalSpace, WorldSpace>;
+pub type LocalToWorld = Transform3D<f32, LocalSpace, WorldSpace>;
 pub type WorldToLocal = Transform2D<f32, WorldSpace, LocalSpace>;
 pub type LocalTransform = Transform2D<f32, LocalSpace, LocalSpace>;
 
