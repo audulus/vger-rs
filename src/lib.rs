@@ -788,9 +788,7 @@ impl Vger {
     fn add_xform(&mut self) -> usize {
         if self.xform_count < MAX_PRIMS {
             let m = *self.tx_stack.last().unwrap();
-            self.scenes[self.cur_scene]
-                .xforms
-                .push(m.to_array());
+            self.scenes[self.cur_scene].xforms.push(m.to_array());
             let n = self.xform_count;
             self.xform_count += 1;
             return n;
@@ -828,7 +826,7 @@ impl Vger {
     /// Rotates the coordinate system.
     pub fn rotate(&mut self, theta: f32) {
         if let Some(m) = self.tx_stack.last_mut() {
-            *m = m.pre_rotate(0.0,0.0,1.0,euclid::Angle::<f32>::radians(theta));
+            *m = m.pre_rotate(0.0, 0.0, 1.0, euclid::Angle::<f32>::radians(theta));
         }
     }
 
