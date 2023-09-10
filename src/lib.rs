@@ -815,11 +815,27 @@ impl Vger {
         }
     }
 
+    /// Translates the coordinate system (3d version).
+    pub fn translate_3d<Vec: Into<LocalVector3D>>(&mut self, offset: Vec) {
+        if let Some(m) = self.tx_stack.last_mut() {
+            let off: LocalVector3D = offset.into();
+            *m = (*m).pre_translate(off);
+        }
+    }
+
     /// Scales the coordinate system.
     pub fn scale<Vec: Into<LocalVector>>(&mut self, scale: Vec) {
         if let Some(m) = self.tx_stack.last_mut() {
             let s: LocalVector = scale.into();
             *m = (*m).pre_scale(s.x, s.y, 1.0);
+        }
+    }
+
+    /// Scales the coordinate system (3d version).
+    pub fn scale_3d<Vec: Into<LocalVector3D>>(&mut self, scale: Vec) {
+        if let Some(m) = self.tx_stack.last_mut() {
+            let s: LocalVector3D = scale.into();
+            *m = (*m).pre_scale(s.x, s.y, s.z);
         }
     }
 
