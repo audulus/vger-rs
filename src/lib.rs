@@ -846,6 +846,14 @@ impl Vger {
         }
     }
 
+    /// Rotates the coordinate system (3d version).
+    pub fn rotate_3d<Vec: Into<LocalVector3D>>(&mut self, axis: Vec, theta: f32) {
+        if let Some(m) = self.tx_stack.last_mut() {
+            let a: LocalVector3D = axis.into();
+            *m = m.pre_rotate(a.x, a.y, a.z, euclid::Angle::<f32>::radians(theta));
+        }
+    }
+
     /// Gets the current transform.
     pub fn current_transform(&self) -> LocalToWorld {
         *self.tx_stack.last().unwrap()
