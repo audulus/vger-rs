@@ -16,10 +16,9 @@ pub struct GlyphCache {
 
 impl GlyphCache {
     pub fn new(device: &wgpu::Device) -> Self {
-        let settings = fontdue::FontSettings {
-            collection_index: 0,
-            scale: 100.0,
-        };
+        let mut settings = fontdue::FontSettings::default();
+        settings.collection_index = 0;
+        settings.scale = 100.0;
         let font = include_bytes!("fonts/Anodina-Regular.ttf") as &[u8];
 
         Self {
