@@ -631,6 +631,8 @@ impl Vger {
 
             self.render(prim);
         }
+
+        self.path_scanner.segments.clear()
     }
 
     fn setup_layout(&mut self, text: &str, size: u32, max_width: Option<f32>) {
