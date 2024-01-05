@@ -451,6 +451,27 @@ fn test_scissor() {
 }
 
 #[test]
+fn test_rounded_scissor() {
+    let (device, queue) = setup();
+
+    let mut vger = Vger::new(
+        device.clone(),
+        queue.clone(),
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+    );
+
+    vger.begin(512.0, 512.0, 2.0);
+
+    vger.rounded_scissor(euclid::rect(200.0, 200.0, 100.0, 100.0), 20.0);
+    let cyan = vger.color_paint(Color::WHITE);
+    vger.fill_rect(euclid::rect(100.0, 100.0, 300.0, 300.0), 10.0, cyan);
+
+    let png_name = "rounded_scissor.png";
+    render_test(&mut vger, &device, &queue, png_name, true);
+    assert!(png_not_black(png_name));
+}
+
+#[test]
 fn test_scissor_text() {
     let (device, queue) = setup();
 
