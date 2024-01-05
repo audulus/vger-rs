@@ -88,6 +88,23 @@ fn fill_circle_translate() {
 }
 
 #[test]
+fn fill_blurred_rect() {
+    let (device, queue) = setup();
+
+    let mut vger = Vger::new(
+        device.clone(),
+        queue.clone(),
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+    );
+
+    vger.begin(512.0, 512.0, 1.0);
+    let cyan = vger.color_paint(Color::CYAN);
+    vger.fill_blurred_rect(euclid::rect(100.0, 100.0, 100.0, 100.0), 10.0, cyan, 10.0);
+
+    render_test(&mut vger, &device, &queue, "blurred_rect.png", false);
+}
+
+#[test]
 fn fill_rect() {
     let (device, queue) = setup();
 
