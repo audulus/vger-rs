@@ -615,17 +615,19 @@ struct Scissors {
 @binding(4)
 var<storage> scissors: Scissors;
 
-fn scissor_mask(scissor: Scissor, p: vec2<f32>) -> f32 {
+// Given an sdf (d) and AA filter width, calculate
+// and alpha.
+fn sdf_alpha(d: f32, fw: f32) -> f32 {
+    return 1.0-smoothstep(-fw/2.0,fw/2.0,d);
+}
+
+// Returns the signed distance function for a scissor rectangle.
+fn scissor_sdf(scissor: Scissor, p: vec2<f32>) -> f32 {
     let M = unpack_mat3x2(scissor.xform);
     let pp = (M * vec3<f32>(p, 1.0)).xy;
     let center = scissor.origin + 0.5 * scissor.size;
     let size = scissor.size;
-    let value = 1.0 - sdBox(pp - center, 0.5 * size, scissor.radius);
-    if scissor.radius > 0.0 {
-        return value;
-    } else {
-        return round(value);
-    }
+    return sdBox(pp - center, 0.5 * size, scissor.radius);
 }
 
 @group(1)
@@ -689,7 +691,7 @@ fn fs_main(
     let t = unpack_mat3x2(paint.xform) * vec3<f32>(in.t, 1.0);
     var color = textureSample(tex, samp, t);
 
-    let s = scissor_mask(scissor, in.p);
+    let s = scissor_sdf(scissor, in.p);
 
     if(prim.prim_type == 8u) { // vgerGlyph
 
@@ -703,13 +705,15 @@ fn fs_main(
         //    color.a *= paint.glow;
         //}
 
-        return s * color;
+        color.a *= sdf_alpha(s, fw);
+
+        return color;
     }
 
-    let d = sdPrim(prim, in.t, fw);
+    let d = max(sdPrim(prim, in.t, fw), s);
     if paint.image == -1 {
         color = apply(paint, in.t);
     }
 
-    return mix(vec4<f32>(color.rgb,0.0), color, 1.0-smoothstep(-fw/2.0,fw/2.0,d) );
+    return mix(vec4<f32>(color.rgb,0.0), color, sdf_alpha(d, fw) );
 }
