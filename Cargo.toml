@@ -16,14 +16,14 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-wgpu = "0.18.0"
+wgpu = "0.20.0"
 euclid = "0.22.7"
-fontdue = "0.8.0"
+fontdue = "0.9.0"
 rect_packer = "0.2.1"
 
 [dev-dependencies]
 png = "0.17.6"
 futures = "0.3"
 futures-intrusive = "0.5"
-svg = "0.14.0"
+svg = "0.17.0"
 rand = "0.8.5"
