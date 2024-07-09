@@ -19,8 +19,8 @@ pub async fn setup() -> (wgpu::Device, wgpu::Queue) {
         .request_device(
             &wgpu::DeviceDescriptor {
                 label: None,
-                features: wgpu::Features::default(),
-                limits: wgpu::Limits::default(),
+                required_features: wgpu::Features::default(),
+                required_limits: wgpu::Limits::default(),
             },
             trace_dir.ok().as_ref().map(std::path::Path::new),
         )
