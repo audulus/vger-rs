@@ -7,12 +7,18 @@ struct ImageData {
     data: Vec<u8>,
 }
 
+pub enum AtlasContent {
+    Mask,
+    Color,
+}
+
 pub struct Atlas {
     packer: Packer,
     new_data: Vec<ImageData>,
     pub atlas_texture: wgpu::Texture,
     area_used: i32,
     did_clear: bool,
+    content: AtlasContent,
 }
 
 impl Atlas {
@@ -50,8 +56,29 @@ impl Atlas {
         }
     }
 
-    pub fn new(device: &wgpu::Device) -> Self {
-        let atlas_texture = device.create_texture(&Self::get_texture_desc());
+    pub fn new(device: &wgpu::Device, content: AtlasContent) -> Self {
+        let texture_size = wgpu::Extent3d {
+            width: Atlas::ATLAS_SIZE,
+            height: Atlas::ATLAS_SIZE,
+            depth_or_array_layers: 1,
+        };
+        let format = match content {
+            AtlasContent::Mask => wgpu::TextureFormat::R8Unorm,
+            AtlasContent::Color => wgpu::TextureFormat::Rgba8Unorm,
+        };
+        let desc = wgpu::TextureDescriptor {
+            size: texture_size,
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format,
+            usage: wgpu::TextureUsages::COPY_SRC
+                | wgpu::TextureUsages::COPY_DST
+                | wgpu::TextureUsages::TEXTURE_BINDING,
+            label: Some("atlas_texture"),
+            view_formats: &[format],
+        };
+        let atlas_texture = device.create_texture(&desc);
 
         Self {
             packer: Packer::new(Atlas::get_packer_config()),
@@ -59,6 +86,7 @@ impl Atlas {
             atlas_texture,
             area_used: 0,
             did_clear: false,
+            content,
         }
     }
 
@@ -78,10 +106,15 @@ impl Atlas {
     }
 
     pub fn update(&mut self, device: &wgpu::Device, encoder: &mut wgpu::CommandEncoder) {
+        let pixels = match self.content {
+            AtlasContent::Mask => 1,
+            AtlasContent::Color => 4,
+        };
+
         if self.did_clear {
             // encoder.clear_texture(&self.atlas_texture, &wgpu::ImageSubresourceRange::default());
 
-            let sz = Atlas::ATLAS_SIZE as usize;
+            let sz = Atlas::ATLAS_SIZE as usize * pixels;
 
             let data = vec![0_u8; sz * sz];
 
@@ -121,14 +154,15 @@ impl Atlas {
         for data in &self.new_data {
             // Pad data to wgpu::COPY_BYTES_PER_ROW_ALIGNMENT
             let align = wgpu::COPY_BYTES_PER_ROW_ALIGNMENT as i32;
-            let padding = (align - data.rect.width % align) % align;
-            let padded_width = data.rect.width + padding;
+            let width = data.rect.width * pixels as i32;
+            let padding = (align - width % align) % align;
+            let padded_width = width + padding;
             let mut padded_data = vec![];
             padded_data.reserve((padded_width * data.rect.height) as usize);
 
             let mut i = 0;
             for _ in 0..data.rect.height {
-                for _ in 0..data.rect.width {
+                for _ in 0..width {
                     padded_data.push(data.data[i]);
                     i += 1;
                 }
