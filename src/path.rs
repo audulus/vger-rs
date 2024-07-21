@@ -111,7 +111,7 @@ impl PathScanner {
     }
 
     pub fn next(&mut self) -> bool {
-        let y = self.nodes[self.index as usize].coord;
+        let y = self.nodes[self.index].coord;
         self.interval.a = y;
         let n = self.nodes.len();
 

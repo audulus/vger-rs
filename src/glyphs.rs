@@ -66,7 +66,7 @@ impl GlyphCache {
         {
             let svg_infos = self.svg_infos.get(hash).unwrap();
             if let Some(info) = svg_infos.get(&(width, height)) {
-                return info.clone();
+                return *info;
             }
         }
 
@@ -80,12 +80,12 @@ impl GlyphCache {
         };
 
         let svg_infos = self.svg_infos.get_mut(hash).unwrap();
-        svg_infos.insert((width, height), info.clone());
+        svg_infos.insert((width, height), info);
 
         info
     }
 
-    pub fn get_glyph_mask<'a>(
+    pub fn get_glyph_mask(
         &mut self,
         font_id: cosmic_text::fontdb::ID,
         glyph_id: u16,

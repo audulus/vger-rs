@@ -214,6 +214,7 @@ impl Vger {
                 module: &shader,
                 entry_point: "vs_main",
                 buffers: &[],
+                compilation_options: Default::default(),
             },
             fragment: Some(wgpu::FragmentState {
                 module: &shader,
@@ -226,6 +227,7 @@ impl Vger {
                     }),
                     write_mask: wgpu::ColorWrites::ALL,
                 })],
+                compilation_options: Default::default(),
             }),
             primitive: wgpu::PrimitiveState {
                 cull_mode: None,
@@ -235,6 +237,7 @@ impl Vger {
             depth_stencil: None,
             multisample: wgpu::MultisampleState::default(),
             multiview: None,
+            cache: None,
         });
 
         let layout = Layout::new(CoordinateSystem::PositiveYUp);
@@ -546,8 +549,8 @@ impl Vger {
             prim.start = self.scenes[self.cur_scene].cvs.len() as u32;
 
             let mut x_interval = Interval {
-                a: std::f32::MAX,
-                b: std::f32::MIN,
+                a: f32::MAX,
+                b: f32::MIN,
             };
 
             let mut index = self.path_scanner.first;
@@ -591,7 +594,8 @@ impl Vger {
         );
     }
 
-    pub fn render_glyph<'a>(
+    #[allow(clippy::too_many_arguments)]
+    pub fn render_glyph(
         &mut self,
         x: f32,
         y: f32,
@@ -630,6 +634,7 @@ impl Vger {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn render_svg(
         &mut self,
         x: f32,
@@ -747,8 +752,7 @@ impl Vger {
         size: u32,
         max_width: Option<f32>,
     ) -> Vec<LocalRect> {
-        let mut rects = vec![];
-        rects.reserve(text.len());
+        let mut rects = Vec::with_capacity(text.len());
 
         self.setup_layout(text, size, max_width);
 
@@ -776,8 +780,7 @@ impl Vger {
         self.setup_layout(text, size, max_width);
         let s = 1.0 / self.device_px_ratio;
 
-        let mut rects = vec![];
-        rects.reserve(text.len());
+        let mut rects = Vec::with_capacity(text.len());
 
         let glyphs = self.layout.glyphs();
 
@@ -912,19 +915,14 @@ impl Vger {
     }
 }
 
-#[derive(Hash, Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Hash, Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Default)]
 #[repr(u8)]
 pub enum SubpixelOffset {
+    #[default]
     Zero = 0,
     Quarter = 1,
     Half = 2,
     ThreeQuarters = 3,
-}
-
-impl Default for SubpixelOffset {
-    fn default() -> Self {
-        SubpixelOffset::Zero
-    }
 }
 
 impl SubpixelOffset {
