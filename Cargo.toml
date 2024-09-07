@@ -4,7 +4,7 @@ resolver = "2" # What does this do?
 [package]
 name = "vger"
 description = "2D GPU renderer for dynamic UIs"
-version = "0.3.0"
+version = "0.4.0"
 license = "MIT"
 readme = "README.md"
 authors = ["Taylor Holliday <taylor@audulus.com>"]
