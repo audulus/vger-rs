@@ -21,6 +21,7 @@ pub async fn setup() -> (wgpu::Device, wgpu::Queue) {
                 label: None,
                 required_features: wgpu::Features::default(),
                 required_limits: wgpu::Limits::default(),
+                memory_hints: wgpu::MemoryHints::Performance,
             },
             trace_dir.ok().as_ref().map(std::path::Path::new),
         )
