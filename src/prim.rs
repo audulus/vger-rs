@@ -25,8 +25,11 @@ pub enum PrimType {
     /// Connection wire. See https://www.shadertoy.com/view/NdsXRl
     Wire,
 
-    /// Text rendering.
-    Glyph,
+    /// A mask from an atlas. Used for text rendering.
+    AtlasMask,
+
+    /// An image from an atlas. E.g. emoji or icons.
+    AtlasImage,
 
     /// Path fills.
     PathFill,

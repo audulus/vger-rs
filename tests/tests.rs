@@ -354,7 +354,7 @@ fn text_small() {
 
     let atlas_png_name = "text_small_atlas.png";
     save_png(
-        &vger.glyph_cache.atlas.atlas_texture,
+        &vger.glyph_cache.mask_atlas.atlas_texture,
         &vger::atlas::Atlas::get_texture_desc(),
         &device,
         &queue,
@@ -383,7 +383,7 @@ fn text_scale() {
 
     let atlas_png_name = "text_scale_atlas.png";
     save_png(
-        &vger.glyph_cache.atlas.atlas_texture,
+        &vger.glyph_cache.mask_atlas.atlas_texture,
         &vger::atlas::Atlas::get_texture_desc(),
         &device,
         &queue,
@@ -421,7 +421,7 @@ fn text_box() {
 
     let atlas_png_name = "text_box_atlas.png";
     save_png(
-        &vger.glyph_cache.atlas.atlas_texture,
+        &vger.glyph_cache.mask_atlas.atlas_texture,
         &vger::atlas::Atlas::get_texture_desc(),
         &device,
         &queue,

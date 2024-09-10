@@ -25,7 +25,9 @@ pub use color::Color;
 pub mod atlas;
 
 mod glyphs;
-use glyphs::GlyphCache;
+pub use glyphs::ImageId;
+
+use glyphs::AtlasCache;
 
 use wgpu::util::DeviceExt;
 
@@ -92,7 +94,7 @@ pub struct Vger {
     scissor_count: usize,
     path_scanner: PathScanner,
     pen: LocalPoint,
-    pub glyph_cache: GlyphCache,
+    pub glyph_cache: AtlasCache,
     layout: Layout,
     images: Vec<Option<wgpu::Texture>>,
     image_bind_groups: Vec<Option<wgpu::BindGroup>>,
@@ -146,6 +148,16 @@ impl Vger {
                     wgpu::BindGroupLayoutEntry {
                         binding: 2,
                         visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Texture {
+                            multisampled: false,
+                            sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                        },
+                        count: None,
+                    },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 3,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
                         ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
                         count: None,
                     },
@@ -168,9 +180,9 @@ impl Vger {
                 label: Some("image_bind_group_layout"),
             });
 
-        let glyph_cache = GlyphCache::new(&device);
-
-        let texture_view = glyph_cache.create_view();
+        let glyph_cache = AtlasCache::new(&device);
+        let mask_texture_view = glyph_cache.mask_atlas.create_view();
+        let color_texture_view = glyph_cache.color_atlas.create_view();
 
         let uniforms = GPUVec::new_uniforms(&device, "uniforms");
 
@@ -187,10 +199,14 @@ impl Vger {
                 uniforms.bind_group_entry(0),
                 wgpu::BindGroupEntry {
                     binding: 1,
-                    resource: wgpu::BindingResource::TextureView(&texture_view),
+                    resource: wgpu::BindingResource::TextureView(&mask_texture_view),
                 },
                 wgpu::BindGroupEntry {
                     binding: 2,
+                    resource: wgpu::BindingResource::TextureView(&color_texture_view),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 3,
                     resource: wgpu::BindingResource::Sampler(&glyph_sampler),
                 },
             ],
@@ -201,7 +217,7 @@ impl Vger {
             layout: &image_bind_group_layout,
             entries: &[wgpu::BindGroupEntry {
                 binding: 0,
-                resource: wgpu::BindingResource::TextureView(&texture_view),
+                resource: wgpu::BindingResource::TextureView(&mask_texture_view),
             }],
             label: Some("vger default image bind group"),
         });
@@ -390,12 +406,7 @@ impl Vger {
         queue.submit(Some(encoder.finish()));
 
         // If we're getting close to full, reset the glyph cache.
-        let usage = self.glyph_cache.usage();
-        // println!("glyph cache usage {}", usage);
-        if usage > 0.7 {
-            // println!("clearing glyph cache");
-            self.glyph_cache.clear();
-        }
+        self.glyph_cache.check_usage();
     }
 
     fn render(&mut self, prim: Prim) {
@@ -691,6 +702,64 @@ impl Vger {
         );
     }
 
+    pub fn render_cached_mask(
+        &mut self,
+        x: f32,
+        y: f32,
+        id: ImageId,
+        width: u32,
+        height: u32,
+        image: impl FnOnce() -> Vec<u8>,
+        paint_index: PaintIndex,
+    ) {
+        let info = self.glyph_cache.get_color_image(id, width, height, image);
+        if let Some(rect) = info.rect {
+            let mut prim = Prim::default();
+            prim.prim_type = PrimType::AtlasMask as u32;
+            let x = x as f32;
+            let y = y as f32;
+            prim.quad_bounds = [x, y, x + rect.width as f32, y + rect.height as f32];
+            prim.tex_bounds = [
+                rect.x as f32,
+                rect.y as f32,
+                (rect.x + rect.width) as f32,
+                (rect.y + rect.height) as f32,
+            ];
+            prim.paint = paint_index.index as u32;
+            prim.xform = self.add_xform() as u32;
+            prim.scissor = self.add_scissor() as u32;
+            self.render(prim);
+        }
+    }
+
+    pub fn render_cached_image(
+        &mut self,
+        x: f32,
+        y: f32,
+        id: ImageId,
+        width: u32,
+        height: u32,
+        image: impl FnOnce() -> Vec<u8>,
+    ) {
+        let info = self.glyph_cache.get_color_image(id, width, height, image);
+        if let Some(rect) = info.rect {
+            let mut prim = Prim::default();
+            prim.prim_type = PrimType::AtlasImage as u32;
+            let x = x as f32;
+            let y = y as f32;
+            prim.quad_bounds = [x, y, x + rect.width as f32, y + rect.height as f32];
+            prim.tex_bounds = [
+                rect.x as f32,
+                rect.y as f32,
+                (rect.x + rect.width) as f32,
+                (rect.y + rect.height) as f32,
+            ];
+            prim.xform = self.add_xform() as u32;
+            prim.scissor = self.add_scissor() as u32;
+            self.render(prim);
+        }
+    }
+
     /// Renders text.
     pub fn text(&mut self, text: &str, size: u32, color: Color, max_width: Option<f32>) {
         self.setup_layout(text, size, max_width);
@@ -710,7 +779,7 @@ impl Vger {
 
             if let Some(rect) = info.rect {
                 let mut prim = Prim::default();
-                prim.prim_type = PrimType::Glyph as u32;
+                prim.prim_type = PrimType::AtlasMask as u32;
                 prim.xform = xform;
                 prim.scissor = scissor;
                 assert!(glyph.width == rect.width as usize);
