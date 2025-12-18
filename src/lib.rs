@@ -213,7 +213,7 @@ impl Vger {
                 &uniform_bind_group_layout,
                 &image_bind_group_layout,
             ],
-            push_constant_ranges: &[],
+            immediate_size: 0,
         });
 
         let blend_comp = wgpu::BlendComponent {
@@ -251,8 +251,8 @@ impl Vger {
             },
             depth_stencil: None,
             multisample: wgpu::MultisampleState::default(),
-            multiview: None,
             cache: None,
+            multiview_mask: None,
         });
 
         let layout = Layout::new(CoordinateSystem::PositiveYUp);

@@ -183,6 +183,7 @@ pub fn render_test(
         depth_stencil_attachment: None,
         occlusion_query_set: None,
         timestamp_writes: None,
+        multiview_mask: None,
     };
 
     vger.encode(&desc);
