@@ -27,6 +27,9 @@ pub mod atlas;
 mod glyphs;
 use glyphs::GlyphCache;
 
+mod text_layout;
+use text_layout::{TextLayout, TextLayoutCache};
+
 use wgpu::util::DeviceExt;
 
 #[allow(dead_code)]
@@ -94,6 +97,7 @@ pub struct Vger {
     pen: LocalPoint,
     pub glyph_cache: GlyphCache,
     layout: Layout,
+    text_layouts: TextLayoutCache,
     images: Vec<Option<wgpu::Texture>>,
     image_bind_groups: Vec<Option<wgpu::BindGroup>>,
     image_bind_group_layout: wgpu::BindGroupLayout,
@@ -276,6 +280,7 @@ impl Vger {
             pen: LocalPoint::zero(),
             glyph_cache,
             layout,
+            text_layouts: TextLayoutCache::default(),
             images: vec![],
             image_bind_groups: vec![],
             image_bind_group_layout,
@@ -286,6 +291,7 @@ impl Vger {
     /// Begin rendering.
     pub fn begin(&mut self, window_width: f32, window_height: f32, device_px_ratio: f32) {
         self.device_px_ratio = device_px_ratio;
+        self.text_layouts.next_frame();
         self.cur_layer = 0;
         self.screen_size = ScreenSize::new(window_width, window_height);
         self.uniforms.clear();
@@ -674,25 +680,26 @@ impl Vger {
         self.path_scanner.segments.clear()
     }
 
-    fn setup_layout(&mut self, text: &str, size: u32, max_width: Option<f32>) {
+    /// Lays out text, or returns the layout from the last time the same text was laid out at
+    /// the same size, maximum width and device pixel ratio.
+    fn layout_text(&mut self, text: &str, size: u32, max_width: Option<f32>) -> Arc<TextLayout> {
         let scale = self.device_px_ratio;
-
-        self.layout.reset(&LayoutSettings {
-            max_width: max_width.map(|w| w * scale),
-            ..LayoutSettings::default()
-        });
-
-        let scaled_size = size as f32 * scale;
-
-        self.layout.append(
-            &[&self.glyph_cache.font],
-            &TextStyle::new(text, scaled_size, 0),
-        );
+        let layout = &mut self.layout;
+        let font = &self.glyph_cache.font;
+        self.text_layouts.get(text, size, max_width, scale, || {
+            layout.reset(&LayoutSettings {
+                max_width: max_width.map(|w| w * scale),
+                ..LayoutSettings::default()
+            });
+            layout.append(&[font], &TextStyle::new(text, size as f32 * scale, 0));
+            let lines = layout.lines().cloned().unwrap_or_default();
+            (layout.glyphs().clone(), lines)
+        })
     }
 
     /// Renders text.
     pub fn text(&mut self, text: &str, size: u32, color: Color, max_width: Option<f32>) {
-        self.setup_layout(text, size, max_width);
+        let layout = self.layout_text(text, size, max_width);
 
         let scale = self.device_px_ratio;
         let scaled_size = size as f32 * scale;
@@ -701,11 +708,8 @@ impl Vger {
         let xform = self.add_xform() as u32;
         let scissor = self.add_scissor() as u32;
 
-        let mut prims = vec![];
-        for (i, glyph) in self.layout.glyphs().iter().enumerate() {
-            let c = text.chars().nth(i).unwrap();
-            // println!("glyph {:?}", c);
-            let info = self.glyph_cache.get_glyph(c, scaled_size);
+        for glyph in &layout.glyphs {
+            let info = self.glyph_cache.get_glyph(glyph.parent, scaled_size);
 
             if let Some(rect) = info.rect {
                 let mut prim = Prim::default();
@@ -732,25 +736,21 @@ impl Vger {
                 prim.paint = paint.index as u32;
                 // println!("tex_bounds: {:?}", prim.tex_bounds);
 
-                prims.push(prim);
+                self.render(prim);
             }
-        }
-
-        for prim in prims {
-            self.render(prim);
         }
     }
 
     /// Calculates the bounds for text.
     pub fn text_bounds(&mut self, text: &str, size: u32, max_width: Option<f32>) -> LocalRect {
-        self.setup_layout(text, size, max_width);
+        let layout = self.layout_text(text, size, max_width);
 
         let mut min = LocalPoint::new(f32::MAX, f32::MAX);
         let mut max = LocalPoint::new(f32::MIN, f32::MIN);
 
         let scale = self.device_px_ratio;
 
-        for glyph in self.layout.glyphs() {
+        for glyph in &layout.glyphs {
             min = min.min([glyph.x / scale, glyph.y / scale].into());
             max = max.max(
                 [
@@ -774,11 +774,11 @@ impl Vger {
         let mut rects = vec![];
         rects.reserve(text.len());
 
-        self.setup_layout(text, size, max_width);
+        let layout = self.layout_text(text, size, max_width);
 
         let s = 1.0 / self.device_px_ratio;
 
-        for glyph in self.layout.glyphs() {
+        for glyph in &layout.glyphs {
             rects.push(
                 LocalRect::new(
                     [glyph.x, glyph.y].into(),
@@ -797,30 +797,28 @@ impl Vger {
         size: u32,
         max_width: Option<f32>,
     ) -> Vec<LineMetrics> {
-        self.setup_layout(text, size, max_width);
+        let layout = self.layout_text(text, size, max_width);
         let s = 1.0 / self.device_px_ratio;
 
         let mut rects = vec![];
         rects.reserve(text.len());
 
-        let glyphs = self.layout.glyphs();
+        let glyphs = &layout.glyphs;
 
-        if let Some(lines) = self.layout.lines() {
-            for line in lines {
-                let mut rect = LocalRect::zero();
+        for line in &layout.lines {
+            let mut rect = LocalRect::zero();
 
-                for glyph in &glyphs[line.glyph_start..line.glyph_end] {
-                    rect = rect.union(&LocalRect::new(
-                        [glyph.x, glyph.y].into(),
-                        [glyph.width as f32, glyph.height as f32].into(),
-                    ));
-                }
-                rects.push(LineMetrics {
-                    glyph_start: line.glyph_start,
-                    glyph_end: line.glyph_end,
-                    bounds: rect.scale(s, s),
-                });
+            for glyph in &glyphs[line.glyph_start..line.glyph_end] {
+                rect = rect.union(&LocalRect::new(
+                    [glyph.x, glyph.y].into(),
+                    [glyph.width as f32, glyph.height as f32].into(),
+                ));
             }
+            rects.push(LineMetrics {
+                glyph_start: line.glyph_start,
+                glyph_end: line.glyph_end,
+                bounds: rect.scale(s, s),
+            });
         }
 
         rects
