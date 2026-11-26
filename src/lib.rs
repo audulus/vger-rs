@@ -27,6 +27,7 @@ pub mod atlas;
 mod glyphs;
 use glyphs::GlyphCache;
 
+mod fxhash;
 mod text_layout;
 use text_layout::{TextLayout, TextLayoutCache};
 

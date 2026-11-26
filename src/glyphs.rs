@@ -1,4 +1,5 @@
 use crate::atlas::Atlas;
+use crate::fxhash::FxBuildHasher;
 use rect_packer::Rect;
 use std::collections::HashMap;
 
@@ -11,7 +12,7 @@ pub struct GlyphInfo {
 pub struct GlyphCache {
     pub atlas: Atlas,
     pub font: fontdue::Font,
-    info: HashMap<(char, u32), GlyphInfo>,
+    info: HashMap<(char, u32), GlyphInfo, FxBuildHasher>,
 }
 
 impl GlyphCache {
@@ -24,7 +25,7 @@ impl GlyphCache {
         Self {
             atlas: Atlas::new(device),
             font: fontdue::Font::from_bytes(font, settings).unwrap(),
-            info: HashMap::new(),
+            info: HashMap::default(),
         }
     }
 
