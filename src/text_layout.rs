@@ -1,8 +1,8 @@
 //! A cache of laid-out text, so text that is drawn or measured frame after frame is laid out
 //! once instead of every time.
 
+use crate::fxhash::{FxHasher, PassBuildHasher};
 use fontdue::layout::{GlyphPosition, LinePosition};
-use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 use std::sync::Arc;
@@ -21,12 +21,12 @@ pub(crate) struct TextLayout {
 /// `next_frame` drops the layouts that weren't used since the previous call.
 #[derive(Default)]
 pub(crate) struct TextLayoutCache {
-    current: HashMap<u64, Arc<TextLayout>>,
-    previous: HashMap<u64, Arc<TextLayout>>,
+    current: HashMap<u64, Arc<TextLayout>, PassBuildHasher>,
+    previous: HashMap<u64, Arc<TextLayout>, PassBuildHasher>,
 }
 
 fn key(text: &str, size: u32, max_width: Option<u32>, scale: u32) -> u64 {
-    let mut hasher = DefaultHasher::new();
+    let mut hasher = FxHasher::default();
     text.hash(&mut hasher);
     size.hash(&mut hasher);
     max_width.hash(&mut hasher);
